@@ -1,0 +1,15 @@
+# Reference / large files — not part of the website
+awe_slides.pdf
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Archive / scratch
+Archive/
+awe-map-prototype.html
+
+# OS
+.DS_Store
+Thumbs.db
