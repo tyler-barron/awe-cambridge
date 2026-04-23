@@ -62,16 +62,16 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
 .fg-header{display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;user-select:none;transition:background .15s;}
 .fg-header:hover{background:rgba(140,69,24,.04);}
 .fg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.fg-label{font-family:"Space Mono",monospace;font-size:8px;letter-spacing:.3em;text-transform:uppercase;flex:1;}
+.fg-label{font-family:"Space Mono",monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;flex:1;}
 .fg-arrow{font-size:9px;color:var(--stone);transition:transform .2s;}
 .fg-header.open .fg-arrow{transform:rotate(90deg);}
 .fg-body{display:none;padding:0 14px 10px;}
 .fg-body.open{display:block;}
 .fg-dim{margin-bottom:8px;}
 .fg-dim:last-child{margin-bottom:0;}
-.fg-dim-label{font-family:"Space Mono",monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--stone);margin-bottom:4px;}
+.fg-dim-label{font-family:"Space Mono",monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--stone);margin-bottom:4px;}
 .chip-row{display:flex;flex-wrap:wrap;gap:3px;}
-.fchip{padding:2px 8px;border:1px solid rgba(140,69,24,.2);border-radius:20px;font-family:"Cormorant Garamond",serif;font-size:11px;font-style:italic;background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .15s;}
+.fchip{padding:2px 8px;border:1px solid rgba(140,69,24,.2);border-radius:20px;font-family:"Cormorant Garamond",serif;font-size:13px;font-style:italic;background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .15s;}
 .fchip:hover{border-color:var(--accent);color:var(--ink);}
 .fchip.active{background:var(--ink);border-color:var(--ink);color:var(--parchment);font-style:normal;}
 
@@ -92,8 +92,8 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
 .inst-card.selected{background:rgba(140,69,24,.07);border-left:3px solid var(--accent);padding-left:11px;}
 .inst-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
 .inst-body{flex:1;min-width:0;}
-.inst-name{font-size:13px;font-weight:300;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px;}
-.inst-meta{font-family:"Space Mono",monospace;font-size:7px;color:var(--stone);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.inst-name{font-size:14px;font-weight:300;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px;}
+.inst-meta{font-family:"Space Mono",monospace;font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
 /* ── Map ── */
 .map-wrap{flex:1;position:relative;overflow:hidden;}
@@ -145,7 +145,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
 <div class="page">
 
 <header class="site-header">
-  <a href="index.html" class="header-back">← Atlas</a>
+  <a href="index.html" class="header-back">← Homepage</a>
   <div class="header-title">Awe <em>Map</em></div>
   <div class="header-count" id="hcount">220 instances</div>
 </header>

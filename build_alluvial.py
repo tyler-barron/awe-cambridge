@@ -40,7 +40,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
 
 /* ── Controls bar ── */
 .controls-bar{flex-shrink:0;background:rgba(255,255,255,.5);border-bottom:2px solid rgba(140,69,24,.12);padding:10px 24px 8px;}
-.ctrl-top{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+.ctrl-top{display:flex;align-items:flex-start;gap:16px;margin-bottom:8px;}
 .ctrl-bottom{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:30px;}
 .chips-label{font-family:"Space Mono",monospace;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--stone);flex-shrink:0;}
 
@@ -167,8 +167,8 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
 <div class="page">
 
 <header class="site-header">
-  <a href="index.html" class="header-back">← Threshold</a>
-  <div class="header-title">Awe <em>Alluvial</em></div>
+  <a href="index.html" class="header-back">← Homepage</a>
+  <div class="header-title"><em>Alluvial</em> Awe</div>
   <div class="header-count" id="hcount">220 instances</div>
   <button class="header-guide-btn" id="guide-toggle-btn" onclick="toggleGuide()" title="Understanding Awe — dimension reference">
     <span>?</span> Guide
@@ -181,12 +181,13 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
 </style>
 
 <div class="controls-bar">
-  <div class="ctrl-top" id="cat-btns">
+  <div class="ctrl-top">
+    <div class="ctrl-cat-btns" id="cat-btns"></div>
     <div class="usage-hint">
-      <span class="usage-step"><span class="usage-num">1</span> Pick columns from the dropdowns to build the diagram.</span>
-      <span class="usage-step"><span class="usage-num">2</span> Click any node to filter by that value.</span>
+      <span class="usage-step"><span class="usage-num">1</span> Pick columns from the dropdowns.</span>
+      <span class="usage-step"><span class="usage-num">2</span> Click any node to filter.</span>
       <span class="usage-step"><span class="usage-num">3</span> Drag chips to reorder columns.</span>
-      <span class="usage-step"><span class="usage-num">4</span> Click <strong>? Guide</strong> for definitions of every category.</span>
+      <span class="usage-step"><span class="usage-num">4</span> Click <strong>? Guide</strong> for definitions.</span>
     </div>
   </div>
   <div class="ctrl-bottom">
@@ -197,7 +198,8 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
   </div>
 </div>
 <style>
-.usage-hint{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;margin-left:auto;padding:2px 0;}
+.ctrl-cat-btns{display:flex;flex-wrap:wrap;gap:6px;flex:1;align-items:flex-start;}
+.usage-hint{display:flex;flex-direction:column;gap:4px;flex:0 0 auto;min-width:200px;max-width:260px;padding:2px 0;border-left:1px solid rgba(140,69,24,.1);padding-left:14px;}
 .usage-step{font-family:"Space Mono",monospace;font-size:9px;color:var(--muted);letter-spacing:.04em;display:flex;align-items:center;gap:5px;}
 .usage-step strong{color:var(--ink);}
 .usage-num{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--linen);border:1px solid rgba(140,69,24,.18);font-size:8px;color:var(--muted);flex-shrink:0;}
