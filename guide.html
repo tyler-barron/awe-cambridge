@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Understanding Awe — Threshold</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:       #1c1914;
+  --charcoal:  #2c2118;
+  --parchment: #f4f0e7;
+  --linen:     #e3d4c5;
+  --stone:     #b7aea2;
+  --accent:    #8c4518;
+  --ember:     #74120c;
+  --saffron:   #caa74d;
+  --muted:     #6b6259;
+  --nature:    #97ba74;
+  --epiphany:  #6b5b8a;
+
+  --geo:   #4a7a8a;
+  --morph: #8c4518;
+  --phen:  #6b5b8a;
+  --tempo: #a07c2a;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  min-height: 100%;
+  background: var(--parchment);
+  color: var(--ink);
+  font-family: 'Cormorant Garamond', serif;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 998; opacity: .45;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+}
+
+/* ── Layout ─────────────────────────────────────────────────────────────────── */
+.page-wrap { max-width: 980px; margin: 0 auto; padding: 0 40px 120px; }
+@media (max-width: 600px) { .page-wrap { padding: 0 20px 80px; } }
+
+/* ── Header ─────────────────────────────────────────────────────────────────── */
+.site-header {
+  padding: 40px 0 32px;
+  border-bottom: 1px solid rgba(140,69,24,.18);
+  margin-bottom: 0;
+}
+.back-link {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 18px;
+  transition: color .2s;
+}
+.back-link:hover { color: var(--accent); }
+.page-title { font-size: 52px; font-weight: 300; line-height: 1; }
+.page-title em { font-style: italic; color: var(--accent); }
+.page-lede {
+  font-size: 17px; line-height: 1.75; color: var(--muted);
+  font-style: italic; margin-top: 12px; max-width: 600px;
+}
+
+/* ── Sticky nav ─────────────────────────────────────────────────────────────── */
+.dim-nav {
+  position: sticky; top: 0; z-index: 10;
+  background: rgba(244,240,231,.94);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(140,69,24,.12);
+  display: flex; gap: 0; overflow-x: auto;
+  padding: 0;
+}
+.dim-nav-btn {
+  flex: 1; min-width: 120px;
+  padding: 14px 12px 12px;
+  background: none; border: none;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px; letter-spacing: .25em; text-transform: uppercase;
+  color: var(--muted); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color .2s, border-color .2s;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.dim-nav-btn span.nav-num { font-size: 7px; opacity: .6; }
+.dim-nav-btn:hover { color: var(--ink); }
+.dim-nav-btn[data-dim="geo"]   { border-color: var(--geo);   color: var(--geo);   }
+.dim-nav-btn[data-dim="morph"] { border-color: var(--morph); color: var(--morph); }
+.dim-nav-btn[data-dim="phen"]  { border-color: var(--phen);  color: var(--phen);  }
+.dim-nav-btn[data-dim="tempo"] { border-color: var(--tempo); color: var(--tempo); }
+
+/* ── Intro explainer ─────────────────────────────────────────────────────────── */
+.intro-block {
+  padding: 40px 0 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+}
+@media (max-width: 700px) { .intro-block { grid-template-columns: 1fr; } }
+.intro-dim-card {
+  padding: 20px 22px;
+  border: 1px solid rgba(140,69,24,.18);
+  border-radius: 3px;
+  position: relative; overflow: hidden;
+  background: rgba(255,255,255,.2);
+  cursor: pointer; transition: background .2s, transform .15s;
+  text-decoration: none; color: inherit; display: block;
+}
+.intro-dim-card:hover { background: rgba(255,255,255,.45); transform: translateY(-2px); }
+.intro-dim-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--card-color, var(--accent));
+}
+.intro-card-num {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .3em;
+  text-transform: uppercase; color: var(--card-color, var(--muted)); margin-bottom: 6px;
+}
+.intro-card-title { font-size: 24px; font-weight: 300; margin-bottom: 6px; }
+.intro-card-title em { font-style: italic; color: var(--card-color, var(--accent)); }
+.intro-card-q {
+  font-size: 13px; color: var(--muted); font-style: italic;
+  line-height: 1.6; border-top: 1px solid rgba(140,69,24,.1); padding-top: 10px; margin-top: 8px;
+}
+
+/* ── Dimension sections ──────────────────────────────────────────────────────── */
+.dim-section {
+  padding: 64px 0 0;
+}
+.dim-section-header {
+  display: flex; align-items: flex-start; gap: 18px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(140,69,24,.12);
+  margin-bottom: 36px;
+}
+.dim-icon {
+  width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px;
+  background: color-mix(in srgb, var(--dim-color) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--dim-color) 30%, transparent);
+}
+.dim-meta { flex: 1; }
+.dim-eyebrow {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .35em;
+  text-transform: uppercase; color: var(--dim-color, var(--muted)); margin-bottom: 5px;
+}
+.dim-title { font-size: 38px; font-weight: 300; line-height: 1.05; }
+.dim-title em { font-style: italic; color: var(--dim-color, var(--accent)); }
+.dim-desc {
+  font-size: 15px; color: var(--muted); font-style: italic;
+  line-height: 1.7; margin-top: 8px; max-width: 580px;
+}
+.dim-atlas-tip {
+  margin-top: 10px; display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--parchment);
+  background: var(--dim-color, var(--accent));
+  padding: 5px 10px; border-radius: 2px;
+}
+
+/* ── Tree layout ─────────────────────────────────────────────────────────────── */
+.tree-branch {
+  margin-bottom: 40px;
+}
+.branch-label {
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .3em;
+  text-transform: uppercase; color: var(--dim-color, var(--muted));
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.branch-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: color-mix(in srgb, var(--dim-color) 20%, transparent);
+}
+
+/* grid of item cards */
+.item-grid {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+.item-grid.wide { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.item-grid.full { grid-template-columns: 1fr; }
+
+.item-card {
+  padding: 14px 16px;
+  border: 1px solid rgba(140,69,24,.15);
+  border-radius: 2px;
+  background: rgba(255,255,255,.18);
+  position: relative; overflow: hidden;
+}
+.item-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: var(--dim-color, var(--accent)); opacity: .4;
+}
+.item-name {
+  font-size: 16px; font-weight: 400; margin-bottom: 4px; line-height: 1.2;
+}
+.item-name em { font-style: italic; color: var(--dim-color, var(--accent)); }
+.item-def {
+  font-size: 12.5px; color: var(--muted); line-height: 1.6; font-style: italic;
+  margin-bottom: 8px;
+}
+.item-heuristic {
+  font-family: 'Space Mono', monospace; font-size: 8px; color: var(--dim-color, var(--muted));
+  letter-spacing: .05em; line-height: 1.5;
+  border-top: 1px solid rgba(140,69,24,.1); padding-top: 7px; margin-top: 2px;
+}
+.item-heuristic::before { content: 'Ask: '; opacity: .7; }
+
+/* compact pill items (for simple lists like location types) */
+.pill-grid {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.pill-item {
+  padding: 6px 13px;
+  border: 1px solid rgba(140,69,24,.2);
+  border-radius: 20px;
+  font-size: 13px; font-style: italic; color: var(--ink);
+  background: rgba(255,255,255,.25);
+}
+
+/* ── Tensions (paired cards) ────────────────────────────────────────────────── */
+.tension-grid {
+  display: grid; gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+}
+.tension-card {
+  border: 1px solid rgba(107,91,138,.2);
+  border-radius: 3px;
+  background: rgba(255,255,255,.18);
+  overflow: hidden;
+}
+.tension-header {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; padding: 14px 16px 12px;
+  border-bottom: 1px solid rgba(107,91,138,.12);
+}
+.tension-pole {
+  font-size: 16px; font-weight: 400; color: var(--phen); flex: 1; text-align: center;
+}
+.tension-arrow {
+  font-family: 'Space Mono', monospace; font-size: 11px; color: var(--stone);
+  padding: 0 10px; flex-shrink: 0;
+}
+.tension-body { padding: 12px 16px 14px; }
+.tension-def {
+  font-size: 12.5px; color: var(--muted); line-height: 1.65; font-style: italic;
+  margin-bottom: 8px;
+}
+.tension-heuristic {
+  font-family: 'Space Mono', monospace; font-size: 8px; color: var(--phen);
+  letter-spacing: .05em; line-height: 1.5;
+}
+.tension-heuristic::before { content: 'Ask: '; opacity: .65; }
+
+/* ── Characteristics (with quote) ───────────────────────────────────────────── */
+.char-grid {
+  display: grid; gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+.char-card {
+  padding: 16px 18px;
+  border: 1px solid rgba(107,91,138,.18);
+  border-radius: 3px;
+  background: rgba(255,255,255,.18);
+  position: relative; overflow: hidden;
+}
+.char-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: var(--phen);
+}
+.char-name { font-size: 22px; font-weight: 300; margin-bottom: 6px; }
+.char-name em { font-style: italic; color: var(--phen); }
+.char-def { font-size: 13px; color: var(--charcoal); line-height: 1.65; margin-bottom: 10px; }
+.char-quote {
+  font-size: 11.5px; color: var(--muted); font-style: italic; line-height: 1.6;
+  border-left: 2px solid rgba(107,91,138,.3); padding-left: 10px;
+}
+
+/* ── Tempo spectrum ──────────────────────────────────────────────────────────── */
+.tempo-spectrum {
+  display: flex; gap: 0; border: 1px solid rgba(160,124,42,.2);
+  border-radius: 3px; overflow: hidden; margin-bottom: 14px;
+}
+.tempo-band {
+  flex: 1; padding: 14px 12px; text-align: center;
+  border-right: 1px solid rgba(160,124,42,.15);
+  background: rgba(255,255,255,.15);
+  cursor: default;
+  transition: background .15s;
+}
+.tempo-band:last-child { border-right: none; }
+.tempo-band:hover { background: rgba(160,124,42,.08); }
+.tempo-band-name {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--tempo); margin-bottom: 5px;
+}
+.tempo-band-def { font-size: 12px; color: var(--muted); font-style: italic; line-height: 1.5; }
+@media (max-width: 700px) { .tempo-spectrum { flex-direction: column; } }
+
+/* ── Binary badges ───────────────────────────────────────────────────────────── */
+.binary-grid {
+  display: grid; gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+.binary-card {
+  padding: 16px 18px;
+  border: 1px solid rgba(140,69,24,.18);
+  border-radius: 3px;
+  background: rgba(255,255,255,.18);
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.binary-badge {
+  flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Mono', monospace; font-size: 9px; color: var(--parchment);
+  background: var(--badge-color, var(--accent));
+  margin-top: 2px;
+}
+.binary-body { flex: 1; }
+.binary-name { font-size: 17px; font-weight: 400; margin-bottom: 4px; }
+.binary-def { font-size: 12.5px; color: var(--muted); font-style: italic; line-height: 1.6; margin-bottom: 6px; }
+.binary-heuristic {
+  font-family: 'Space Mono', monospace; font-size: 8px;
+  color: var(--badge-color, var(--accent)); letter-spacing: .05em; line-height: 1.5;
+}
+.binary-heuristic::before { content: 'Ask: '; opacity: .7; }
+
+/* ── Wonders of life (8 types) ────────────────────────────────────────────────*/
+.wonder-grid {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+.wonder-card {
+  padding: 14px 16px;
+  border: 1px solid rgba(140,69,24,.15);
+  border-radius: 2px;
+  background: rgba(255,255,255,.2);
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.wonder-emoji { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+.wonder-name { font-size: 16px; font-weight: 400; margin-bottom: 3px; }
+.wonder-name em { font-style: italic; color: var(--morph); }
+
+/* ── Location type icons ──────────────────────────────────────────────────────*/
+.loc-grid {
+  display: grid; gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+}
+.loc-card {
+  padding: 11px 14px;
+  border: 1px solid rgba(74,122,138,.18);
+  border-radius: 2px;
+  background: rgba(255,255,255,.2);
+  display: flex; gap: 10px; align-items: center;
+}
+.loc-icon { font-size: 18px; flex-shrink: 0; }
+.loc-name { font-size: 14px; font-style: italic; }
+.loc-sub { font-size: 11px; color: var(--muted); line-height: 1.4; margin-top: 2px; }
+
+/* ── Footer ──────────────────────────────────────────────────────────────────── */
+footer {
+  margin-top: 80px; padding-top: 24px;
+  border-top: 1px solid rgba(140,69,24,.12);
+  font-family: 'Space Mono', monospace; font-size: 9px;
+  color: var(--stone); letter-spacing: .1em;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.footer-links { display: flex; gap: 20px; }
+.footer-links a { color: var(--stone); text-decoration: none; transition: color .2s; }
+.footer-links a:hover { color: var(--accent); }
+
+/* ── Atlas-use banner ────────────────────────────────────────────────────────── */
+.atlas-banner {
+  margin-top: 24px;
+  padding: 18px 22px;
+  background: rgba(28,25,20,.04);
+  border: 1px solid rgba(140,69,24,.15);
+  border-radius: 3px;
+  display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+}
+.atlas-banner-icon { font-size: 26px; flex-shrink: 0; }
+.atlas-banner-text { flex: 1; min-width: 200px; }
+.atlas-banner-label {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .25em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 4px;
+}
+.atlas-banner-title { font-size: 20px; font-weight: 300; }
+.atlas-banner-title em { font-style: italic; color: var(--accent); }
+.atlas-banner-desc { font-size: 13px; color: var(--muted); font-style: italic; margin-top: 4px; line-height: 1.6; }
+.atlas-banner-btn {
+  padding: 9px 18px; background: var(--ink); color: var(--parchment);
+  border: none; font-family: 'Space Mono', monospace; font-size: 9px;
+  letter-spacing: .15em; text-transform: uppercase; cursor: pointer;
+  border-radius: 2px; text-decoration: none; display: inline-block;
+  flex-shrink: 0;
+}
+.atlas-banner-btn:hover { background: var(--accent); }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <header class="site-header">
+    <a href="index.html" class="back-link">← Threshold</a>
+    <h1 class="page-title"><em>Understanding</em> Awe</h1>
+    <p class="page-lede">A field guide to the research framework behind the Atlas — how awe in Cambridge was observed, categorized, and mapped across four analytical dimensions.</p>
+  </header>
+
+  <!-- Sticky nav -->
+  <nav class="dim-nav">
+    <button class="dim-nav-btn" data-dim="geo" onclick="document.getElementById('dim-geo').scrollIntoView({behavior:'smooth'})">
+      <span class="nav-num">01</span>Geography
+    </button>
+    <button class="dim-nav-btn" data-dim="morph" onclick="document.getElementById('dim-morph').scrollIntoView({behavior:'smooth'})">
+      <span class="nav-num">02</span>Morphology
+    </button>
+    <button class="dim-nav-btn" data-dim="phen" onclick="document.getElementById('dim-phen').scrollIntoView({behavior:'smooth'})">
+      <span class="nav-num">03</span>Phenomenology
+    </button>
+    <button class="dim-nav-btn" data-dim="tempo" onclick="document.getElementById('dim-tempo').scrollIntoView({behavior:'smooth'})">
+      <span class="nav-num">04</span>Temporality
+    </button>
+  </nav>
+
+  <!-- Intro cards -->
+  <div class="intro-block">
+    <a href="#dim-geo" class="intro-dim-card" style="--card-color: var(--geo)" onclick="event.preventDefault(); document.getElementById('dim-geo').scrollIntoView({behavior:'smooth'})">
+      <div class="intro-card-num">01 · Geography</div>
+      <div class="intro-card-title"><em>Where</em> awe happens</div>
+      <div class="intro-card-q">What type of space, and how were you moving through it?</div>
+    </a>
+    <a href="#dim-morph" class="intro-dim-card" style="--card-color: var(--morph)" onclick="event.preventDefault(); document.getElementById('dim-morph').scrollIntoView({behavior:'smooth'})">
+      <div class="intro-card-num">02 · Morphology</div>
+      <div class="intro-card-title"><em>What</em> triggers awe</div>
+      <div class="intro-card-q">What external form or stimulus gave rise to this feeling?</div>
+    </a>
+    <a href="#dim-phen" class="intro-dim-card" style="--card-color: var(--phen)" onclick="event.preventDefault(); document.getElementById('dim-phen').scrollIntoView({behavior:'smooth'})">
+      <div class="intro-card-num">03 · Phenomenology</div>
+      <div class="intro-card-title"><em>How</em> awe feels</div>
+      <div class="intro-card-q">What are the defining qualities of this inner experience?</div>
+    </a>
+    <a href="#dim-tempo" class="intro-dim-card" style="--card-color: var(--tempo)" onclick="event.preventDefault(); document.getElementById('dim-tempo').scrollIntoView({behavior:'smooth'})">
+      <div class="intro-card-num">04 · Temporality</div>
+      <div class="intro-card-title"><em>When</em> awe is available</div>
+      <div class="intro-card-q">Is this a singular event or part of a rhythm? Can it be revisited?</div>
+    </a>
+  </div>
+
+  <!-- Atlas use banner -->
+  <div class="atlas-banner">
+    <div class="atlas-banner-icon">🗺</div>
+    <div class="atlas-banner-text">
+      <div class="atlas-banner-label">How to use this guide</div>
+      <div class="atlas-banner-title">Each dimension maps to a <em>filter in the Atlas</em></div>
+      <div class="atlas-banner-desc">When browsing the Interactive Map or the Awe Atlas, every filter you see corresponds to one of these four dimensions. Use this guide to understand what you're looking at — and what it felt like to be there.</div>
+    </div>
+    <a href="atlas.html" class="atlas-banner-btn">Open the Atlas →</a>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       01 — GEOGRAPHY
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="dim-section" id="dim-geo" style="--dim-color: var(--geo)">
+    <div class="dim-section-header">
+      <div class="dim-icon" style="--dim-color: var(--geo)">📍</div>
+      <div class="dim-meta">
+        <div class="dim-eyebrow" style="color: var(--geo)">Dimension 01</div>
+        <h2 class="dim-title">Geo<em>graphy</em></h2>
+        <p class="dim-desc">Where exactly is awe being experienced in the built environment? What type of movement or transportation is associated with this experience?</p>
+        <span class="dim-atlas-tip" style="background: var(--geo)">Atlas filter: Location type &amp; Mode →</span>
+      </div>
+    </div>
+
+    <!-- Location types -->
+    <div class="tree-branch">
+      <div class="branch-label" style="--dim-color: var(--geo)">Location types — where in the city</div>
+      <div class="loc-grid">
+        <div class="loc-card">
+          <div class="loc-icon">🏛</div>
+          <div>
+            <div class="loc-name">Civic, Community &amp; Cultural Venues</div>
+            <div class="loc-sub">Libraries, cafés, concert halls, markets, places of worship, museums, public lobbies</div>
+          </div>
+        </div>
+        <div class="loc-card">
+          <div class="loc-icon">🚆</div>
+          <div>
+            <div class="loc-name">Corridors</div>
+            <div class="loc-sub">Train tracks and transportation right-of-ways</div>
+          </div>
+        </div>
+        <div class="loc-card">
+          <div class="loc-icon">🎓</div>
+          <div>
+            <div class="loc-name">Educational Institutions</div>
+            <div class="loc-sub">Universities and schools</div>
+          </div>
+        </div>
+        <div class="loc-card">
+          <div class="loc-icon">🏗</div>
+          <div>
+            <div class="loc-name">Industry &amp; Office Buildings</div>
+            <div class="loc-sub">Research labs, factories, offices</div>
+          </div>
+        </div>
+        <div class="loc-card">
+          <div class="loc-icon">🌳</div>
+          <div>
+            <div class="loc-name">Parks</div>
+            <div class="loc-sub">Open spaces, cemeteries, dog parks, community gardens, pocket parks, courtyards</div>
+          </div>
+        </div>
+        <div class="loc-card">
+          <div class="loc-icon">⬜</div>
+          <div>
+            <div class="loc-name">Plazas</div>
+            <div class="loc-sub">Open urban spaces and public squares designed for gathering</div>
+          </div>
+        </div>
+        <div class="loc-card">
+          <div class="loc-icon">🏠</div>
+          <div>
+            <div class="loc-name">Residences</div>
+            <div class="loc-sub">Personal dwellings</div>
+          </div>
+        </div>
+        <div class="loc-card">
+          <div class="loc-icon">🛣</div>
+          <div>
+            <div class="loc-name">Streets</div>
+            <div class="loc-sub">Sidewalks, bike lanes, and roads</div>
+          </div>
+        </div>
+        <div class="loc-card">
+          <div class="loc-icon">🌊</div>
+          <div>
+            <div class="loc-name">Waterfronts</div>
+            <div class="loc-sub">Beaches, canals, bridges, and linear paths along bodies of water</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modes -->
+    <div class="tree-branch">
+      <div class="branch-label" style="--dim-color: var(--geo)">Modes — how you were moving</div>
+      <div class="item-grid">
+        <div class="item-card" style="--dim-color: var(--geo)">
+          <div class="item-name">🚶 Walking</div>
+          <div class="item-def">Awe encountered on foot — the most prevalent mode in the dataset, allowing for slowness, noticing, and spontaneous encounter.</div>
+        </div>
+        <div class="item-card" style="--dim-color: var(--geo)">
+          <div class="item-name">🚴 Biking</div>
+          <div class="item-def">Awe encountered while cycling — combining pace, exposure to the environment, and a particular bodily attunement to the street.</div>
+        </div>
+        <div class="item-card" style="--dim-color: var(--geo)">
+          <div class="item-name">🚇 Public Transit</div>
+          <div class="item-def">Awe encountered on buses and trains — often tied to collective presence, transition, and unexpected views.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       02 — MORPHOLOGY
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="dim-section" id="dim-morph" style="--dim-color: var(--morph)">
+    <div class="dim-section-header">
+      <div class="dim-icon" style="--dim-color: var(--morph)">🌿</div>
+      <div class="dim-meta">
+        <div class="dim-eyebrow" style="color: var(--morph)">Dimension 02</div>
+        <h2 class="dim-title">Mor<em>phology</em></h2>
+        <p class="dim-desc">What are the external forms or stimuli — the people, places, and things — that give rise to awe? Morphology describes the <em>shape</em> of what triggers the feeling.</p>
+        <span class="dim-atlas-tip" style="background: var(--morph)">Atlas filter: Awe type &amp; Physical form →</span>
+      </div>
+    </div>
+
+    <!-- 15 Forms -->
+    <div class="tree-branch">
+      <div class="branch-label" style="--dim-color: var(--morph)">15 physical forms — the immediate trigger</div>
+      <div class="item-grid">
+        <div class="item-card" style="--dim-color: var(--morph)"><div class="item-name">Animals</div><div class="item-def">Birds and mammals encountered in the city — creatures whose wildness interrupts the built environment.</div></div>
+        <div class="item-card" style="--dim-color: var(--morph)"><div class="item-name">Architecture</div><div class="item-def">Building forms, enclosure, color, materiality, and ornament — the felt presence of human craft at scale.</div></div>
+        <div class="item-card" style="--dim-color: var(--morph)"><div class="item-name">Art &amp; Objects</div><div class="item-def">Murals, sculptures, installations, found items, and museum exhibits — things made for looking at.</div></div>
+        <div class="item-card" style="--dim-color: var(--morph)"><div class="item-name">Communities</div><div class="item-def">Social bodies, organizations, and collections of people with shared purpose — awe in the presence of collective belonging.</div></div>
+        <div class="item-card" style="--dim-color: var(--morph)"><div class="item-name">Events</div><div class="item-def">Gatherings, performances, festivals, lectures, sporting events, celebrations — awe that only exists in the moment.</div></div>
+        <div class="item-card" style="--dim-color: var(--morph)"><div class="item-name">Green Space</div><div class="item-def">Designed or semi-designed outdoor spaces — parks, gardens, and urban nature in its various states of cultivation.</div></div>
+        <div class="item-card" style="--dim-color: var(--morph)"><div class="item-name">Infrastructure</div><div class="item-def">Bridges, alleyways, boathouses, and transit spaces — the city's structural skeleton made visible and felt.</div></div>
+        <div class="item-card" style="--dim-color: var(--morph)"><div class="item-name">Light</div><div class="item-def">Sunsets, reflections, shade, and seasonal lighting changes — the city's most ephemeral material.</div></div>
+        <div class="item-card" style="--dim-color: var(--morph)"><div class="item-name">People</div><div class="item-def">Strangers, individuals, historic figures, and the presence of others — awe at human presence itself.</div></div>
+        <div class="item-card" style="--dim-color: var(--morph)"><div class="item-name">Plants</div><div class="item-def">Trees, lawns, flowers, shrubs, gardens, and mushrooms — the non-human life embedded in the city's fabric.</div></div>
+        <div class="item-card" style="--dim-color: var(--morph)"><div class="item-name">Smells</div><div class="item-def">Olfactory encounters with food and natural elements — the most primal and least mapped of urban senses.</div></div>
+        <div class="item-card" style="--dim-color: var(--morph)"><div class="item-name">Sounds</div><div class="item-def">Auditory encounters created through movement or nature — the city heard rather than seen.</div></div>
+        <div class="item-card" style="--dim-color: var(--morph)"><div class="item-name">Vistas</div><div class="item-def">Expansive views often of the sky, cityscapes, and bodies of water — awe at spatial openness and distance.</div></div>
+        <div class="item-card" style="--dim-color: var(--morph)"><div class="item-name">Water</div><div class="item-def">Rivers, canals, and ponds — the presence of a non-human system moving through the city.</div></div>
+        <div class="item-card" style="--dim-color: var(--morph)"><div class="item-name">Weather</div><div class="item-def">Rain, snow, ice, frost, and seasonal transitions — the atmosphere as an active presence in daily life.</div></div>
+      </div>
+    </div>
+
+    <!-- 8 Wonders -->
+    <div class="tree-branch">
+      <div class="branch-label" style="--dim-color: var(--morph)">8 wonders of life — the deeper category</div>
+      <p style="font-size:13.5px;color:var(--muted);font-style:italic;line-height:1.7;margin-bottom:16px;max-width:620px">
+        Drawn from Dacher Keltner's <em>Awe</em>, these eight archetypes describe the deepest sources of human awe — the universal categories beneath the specific physical forms.
+      </p>
+      <div class="wonder-grid">
+        <div class="wonder-card"><div class="wonder-emoji">🌿</div><div><div class="wonder-name">Nature</div><div class="item-def" style="font-size:12px">Awe in the face of the living, non-human world — plants, animals, weather, and ecological systems.</div></div></div>
+        <div class="wonder-card"><div class="wonder-emoji">🏛</div><div><div class="wonder-name">Visual Design</div><div class="item-def" style="font-size:12px">Awe in the presence of beauty made by human hands — architecture, art, and the crafted environment.</div></div></div>
+        <div class="wonder-card"><div class="wonder-emoji">🕯</div><div><div class="wonder-name">Life &amp; Death</div><div class="item-def" style="font-size:12px">Awe at the fragility and magnitude of existence — birth, aging, grief, and mortality made present.</div></div></div>
+        <div class="wonder-card"><div class="wonder-emoji">🌊</div><div><div class="wonder-name">Collective Effervescence</div><div class="item-def" style="font-size:12px">Awe in the shared energy of a crowd or community — the feeling of being swept up in something larger than yourself.</div></div></div>
+        <div class="wonder-card"><div class="wonder-emoji">🎵</div><div><div class="wonder-name">Music</div><div class="item-def" style="font-size:12px">Awe through sound organized in time — the way music moves through and beyond the body.</div></div></div>
+        <div class="wonder-card"><div class="wonder-emoji">✨</div><div><div class="wonder-name">Epiphany / Knowledge</div><div class="item-def" style="font-size:12px">Awe in a flash of understanding — the sudden expansion of one's frame of reference.</div></div></div>
+        <div class="wonder-card"><div class="wonder-emoji">🧡</div><div><div class="wonder-name">Moral Beauty</div><div class="item-def" style="font-size:12px">Awe at extraordinary goodness, virtue, or kindness — the recognition of human excellence.</div></div></div>
+        <div class="wonder-card"><div class="wonder-emoji">🕊</div><div><div class="wonder-name">Spirituality / Religion</div><div class="item-def" style="font-size:12px">Awe encountered in sacred spaces, rituals, and encounters with the transcendent or numinous.</div></div></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       03 — PHENOMENOLOGY
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="dim-section" id="dim-phen" style="--dim-color: var(--phen)">
+    <div class="dim-section-header">
+      <div class="dim-icon" style="--dim-color: var(--phen)">✦</div>
+      <div class="dim-meta">
+        <div class="dim-eyebrow" style="color: var(--phen)">Dimension 03</div>
+        <h2 class="dim-title">Phenom<em>enology</em></h2>
+        <p class="dim-desc">What are the perceptions and defining qualities of the experience of awe? Phenomenology describes the <em>inner texture</em> of the feeling — how it registers in the body and mind.</p>
+        <span class="dim-atlas-tip" style="background: var(--phen)">Atlas filter: Characteristics, tensions &amp; binaries →</span>
+      </div>
+    </div>
+
+    <!-- 5 Characteristics -->
+    <div class="tree-branch">
+      <div class="branch-label" style="--dim-color: var(--phen)">5 characteristics — what the experience contains</div>
+      <div class="char-grid">
+        <div class="char-card">
+          <div class="char-name"><em>Beauty</em></div>
+          <div class="char-def">The perception of aesthetic harmony or sensory pleasure in the natural or built environment.</div>
+          <div class="char-quote">"In cities judged from photos to be more evocative of visual awe, people report more robust health." — Keltner</div>
+        </div>
+        <div class="char-card">
+          <div class="char-name"><em>Mystery</em></div>
+          <div class="char-def">The encounter with something that cannot easily be explained or understood.</div>
+          <div class="char-quote">"Awe requires the unexpected, moves us toward mystery and the unknown." — Keltner</div>
+        </div>
+        <div class="char-card">
+          <div class="char-name"><em>Wonder</em></div>
+          <div class="char-def">The state of curiosity, openness, and receptivity.</div>
+          <div class="char-quote">"Approach what you see with fresh eyes, imagining that you are seeing it for the first time." — Keltner</div>
+        </div>
+        <div class="char-card">
+          <div class="char-name"><em>Vastness</em></div>
+          <div class="char-def">The perception of something physically, temporally, conceptually, or socially large that transcends your current understanding.</div>
+          <div class="char-quote">"Awe is the feeling of being in the presence of something vast." — Keltner</div>
+        </div>
+        <div class="char-card">
+          <div class="char-name"><em>Interconnection</em></div>
+          <div class="char-def">The sense of being part of a larger whole — seeing yourself as embedded in a system or network.</div>
+          <div class="char-quote">"Awe shifts us to a systems view of life." — Keltner</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 Tensions -->
+    <div class="tree-branch">
+      <div class="branch-label" style="--dim-color: var(--phen)">6 tensions — the spectrum each experience sits on</div>
+      <p style="font-size:13.5px;color:var(--muted);font-style:italic;line-height:1.7;margin-bottom:16px;max-width:620px">
+        Each instance of awe was located on one side of a tension — a pairing that captures the quality of vastness perceived. Drawn from six frames of reference: formal, social, ecological, evaluative, temporal, and spatial.
+      </p>
+      <div class="tension-grid">
+        <div class="tension-card">
+          <div class="tension-header">
+            <span class="tension-pole">Ornate</span>
+            <span class="tension-arrow">←→</span>
+            <span class="tension-pole">Utilitarian</span>
+          </div>
+          <div class="tension-body">
+            <div class="tension-def">Built forms that exceed their function through decoration, craft, and aesthetic excess — versus those that perform their function with elegance and fidelity. Aspects include: historical richness, material quality, and unnecessary beauty.</div>
+            <div class="tension-heuristic">Does this thing do more than it needs to, or exactly what it needs to?</div>
+          </div>
+        </div>
+        <div class="tension-card">
+          <div class="tension-header">
+            <span class="tension-pole">Inclusive</span>
+            <span class="tension-arrow">←→</span>
+            <span class="tension-pole">Exclusive</span>
+          </div>
+          <div class="tension-body">
+            <div class="tension-def">Spaces and communities experienced as open and inviting — versus those experienced as inaccessible or closed, often generating awe through opacity and mystery. Aspects include: belonging, boundaries, and intrigue.</div>
+            <div class="tension-heuristic">Does this space invite you in, or hold you at a boundary?</div>
+          </div>
+        </div>
+        <div class="tension-card">
+          <div class="tension-header">
+            <span class="tension-pole">Wild</span>
+            <span class="tension-arrow">←→</span>
+            <span class="tension-pole">Curated</span>
+          </div>
+          <div class="tension-body">
+            <div class="tension-def">Living things that exceed or escape human management, asserting their own autonomy — versus those defined by human care, cultivation, and maintenance. Aspects include: intentionality, ecological agency, and stewardship.</div>
+            <div class="tension-heuristic">Is this place managing nature, or is nature managing itself?</div>
+          </div>
+        </div>
+        <div class="tension-card">
+          <div class="tension-header">
+            <span class="tension-pole">Impressive</span>
+            <span class="tension-arrow">←→</span>
+            <span class="tension-pole">Ordinary</span>
+          </div>
+          <div class="tension-body">
+            <div class="tension-def">Things and experiences that exceed standards or expectation for their category — versus those that pleasantly stand outside of normal categorization. Aspects include: scale, significance, expectation, and the everyday.</div>
+            <div class="tension-heuristic">Does this thing exceed a normal range, or does it stand quietly outside of comparison?</div>
+          </div>
+        </div>
+        <div class="tension-card">
+          <div class="tension-header">
+            <span class="tension-pole">Novel</span>
+            <span class="tension-arrow">←→</span>
+            <span class="tension-pole">Familiar</span>
+          </div>
+          <div class="tension-body">
+            <div class="tension-def">Encountering something genuinely new, or a known thing made new — versus encountering something already known, seen again more deeply. Aspects include: time, memory, attentiveness, and a relationship to place.</div>
+            <div class="tension-heuristic">Is something new being noticed, or is it being seen more deeply?</div>
+          </div>
+        </div>
+        <div class="tension-card">
+          <div class="tension-header">
+            <span class="tension-pole">Expansive</span>
+            <span class="tension-arrow">←→</span>
+            <span class="tension-pole">Intimate</span>
+          </div>
+          <div class="tension-body">
+            <div class="tension-def">Spaces that highlight the body's relationship toward something vast and outward — versus spaces that hold, enclose, or provide refuge. Aspects include: bodily orientation, spatial scale, and containment.</div>
+            <div class="tension-heuristic">Does this space open outwardly beyond you, or does it help draw you in?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 Binaries -->
+    <div class="tree-branch">
+      <div class="branch-label" style="--dim-color: var(--phen)">4 phenomenological binaries — qualities that are either present or absent</div>
+      <p style="font-size:13.5px;color:var(--muted);font-style:italic;line-height:1.7;margin-bottom:16px;max-width:620px">
+        Unlike the tensions, these four qualities don't have an opposite that generates awe — they are simply present or absent in a given experience. Each can be used as a filter in the Atlas.
+      </p>
+      <div class="binary-grid">
+        <div class="binary-card">
+          <div class="binary-badge" style="--badge-color: var(--accent)">S</div>
+          <div class="binary-body">
+            <div class="binary-name">Surprise</div>
+            <div class="binary-def">The experience of awe was unanticipated or caused a redirection of attention. Aspects include: discovery and disruption of routine.</div>
+            <div class="binary-heuristic" style="color:var(--accent)">Was this moment of awe unexpected, or did it interrupt the moment?</div>
+          </div>
+        </div>
+        <div class="binary-card">
+          <div class="binary-badge" style="--badge-color: #5a8a72">A</div>
+          <div class="binary-body">
+            <div class="binary-name">Alterity</div>
+            <div class="binary-def">The experience involved an encounter with irreducible otherness — a recognition of presence beyond the self. Aspects include: receptivity and an animate other.</div>
+            <div class="binary-heuristic" style="color:#5a8a72">Did this moment help you recognize and appreciate something beyond you?</div>
+          </div>
+        </div>
+        <div class="binary-card">
+          <div class="binary-badge" style="--badge-color: var(--geo)">T</div>
+          <div class="binary-body">
+            <div class="binary-name">Threshold</div>
+            <div class="binary-def">The experience involved a felt sense of transition — movement across a spatial, sensory, or perceptual register. Aspects include: transformation, passage, and liminal spaces or moments.</div>
+            <div class="binary-heuristic" style="color:var(--geo)">Did this moment denote a passage from one quality to another?</div>
+          </div>
+        </div>
+        <div class="binary-card">
+          <div class="binary-badge" style="--badge-color: var(--tempo)">S</div>
+          <div class="binary-body">
+            <div class="binary-name">Sanctuary</div>
+            <div class="binary-def">The experience was accompanied by a felt sense of enclosure and refuge. Aspects include: solitude, shelter, intimacy, and nooks or enclosures with sanctuary-like qualities.</div>
+            <div class="binary-heuristic" style="color:var(--tempo)">Did this moment of awe feel like being held rather than being drawn outward?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       04 — TEMPORALITY
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="dim-section" id="dim-tempo" style="--dim-color: var(--tempo)">
+    <div class="dim-section-header">
+      <div class="dim-icon" style="--dim-color: var(--tempo)">⟳</div>
+      <div class="dim-meta">
+        <div class="dim-eyebrow" style="color: var(--tempo)">Dimension 04</div>
+        <h2 class="dim-title">Tem<em>porality</em></h2>
+        <p class="dim-desc">What is the temporal nature of this experience of awe? Is it a singular event or part of a cycle? What is its potential for repetition — and can it be revisited?</p>
+        <span class="dim-atlas-tip" style="background: var(--tempo)">Atlas filter: Frequency (default: Timeless) →</span>
+      </div>
+    </div>
+
+    <!-- Frequencies -->
+    <div class="tree-branch">
+      <div class="branch-label" style="--dim-color: var(--tempo)">6 frequencies — how often this awe is available</div>
+      <p style="font-size:13.5px;color:var(--muted);font-style:italic;line-height:1.7;margin-bottom:16px;max-width:640px">
+        Drawn from Henri Lefebvre's <em>Rhythmanalysis</em>, these categories situate each experience of awe in time — from the once-in-a-lifetime to the permanently present. The Awe Atlas defaults to <em>Timeless</em> so you're always looking for something that's available right now.
+      </p>
+      <div class="tempo-spectrum">
+        <div class="tempo-band">
+          <div class="tempo-band-name">Ephemeral</div>
+          <div class="tempo-band-def">Once — unlikely to occur again. Rarity and singularity.</div>
+        </div>
+        <div class="tempo-band">
+          <div class="tempo-band-name">Periodic</div>
+          <div class="tempo-band-def">Unpredictable or inconsistent cycle. Irregularity and synchronicity.</div>
+        </div>
+        <div class="tempo-band">
+          <div class="tempo-band-name">Seasonal</div>
+          <div class="tempo-band-def">Returns with natural cycles — migration, flowering, weather.</div>
+        </div>
+        <div class="tempo-band">
+          <div class="tempo-band-name">Recurring</div>
+          <div class="tempo-band-def">Scheduled by human activity — calendar, programming, celebration.</div>
+        </div>
+        <div class="tempo-band">
+          <div class="tempo-band-name">Daily</div>
+          <div class="tempo-band-def">Available within an ordinary day — diurnal rhythms, open hours.</div>
+        </div>
+        <div class="tempo-band">
+          <div class="tempo-band-name">Timeless</div>
+          <div class="tempo-band-def">Continuously available — persistent, durable, always there.</div>
+        </div>
+      </div>
+
+      <!-- Expanded cards for each frequency -->
+      <div class="item-grid wide" style="margin-top:12px">
+        <div class="item-card" style="--dim-color: var(--tempo)">
+          <div class="item-name">Ephemeral</div>
+          <div class="item-def">An instance of awe that occurred once and could not reliably be recreated. Reflects the rarity of certain alignments of circumstance.</div>
+          <div class="item-heuristic" style="color:var(--tempo)">Is this moment of awe likely to occur just once?</div>
+        </div>
+        <div class="item-card" style="--dim-color: var(--tempo)">
+          <div class="item-name">Periodic</div>
+          <div class="item-def">Part of an unpredictable or inconsistent cycle. May happen again but on an unidentifiable or sporadic basis.</div>
+          <div class="item-heuristic" style="color:var(--tempo)">Does this moment return on a cycle that can't quite be predicted?</div>
+        </div>
+        <div class="item-card" style="--dim-color: var(--tempo)">
+          <div class="item-name">Seasonal</div>
+          <div class="item-def">Dependent upon natural cycles — aligned with Lefebvre's notion of cyclical time, originating in the cosmos and nature.</div>
+          <div class="item-heuristic" style="color:var(--tempo)">Does this moment of awe return with the seasons?</div>
+        </div>
+        <div class="item-card" style="--dim-color: var(--tempo)">
+          <div class="item-name">Recurring</div>
+          <div class="item-def">Available based on an anthropocentric timeframe — weekly, monthly, or yearly. Aligned with linear time derived from social practice.</div>
+          <div class="item-heuristic" style="color:var(--tempo)">Does this moment recur based on a calendar or human schedule?</div>
+        </div>
+        <div class="item-card" style="--dim-color: var(--tempo)">
+          <div class="item-name">Daily</div>
+          <div class="item-def">Marked by everyday rhythms — available within diurnal time, such as the movement of the sun or a museum's regular hours.</div>
+          <div class="item-heuristic" style="color:var(--tempo)">Is this available within the rhythm of an ordinary day?</div>
+        </div>
+        <div class="item-card" style="--dim-color: var(--tempo)">
+          <div class="item-name">Timeless</div>
+          <div class="item-def">Connected to physical elements in the built environment — continuously available regardless of season, schedule, or weather.</div>
+          <div class="item-heuristic" style="color:var(--tempo)">Is this awe available in any given moment?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History binary -->
+    <div class="tree-branch">
+      <div class="branch-label" style="--dim-color: var(--tempo)">Temporal binary — history as active presence</div>
+      <div class="binary-grid" style="grid-template-columns: 1fr;">
+        <div class="binary-card">
+          <div class="binary-badge" style="--badge-color: var(--tempo); font-size:8px">H</div>
+          <div class="binary-body">
+            <div class="binary-name">History</div>
+            <div class="binary-def">The experience of awe was accompanied by a felt sense of the past or an awareness of the accumulation of time. Aspects include: longevity, connection to certain time periods, and the presence of time itself. <em>"History, in the sacred sense, is one that is still alive, one in which we can participate"</em> (Sacred Experience and Place in Cities, Krasin, 1976).</div>
+            <div class="binary-heuristic" style="color:var(--tempo)">Was this moment of awe informed by the past, or connected to something old?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final atlas link -->
+  <div class="atlas-banner" style="margin-top:64px">
+    <div class="atlas-banner-icon">✦</div>
+    <div class="atlas-banner-text">
+      <div class="atlas-banner-label">Ready to explore</div>
+      <div class="atlas-banner-title">Now open the <em>Awe Atlas</em></div>
+      <div class="atlas-banner-desc">Use these four dimensions as your lens. Every filter in the atlas maps to a dimension described here — geography, morphology, phenomenology, temporality.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0">
+      <a href="community.html" class="atlas-banner-btn">Awe Atlas →</a>
+      <a href="atlas.html" class="atlas-banner-btn" style="background:var(--geo)">Interactive Map →</a>
+    </div>
+  </div>
+
+  <footer>
+    <span>Threshold · Awe in Cambridge · 2024–2025</span>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="community.html">Awe Atlas</a>
+      <a href="atlas.html">Interactive Map</a>
+      <a href="alluvial.html">Alluvial Explorer</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+// Highlight active nav button on scroll
+var sections = [
+  { id: 'dim-geo',   btn: document.querySelector('[data-dim="geo"]') },
+  { id: 'dim-morph', btn: document.querySelector('[data-dim="morph"]') },
+  { id: 'dim-phen',  btn: document.querySelector('[data-dim="phen"]') },
+  { id: 'dim-tempo', btn: document.querySelector('[data-dim="tempo"]') },
+];
+
+function updateNav() {
+  var scrollY = window.scrollY + 120;
+  var active = null;
+  sections.forEach(function(s) {
+    var el = document.getElementById(s.id);
+    if (el && el.offsetTop <= scrollY) active = s;
+  });
+  sections.forEach(function(s) {
+    s.btn.style.opacity = (s === active) ? '1' : '.5';
+  });
+}
+window.addEventListener('scroll', updateNav, { passive: true });
+updateNav();
+</script>
+</body>
+</html>

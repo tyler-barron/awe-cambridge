@@ -3,784 +3,135 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Awe in Cambridge — Map Prototype</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<title>Awe in Cambridge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono&display=swap" rel="stylesheet">
 <style>
-/* ── Tokens (from awe-atlas palette) ── */
 :root {
   --ink:       #1c1914;
+  --charcoal:  #2c2118;
   --parchment: #f4f0e7;
   --linen:     #e3d4c5;
   --stone:     #b7aea2;
   --accent:    #8c4518;
+  --ember:     #74120c;
+  --saffron:   #caa74d;
   --muted:     #6b6259;
-
-  /* Awe-type colors (WOL) */
-  --c-nature:      #6a9e4f;
-  --c-epiphany:    #6b5b8a;
-  --c-collective:  #4a7a8a;
-  --c-moral:       #c4a882;
-  --c-visual:      #b05a3a;
-  --c-life:        #888;
-  --c-music:       #e07040;
-  --c-vista:       #5890b8;
-
-  /* Perception colors */
-  --c-wonder:        #7a9e5f;
-  --c-beauty:        #d4845a;
-  --c-vastness:      #5890b8;
-  --c-interconn:     #c4a882;
-  --c-mystery:       #7a6aaa;
-
-  /* Tension colors */
-  --c-wild:      #4e8c4a;
-  --c-impressive:#8c4518;
-  --c-intimate:  #c4a882;
-  --c-inclusive: #4a7a8a;
-  --c-ornate:    #b05a3a;
-  --c-novel:     #6b5b8a;
-  --c-ordinary:  #888;
-  --c-familiar:  #a88058;
-  --c-expansive: #5890b8;
-  --c-exclusive: #74120c;
-  --c-curated:   #97ba74;
-  --c-functional:#7a6e5f;
+  --nature:    #97ba74;
+  --epiphany:  #6b5b8a;
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; background: var(--parchment); color: var(--ink); font-family: 'Georgia', serif; }
-
-/* ── Layout ── */
-.app {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  grid-template-rows: 56px 1fr;
-  height: 100vh;
+html, body { min-height: 100%; background: var(--parchment); color: var(--ink); font-family: 'Cormorant Garamond', serif; }
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 998; opacity: .5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
 }
 
-/* ── Header ── */
-header {
-  grid-column: 1 / -1;
-  display: flex; align-items: center; gap: 16px;
-  padding: 0 20px;
-  background: var(--parchment);
-  border-bottom: 1px solid var(--linen);
-}
-header h1 { font-size: 20px; font-weight: 400; }
-header h1 em { font-style: italic; color: var(--accent); }
-header .sub { font-size: 12px; color: var(--stone); margin-left: auto; }
+.site-wrap { max-width: 900px; margin: 0 auto; padding: 60px 40px 80px; }
 
-/* ── Sidebar ── */
-.sidebar {
-  overflow-y: auto;
-  border-right: 1px solid var(--linen);
-  background: var(--parchment);
-  display: flex; flex-direction: column;
-  gap: 0;
-}
+header { margin-bottom: 64px; border-bottom: 1px solid rgba(140,69,24,.18); padding-bottom: 32px; }
+.wordmark { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .4em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+h1 { font-size: 52px; font-weight: 300; line-height: 1; }
+h1 em { font-style: italic; color: var(--accent); }
+.lede { font-size: 17px; line-height: 1.75; color: var(--muted); font-style: italic; margin-top: 12px; max-width: 560px; }
 
-.sidebar-section {
-  padding: 16px 18px;
-  border-bottom: 1px solid var(--linen);
-}
+.tools-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+@media (max-width: 860px) { .tools-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .tools-grid { grid-template-columns: 1fr; } }
 
-.sidebar-section h2 {
-  font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 10px; font-weight: normal;
-  font-family: 'Courier New', monospace;
+.tool-card {
+  display: block; text-decoration: none; color: inherit;
+  padding: 28px 30px;
+  border: 1px solid rgba(140,69,24,.22);
+  border-radius: 3px;
+  background: rgba(255,255,255,.25);
+  transition: border-color .2s, background .2s, transform .2s;
+  position: relative; overflow: hidden;
 }
+.tool-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--card-accent, var(--accent));
+}
+.tool-card:hover { border-color: var(--card-accent, var(--accent)); background: rgba(255,255,255,.5); transform: translateY(-2px); }
+.tool-card.unavailable { opacity: .55; cursor: default; pointer-events: none; }
 
-/* ── Color-by selector ── */
-.color-by-select {
-  width: 100%; padding: 8px 10px;
-  border: 1px solid var(--linen); border-radius: 2px;
-  background: white; color: var(--ink);
-  font-size: 14px; font-family: inherit;
-  cursor: pointer; outline: none;
-}
-.color-by-select:focus { border-color: var(--accent); }
+.card-eyebrow { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .35em; text-transform: uppercase; color: var(--card-accent, var(--accent)); margin-bottom: 10px; }
+.card-title { font-size: 26px; font-weight: 300; line-height: 1.15; margin-bottom: 8px; }
+.card-title em { font-style: italic; color: var(--card-accent, var(--accent)); }
+.card-desc { font-size: 14px; line-height: 1.7; color: var(--muted); font-style: italic; }
+.card-tag { margin-top: 16px; display: inline-block; font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .2em; text-transform: uppercase; color: var(--parchment); background: var(--card-accent, var(--accent)); padding: 4px 9px; border-radius: 1px; }
+.card-tag.coming-soon { background: var(--stone); }
 
-/* ── Legend ── */
-.legend { display: flex; flex-direction: column; gap: 6px; }
-.legend-item {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 13px; cursor: pointer; padding: 2px 4px; border-radius: 2px;
-  transition: background .15s;
-}
-.legend-item:hover { background: var(--linen); }
-.legend-item.dimmed { opacity: .35; }
-.legend-dot {
-  width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
-  border: 1.5px solid rgba(0,0,0,.15);
-}
-.legend-label { flex: 1; }
-.legend-count { font-size: 11px; color: var(--stone); font-family: 'Courier New', monospace; }
+footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,24,.12); font-family: 'Space Mono', monospace; font-size: 9px; color: var(--stone); letter-spacing: .1em; }
 
-/* ── Point detail panel ── */
-.detail-panel {
-  padding: 14px 18px; flex: 1;
-  font-size: 13px; line-height: 1.55;
-  color: var(--muted);
+.resource-card {
+  display: block; text-decoration: none; color: inherit;
+  margin-top: 16px;
+  border: 1px solid rgba(140,69,24,.22);
+  border-radius: 3px;
+  background: rgba(255,255,255,.25);
+  transition: border-color .2s, background .2s, transform .2s;
+  position: relative; overflow: hidden;
 }
-.detail-panel.empty { display: flex; align-items: center; justify-content: center; text-align: center; font-style: italic; }
-.detail-title { font-size: 16px; font-weight: bold; color: var(--ink); margin-bottom: 8px; line-height: 1.3; }
-.detail-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
-.tag {
-  font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
-  padding: 2px 7px; border-radius: 10px;
-  background: var(--linen); color: var(--muted);
-  font-family: 'Courier New', monospace;
+.resource-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--card-accent, var(--stone));
 }
-.tag.highlight { background: var(--accent); color: white; }
-.detail-desc { font-style: italic; color: var(--ink); margin-top: 8px; line-height: 1.6; font-size: 13px; }
-.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-.detail-cell { font-size: 11px; }
-.detail-cell .k { color: var(--stone); font-family: 'Courier New', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
-.detail-cell .v { color: var(--ink); }
-
-/* ── Map ── */
-#map { width: 100%; height: 100%; }
-.leaflet-container { background: #e8e0d5; }
-
-/* ── Awe marker ── */
-.awe-marker {
-  border-radius: 50%;
-  border: 2px solid rgba(255,255,255,.7);
-  transition: all .15s;
-  cursor: pointer;
+.resource-card:hover { border-color: var(--card-accent, var(--stone)); background: rgba(255,255,255,.5); transform: translateY(-1px); }
+.resource-inner {
+  display: flex; align-items: center; gap: 24px;
+  padding: 10px 30px;
+  flex-wrap: wrap;
 }
-.awe-marker:hover { transform: scale(1.4); border-color: white; }
-
-/* ── Stats bar ── */
-.stats-bar {
-  display: flex; gap: 12px; flex-wrap: wrap;
-}
-.stat { text-align: center; }
-.stat-n { font-size: 22px; font-weight: 300; color: var(--accent); }
-.stat-label { font-size: 10px; color: var(--stone); font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: .15em; }
-
-/* ── Filter chips ── */
-.filter-chips { display: flex; flex-wrap: wrap; gap: 5px; }
-.chip {
-  font-size: 11px; padding: 3px 9px; border-radius: 10px;
-  border: 1px solid var(--linen); background: white;
-  cursor: pointer; transition: all .15s;
-  font-family: 'Courier New', monospace;
-}
-.chip:hover { border-color: var(--accent); }
-.chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+.resource-title { font-size: 20px; font-weight: 300; line-height: 1.15; white-space: nowrap; }
+.resource-title em { font-style: italic; color: var(--card-accent, var(--stone)); }
+.resource-desc { font-size: 13px; line-height: 1.65; color: var(--muted); font-style: italic; flex: 1; min-width: 200px; }
+.resource-inner .card-eyebrow { margin-bottom: 0; white-space: nowrap; }
+.resource-inner .card-tag { margin-top: 0; white-space: nowrap; flex-shrink: 0; }
 </style>
 </head>
 <body>
-<div class="app">
-
+<div class="site-wrap">
   <header>
-    <h1>Awe in <em>Cambridge</em></h1>
-    <span class="sub">Awe Atlas — Map Prototype</span>
+    <div class="wordmark">Awe in Cambridge</div>
+    <h1>The <em>Awe</em> Atlas</h1>
+    <p class="lede">Cambridge is full of places that stop people in their tracks. This is a set of tools for finding them, mapping them, and understanding what it is about those places that moves us.</p>
   </header>
 
-  <!-- ── Sidebar ── -->
-  <div class="sidebar">
+  <div class="tools-grid">
 
-    <!-- Stats -->
-    <div class="sidebar-section">
-      <h2>Overview</h2>
-      <div class="stats-bar">
-        <div class="stat">
-          <div class="stat-n" id="stat-total">—</div>
-          <div class="stat-label">spots</div>
-        </div>
-        <div class="stat">
-          <div class="stat-n" id="stat-visible">—</div>
-          <div class="stat-label">visible</div>
-        </div>
-        <div class="stat">
-          <div class="stat-n" id="stat-awe-walks">—</div>
-          <div class="stat-label">awe walks</div>
-        </div>
-      </div>
-    </div>
+    <a href="community.html" class="tool-card" style="--card-accent: #8c4518">
+      <div class="card-eyebrow">Tool 01</div>
+      <div class="card-title">Awe <em>Atlas</em></div>
+      <div class="card-desc">Find and create everyday awe. Browse instances near you, join or schedule awe walks, attend or host awe talks, and contribute your own moments of wonder to the atlas.</div>
+      <span class="card-tag">Open Tool →</span>
+    </a>
 
-    <!-- Color By -->
-    <div class="sidebar-section">
-      <h2>Color points by</h2>
-      <select class="color-by-select" id="colorBy">
-        <option value="wol">Way of Life (awe type)</option>
-        <option value="perception">Perception quality</option>
-        <option value="tension">Tension / atmosphere</option>
-        <option value="rhythm">Temporal rhythm</option>
-        <option value="experienced_where">Experienced where</option>
-        <option value="potential">Temporal potential</option>
-        <option value="affiliation">Contributor affiliation</option>
-      </select>
-    </div>
+    <a href="atlas.html" class="tool-card" style="--card-accent: #4a7a8a">
+      <div class="card-eyebrow">Tool 02</div>
+      <div class="card-title"><em>Interactive</em> Map</div>
+      <div class="card-desc">Explore 220 georeferenced instances of awe plotted across Cambridge. Filter by all analytical dimensions — geography, morphology, phenomenology, and temporality.</div>
+      <span class="card-tag">Open Tool →</span>
+    </a>
 
-    <!-- Legend -->
-    <div class="sidebar-section">
-      <h2>Legend <span style="font-size:10px;font-weight:normal;color:var(--stone)">(click to filter)</span></h2>
-      <div class="legend" id="legend"></div>
-    </div>
-
-    <!-- Quick filters -->
-    <div class="sidebar-section">
-      <h2>Quick filters</h2>
-      <div style="margin-bottom:8px;">
-        <div class="detail-cell"><span class="k">Affiliation</span></div>
-        <div class="filter-chips" id="filter-affiliation" style="margin-top:5px;"></div>
-      </div>
-      <div>
-        <div class="detail-cell"><span class="k">Awe walk?</span></div>
-        <div class="filter-chips" id="filter-awewalk" style="margin-top:5px;">
-          <span class="chip active" data-val="all">All</span>
-          <span class="chip" data-val="y">Awe walks only</span>
-          <span class="chip" data-val="n">Non-awe walks</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Detail panel -->
-    <div class="detail-panel empty" id="detailPanel">
-      <div>Click a point on the map<br>to see details</div>
-    </div>
+    <a href="alluvial.html" class="tool-card" style="--card-accent: #6b5b8a">
+      <div class="card-eyebrow">Tool 03</div>
+      <div class="card-title"><em>Alluvial</em> Explorer</div>
+      <div class="card-desc">Visualize how instances of awe flow across analytical categories — wonder type, physical form, characteristics, temporality, and more. Toggle and reorder dimensions to reveal patterns in the data.</div>
+      <span class="card-tag">Open Tool →</span>
+    </a>
 
   </div>
 
-  <!-- ── Map ── -->
-  <div id="map"></div>
+  <a href="guide.html" class="resource-card" style="--card-accent: #7a6e5f">
+    <div class="resource-inner">
+      <div class="card-eyebrow" style="color: var(--card-accent)">Resource 01</div>
+      <div class="resource-title"><em>Understanding</em> Awe</div>
+      <div class="resource-desc">A tool to situate yourself within the research of awe.</div>
+      <span class="card-tag" style="background: var(--card-accent)">Open Guide →</span>
+    </div>
+  </a>
 
+  <footer>Thesis research · Cambridge, MA · 2024–2025</footer>
 </div>
-
-<script>
-// ═══════════════════════════════════════════════════════════
-// DATA — embedded from CSV
-// Add/remove rows here, or replace with a fetch() call if
-// you want to load from an external CSV file.
-// ═══════════════════════════════════════════════════════════
-const RAW = [
-  [-71.069,42.36902,"Spring Daffodils at North Point Park","gardener","walk","n","n","n","n","n","n","cyclical","park","seasonal","nature","","","plant","","","wonder","","","curated","","","wonder/attention"],
-  [-71.137,42.37854,"Accessible Beauty","gardener","walk","n","n","n","n","n","n","cyclical","street","seasonal","nature","moral_beauty","","park/garden","people","","beauty","interconnection","","curated","inclusive","","appreciation for the beauty of the garden"],
-  [-71.1417,42.38205,"Lexington St. Gardens","gardener","walk","n","n","n","n","n","n","cyclical","street","seasonal","nature","moral_beauty","","plant","people","","beauty","interconnection","","curated","inclusive","","visible/accessible beauty"],
-  [-71.1406,42.38259,"Lakeview Ave Gardens","gardener","walk","n","n","n","n","n","n","cyclical","street","seasonal","nature","moral_beauty","","plant","people","","beauty","interconnection","","curated","inclusive","","visible/accessible beauty"],
-  [-71.0849,42.37034,"Library Magnolias","personal","walk","y","n","n","y","n","n","cyclical","street","timeless","nature","","","plant","","","wonder","","","curated","","",""],
-  [-71.0906,42.36438,"Draper Labs","CRA","walk","n","n","n","n","n","n","linear","institution","timeless","epiphany/knowledge","","","building","","","mystery","","","exclusive","","","mystery: wondering what is happening in these opaque and mysterious labs"],
-  [-71.0871,42.36276,"Google Cambridge","CRA","walk","n","n","n","n","n","n","linear","institution","timeless","epiphany/knowledge","","","group/community","","","mystery","","","exclusive","","","mystery; wondering what goes on in here"],
-  [-71.0956,42.3678,"Secret Back Yard 1","CRA","walk","y","y","n","n","n","n","linear","street","timeless","visual_design","","","building","","","mystery","","","exclusive","","","mystery - Interstitial spaces"],
-  [-71.0958,42.36791,"Secret Back Yard 2","CRA","walk","y","y","n","n","n","n","linear","street","timeless","visual_design","","","building","","","mystery","","","exclusive","","","Interstitial spaces - mystery of what's around the corner"],
-  [-71.1166,42.37238,"Mysterious Courtyard","personal","walk","y","y","n","n","n","n","linear","street","timeless","visual_design","","","building","","","mystery","","","exclusive","","",""],
-  [-71.0854,42.36262,"View from Cambridge Redevelopment Authority","CRA","walk","n","n","n","n","n","n","cyclical","institution","timeless","nature","","","vista","","","wonder","","","expansive","","","wonder; view to Charles River"],
-  [-71.0761,42.36488,"Vista of Charles River Basin","gardener","walk","n","n","n","n","n","n","cyclical","park","timeless","nature","","","vista","","","wonder","","","expansive","","","wonder; openness"],
-  [-71.1331,42.389,"Danehy Park","gardener","walk","n","y","n","y","n","n","cyclical","park","timeless","nature","","","park/garden","","","mystery","","","expansive","","","vastness; mystery of connecting with something other"],
-  [-71.0678,42.369,"Vista + Boston Skyline","gardener","walk","n","n","n","n","n","n","cyclical","park","timeless","nature","","","vista","","","vastness","","","expansive","","","beauty and vastness: walking along the Charles River"],
-  [-71.1553,42.38424,"Little Fresh Pond Dog Beach","gardener","walk","n","n","n","n","n","n","cyclical","park","timeless","nature","","","vista","","","vastness","","","expansive","","","vastness; nature - view of sky and clouds"],
-  [-71.1273,42.37487,"Vista to Charles River at Longfellow Park","CRA","walk","n","n","n","n","n","n","cyclical","park","timeless","nature","","","vista","","","beauty","","","expansive","","","attention grabbing; beautiful"],
-  [-71.0765,42.35621,"Vista from Esplanade","CRA","walk","n","n","n","n","n","n","cyclical","park","timeless","nature","","","vista","","","wonder","","","expansive","","","wonder; seeing the skyline of Backbay"],
-  [-71.1338,42.31268,"View of Boston from Larz Anderson Park","CRA","walk","y","n","n","n","n","n","cyclical","park","timeless","nature","","","vista","","","wonder","","","expansive","","","awe walk - sense of wonder at top of park"],
-  [-71.0954,42.35604,"Charles River Between Harvard and MIT","CRA","walk","y","n","n","n","n","n","cyclical","park","timeless","nature","","","vista","","","vastness","","","expansive","","","vast plain of white"],
-  [-71.087,42.36042,"Vista of Charles River Basin at MIT Media Lab","personal","walk","n","n","n","n","n","n","cyclical","park","timeless","nature","","","vista","","","beauty","","","expansive","","",""],
-  [-71.0913,42.3544,"Snowy Charles River","personal","walk","n","n","n","n","n","n","cyclical","park","timeless","nature","","","vista","","","beauty","","","expansive","","",""],
-  [-71.1525,42.38469,"Crackling Ice at Fresh Pond","gardener","walk","n","n","n","y","n","n","cyclical","park","seasonal","nature","nature","","water","sound","","beauty","wonder","","expansive","novel","","wonder; nature - vastness of crackling frozen ice"],
-  [-71.134,42.38887,"Winter at Danehy Park","gardener","walk","n","y","n","n","n","n","cyclical","park","seasonal","nature","","","vista","","","vastness","","","expansive","","","vastness; nature - view of sky and more horizon"],
-  [-71.1196,42.38874,"A View to Boston from Porter Square","CRA","walk","y","n","n","n","n","n","cyclical","street","timeless","nature","","","vista","","","wonder","","","expansive","","","beauty of seeing all the way to Boston from Cambridge"],
-  [-71.0969,42.37034,"Looming Building","CRA","walk","n","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","vastness","","","impressive","","","vastness - can see new somerville building that looms over neighborhood"],
-  [-71.076,42.3686,"Charles River Boat Company","gardener","walk","n","n","n","n","n","n","linear","park","seasonal","nature","","","water","","","vastness","","","expansive","","","vastness; the connection between the river and the ocean"],
-  [-71.1372,42.39053,"Dog Park and Picnic Benches at Danehy Park","gardener","walk","n","n","n","n","n","n","linear","park","daily","collective_effervescence","","","people","","","interconnection","","","familiar","","","interconnection"],
-  [-71.1447,42.38316,"Pedestrians and Cyclists at Fresh Pond","gardener","walk","n","n","n","n","n","n","linear","park","daily","collective_effervescence","","","people","","","interconnection","","","familiar","","","interconnection"],
-  [-71.106,42.36362,"Sidewalk Society","gardener","walk","n","n","n","n","n","n","linear","street","daily","collective_effervescence","","","people","","","interconnection","","","familiar","","","interconnection: people to look at and talk to on sidewalk"],
-  [-71.102,42.36532,"Potluck Mural","CRA","walk","n","n","n","n","n","n","linear","street","timeless","visual_design","","","art/object","","","wonder","","","familiar","","","wonder - enjoys murals that depict real life in Cambridge"],
-  [-71.1115,42.37581,"Best Ever Alleyway","gardener","walk","n","n","y","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","functional","","","Pleasurable cut through; Perfect shortcut; Fluidity"],
-  [-71.1323,42.40064,"Brief Enjoyment of the Rain","gardener","walk","n","n","y","n","n","n","cyclical","street","periodic","nature","","","water","","","wonder","","","wild","","","brief moment of emergence; clarity and awareness of what the world is doing"],
-  [-71.1367,42.40095,"The Sound of the Sand","gardener","bike","n","n","y","n","n","n","cyclical","park","timeless","nature","","","sound","","","wonder","","","ordinary","","","pleasurable sound of the sand as you transition from the pavement"],
-  [-71.0909,42.37046,"Sycamore and Birds","personal","walk","y","n","n","y","n","n","cyclical","park","periodic","nature","nature","","plant","animal","","wonder","wonder","","impressive","wild","",""],
-  [-71.1208,42.30735,"Arnold Arboretum of Harvard University","gardener","walk","n","n","n","n","n","y","cyclical","park","timeless","nature","moral_beauty","","plant","group/community","","beauty","wonder","","impressive","curated","","place of awe; plants and effort to obtain these plants"],
-  [-71.1061,42.36356,"Lavender Resilience","gardener","walk","n","n","n","n","n","n","cyclical","home","seasonal","nature","","","plant","","","wonder","","","impressive","","","impressed by the resilience of a lavender plant"],
-  [-71.1289,42.38593,"Resilient Witch Hazel","gardener","walk","n","n","n","n","n","n","cyclical","home","seasonal","nature","","","plant","","","wonder","","","impressive","","","noticing that her witch hazel was nearly covered with snow"],
-  [-71.1239,42.38097,"Locust Tree","gardener","walk","n","n","n","y","n","n","cyclical","park","timeless","nature","","","plant","","","wonder","","","impressive","","","wonder; locust tree with thorns"],
-  [-71.1245,42.38168,"Reishi Mushroom","gardener","walk","n","n","n","y","n","n","cyclical","park","seasonal","nature","","","plant","","","wonder","","","impressive","","","wonder: Reishi mushroom that grows on a tree in Radcliffe"],
-  [-71.1058,42.36652,"Flowers growing wild","gardener","walk","n","n","n","n","n","n","cyclical","park","seasonal","nature","","","plant","","","wonder","","","impressive","","","wonder; wildflower patch"],
-  [-71.1201,42.37496,"Tombstone Embedded in Tree","personal","walk","y","n","n","n","n","y","cyclical","park","timeless","nature","","","plant","","","wonder","","","impressive","","","amazing to see the tree growing around the tombstone"],
-  [-71.143,42.39672,"Tall Teasel Plant","gardener","walk","n","n","n","y","n","n","cyclical","park","seasonal","nature","","","plant","","","wonder","","","impressive","","","wonder"],
-  [-71.1273,42.39,"Mushroom Logs","gardener","walk","n","n","n","y","n","n","cyclical","park","seasonal","nature","","","plant","","","wonder","","","impressive","","","Excitement of colonized mushroom log"],
-  [-71.0976,42.3681,"Birdie Bush_1","personal","walk","n","n","n","y","n","n","cyclical","street","seasonal","nature","","","animal","","","wonder","","","impressive","","",""],
-  [-71.0952,42.36661,"Birdie Bush_2","personal","walk","n","n","n","y","n","n","cyclical","street","seasonal","nature","","","animal","","","wonder","","","impressive","","",""],
-  [-71.0942,42.36009,"Massachusetts Institute of Technology","gardener","walk","n","n","n","n","n","y","linear","institution","timeless","epiphany/knowledge","","","group/community","","","vastness","","","impressive","","","vastness; enduring quality of being impressive and influential"],
-  [-71.0886,42.36723,"Moderna during Covid-19 Pandemic","CRA","walk","n","n","n","n","n","n","linear","institution","ephemeral","epiphany/knowledge","","","building","","","interconnection","","","impressive","","","vastness; feeling global impact and connection during the pandemic"],
-  [-71.0884,42.3671,"Vaccine Production During Covid","CRA","walk","n","n","n","n","n","n","linear","institution","ephemeral","epiphany/knowledge","","","building","","","interconnection","","","impressive","","","interconnection of Kendall Sq with rest of the world"],
-  [-71.0975,42.36291,"Necco Factory","CRA","walk","n","n","n","n","n","y","linear","institution","timeless","epiphany/knowledge","","","building","","","interconnection","","","impressive","","","interconnection through global distribution"],
-  [-71.0851,42.36541,"Potential NASA location in 1960s","CRA","walk","n","n","n","n","n","y","linear","institution","timeless","epiphany/knowledge","","","building","","","interconnection","","","impressive","","","interconnection through history"],
-  [-71.0906,42.36456,"Draper Defense Research Lab","CRA","walk","n","n","n","n","n","n","linear","institution","timeless","epiphany/knowledge","","","building","","","interconnection","","","impressive","","","interconnection of defense labs"],
-  [-71.1155,42.37823,"Harvard Natural History Museum","CRA","walk","n","n","n","n","n","n","linear","institution","timeless","nature","","","art/object","","","mystery","","","impressive","","","mystery/vastness - rock/natural history museums"],
-  [-71.0864,42.36211,"MIT Museum","CRA","walk","n","n","n","n","n","n","linear","institution","timeless","epiphany/knowledge","","","art/object","","","mystery","","","impressive","","","mystery"],
-  [-71.1156,42.37846,"Glass Flowers Exhibit - Harvard Museum of Natural History","personal","walk","n","n","n","n","n","n","linear","institution","timeless","visual_design","","","art/object","","","beauty","","","impressive","","",""],
-  [-71.1154,42.37853,"Gem and Minerals Collection - Harvard Museum of Natural History","personal","walk","n","n","n","y","n","n","linear","institution","timeless","nature","","","art/object","","","beauty","","","impressive","","",""],
-  [-71.0972,42.36225,"Rube Goldberg Machines - Old MIT Museum","CRA","walk","n","n","n","n","n","n","linear","institution","recurring","collective_effervescence","","","event","","","mystery","","","impressive","","","mystery; experience of 'oh thats how that works'"],
-  [-71.0862,42.36224,"Cambridge Science Carnival","CRA","walk","n","n","n","n","n","n","linear","institution","recurring","epiphany/knowledge","","","event","","","wonder","","","impressive","","","wonder and curiosity"],
-  [-71.1182,42.37444,"History of Harvard University","gardener","walk","n","n","n","n","n","y","linear","institution","daily","epiphany/knowledge","visual_design","","group/community","building","","mystery","beauty","","impressive","impressive","","mystery: unknown stories; history and famous people"],
-  [-71.089,42.36283,"Broad Discovery Center","CRA","walk","n","n","n","n","n","n","linear","institution","daily","collective_effervescence","","","building","","","wonder","","","impressive","","","wonder; opportunity to really learn about what is going on"],
-  [-71.1053,42.36612,"History and Community of Cantab Lounge","CRA","walk","n","n","n","n","n","y","linear","institution","daily","collective_effervescence","","","group/community","","","interconnection","","","impressive","","","interconnection - impressive due to age and longevity"],
-  [-71.0851,42.37172,"Smoke This Rib Festival","CRA","walk","n","n","n","n","n","n","linear","street","recurring","collective_effervescence","","","event","","","interconnection","","","impressive","","","vastness + interconnection"],
-  [-71.0851,42.36241,"Main Street on Fourth of July","CRA","walk","n","n","n","n","n","n","linear","street","recurring","collective_effervescence","","","event","","","interconnection","","","impressive","","","vastness; sheer number of people"],
-  [-71.0896,42.36309,"Lecture about Kendall Square","CRA","walk","n","n","n","n","n","y","linear","institution","recurring","epiphany/knowledge","","","event","","","wonder","","","impressive","","","interconnection: went to talk about origin of Kendall Square"],
-  [-71.1201,42.3757,"Connection to American Revolution - Cambridge Common","CRA","walk","n","n","n","n","n","y","linear","park","timeless","epiphany/knowledge","","","park/garden","","","interconnection","","","impressive","","","interconnection and historical relationship to the American Revolution"],
-  [-71.119,42.37336,"Harvard Square T-Stop","CRA","walk","n","n","y","n","n","y","linear","plaza","ephemeral","visual_design","","","building","","","wonder","","","impressive","","","wonder: arriving in Cambridge for the first time"],
-  [-71.0755,42.35,"Trinity Church Cedar Pillars","gardener","walk","n","n","n","n","n","n","linear","institution","timeless","epiphany/knowledge","","","building","","","wonder","","","impressive","","","cedar pillars as way to learn from nature"],
-  [-71.1209,42.37323,"Golden sculpture at Igor Fokin memorial","gardener","walk","n","n","n","y","n","n","linear","street","timeless","visual_design","","","art/object","","","mystery","","","impressive","","","mystery; gold sculpture of puppeteer"],
-  [-71.1195,42.38377,"People Pouring onto the Street","CRA","walk","n","n","n","n","n","n","linear","street","ephemeral","collective_effervescence","","","people","","","interconnection","","","impressive","","","vastness- people pouring onto the street when Trump lost the election"],
-  [-71.1212,42.3921,"Favorite Corner Ever","CRA","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","impressive","","","beauty/visual design; favorite corner ever"],
-  [-71.1061,42.38963,"Somerville Winter Farmers Market at the Armory","personal","walk","n","n","n","n","n","n","linear","institution","seasonal","collective_effervescence","","","event","","","interconnection","","","impressive","","",""],
-  [-71.0826,42.37059,"Beautiful Brick Home 2","personal","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","impressive","","","a lovely brick home with a fun staircase"],
-  [-71.0909,42.3693,"Evergreen Trees","personal","walk","y","n","n","y","y","n","cyclical","street","timeless","nature","","","plant","","","mystery","","","impressive","","","intrigue about these two trees; they almost felt out of place"],
-  [-71.0941,42.35835,"MIT Chapel","gardener","walk","n","n","n","n","y","n","linear","institution","timeless","visual_design","","","art/object","","","mystery","","","impressive","","","mystery: reflection in chapel"],
-  [-71.1047,42.36588,"Lost and Found Wallet","CRA","walk","n","n","n","n","y","n","linear","street","ephemeral","moral_beauty","","","people","","","interconnection","","","impressive","","","interconnection; anecdote of losing wallet"],
-  [-71.1057,42.36714,"Cambridge City Hall Moniker","CRA","walk","n","n","n","n","y","n","linear","street","timeless","epiphany/knowledge","visual_design","","people","building","","mystery","beauty","","impressive","ornate","","mystery: moniker above city hall"],
-  [-71.1024,42.36483,"Graffiti Alley - Richard B. Rico Modica Way","CRA","walk","n","n","y","n","y","n","linear","street","timeless","visual_design","","","art/object","","","wonder","","","impressive","","","wonder; moment of discovery that is memorable"],
-  [-71.1293,42.38642,"Neighbor Cleaning Up Sidewalk","gardener","walk","n","n","n","n","y","n","linear","street","periodic","moral_beauty","","","people","","","interconnection","","","impressive","","","appreciation for people doing this; people improving surroundings"],
-  [-71.1263,42.39265,"House of Many Doors","CRA","walk","y","n","n","n","y","n","linear","street","timeless","visual_design","","","building","","","beauty","","","impressive","","","appreciation/whimsy - Doors at different heights and directions"],
-  [-71.1016,42.38806,"The Friend Smithsonian Museum Yard Ornaments","personal","walk","n","n","n","n","y","n","linear","street","timeless","visual_design","","","art/object","","","wonder","","","impressive","","","amount of yard ornaments"],
-  [-71.126,42.37639,"Forgotten Souls of Tory Row","personal","bike","y","n","n","n","y","y","linear","street","timeless","epiphany/knowledge","","","art/object","","","wonder","","","impressive","","","i was in awe of the history of cambridge"],
-  [-71.1281,42.3747,"Man Zamboni-ing Rink by Hand","CRA","walk","n","n","n","n","y","n","linear","institution","seasonal","epiphany/knowledge","","","people","","","mystery","","","impressive","","","surprise; change of routine; witness man hand zamboni-ing outdoor ice rink"],
-  [-71.1046,42.36185,"Peggy Hayes Memorial Garden","gardener","walk","n","n","n","y","y","n","linear","park","seasonal","collective_effervescence","","","group/community","","","mystery","","","impressive","","","mystery: people at community garden"],
-  [-71.0829,42.36843,"Hurley Street Community Garden","gardener","walk","n","y","n","n","n","n","cyclical","park","seasonal","moral_beauty","nature","","group/community","nature","","beauty","wonder","","inclusive","intimate","","beautiful but small and cozy space"],
-  [-71.1279,42.38657,"Raymond Park Community Garden","gardener","walk","n","y","n","y","n","n","cyclical","park","seasonal","moral_beauty","","","group/community","","","interconnection","","","inclusive","","","interconnection with others who share produce and knowledge"],
-  [-71.066,42.35843,"Nichols House Museum","gardener","walk","n","n","n","n","n","y","linear","institution","timeless","moral_beauty","","","people","","","wonder","","","inclusive","","","wonder; social responsibility - womens suffrage"],
-  [-71.1082,42.363,"Amigos Elementary School","gardener","walk","n","n","n","n","n","n","linear","institution","daily","collective_effervescence","","","group/community","","","interconnection","","","inclusive","","","interconnection; preschool community"],
-  [-71.1209,42.39065,"St. James Episcopal Church","CRA","walk","n","n","n","n","n","n","linear","institution","timeless","moral_beauty","visual_design","","group/community","building","","wonder","beauty","","inclusive","impressive","","wonder and interconnection; beautiful church"],
-  [-71.1158,42.35805,"Riverside Boat Club","CRA","walk","n","n","n","n","n","n","linear","institution","timeless","moral_beauty","","","group/community","","","interconnection","","","inclusive","","","interconnection; it matters if you show up"],
-  [-71.1067,42.36683,"Cambridge YMCA Sauna","gardener","walk","n","n","n","y","n","n","linear","institution","daily","collective_effervescence","","","people","","","interconnection","","","inclusive","","","interconnection: locker room conversations"],
-  [-71.0914,42.37274,"Being a regular at Satellite","CRA","walk","n","n","n","n","n","n","linear","institution","daily","collective_effervescence","","","group/community","","","interconnection","","","inclusive","","","interconnection; process of converting people from stranger to friends"],
-  [-71.1217,42.39087,"CSCA Cafe Front Patio","CRA","walk","n","n","n","n","n","n","linear","institution","daily","collective_effervescence","visual_design","","group/community","building","","interconnection","","","inclusive","intimate","","interconnection - place where chefs spend time"],
-  [-71.0988,42.383,"Nunziato Dog Park","CRA","walk","n","n","n","y","n","n","linear","park","daily","collective_effervescence","nature","","people","animal","","interconnection","","","inclusive","wild","","interconnection; excuse to strike up conversations"],
-  [-71.0874,42.36282,"Kendall Public Lobby Events","CRA","walk","n","n","n","n","n","n","linear","institution","recurring","collective_effervescence","","","event","","","interconnection","","","inclusive","","","interconnection; kendall public lobby events"],
-  [-71.0743,42.37197,"Summer Nights at Cambridge Crossing","gardener","walk","n","n","n","n","n","n","linear","park","seasonal","moral_beauty","collective_effervescence","","people","event","","interconnection","beauty","","inclusive","curated","","interconnection; free concert for community"],
-  [-71.0866,42.36315,"Urban Park (UP) Roof Garden","CRA","walk","n","y","n","n","n","n","linear","park","timeless","nature","nature","","park/garden","park/garden","","wonder","beauty","","inclusive","intimate","","wonder: charming and example of securing public amenities"],
-  [-71.0873,42.36245,"Plowed Bike Lane","personal","walk","y","n","n","n","n","n","linear","street","seasonal","moral_beauty","","","art/object","","","interconnection","","","inclusive","","",""],
-  [-71.1418,42.373,"A Stranger Speaks of Spring","gardener","walk","y","n","n","y","y","n","linear","park","periodic","moral_beauty","","","people","","","interconnection","","","inclusive","","","interconnection - pleasant to run into man in the park"],
-  [-71.0999,42.3633,"Art Installation at Jill Brown-Rhone Park","CRA","walk","n","n","n","n","y","n","linear","park","timeless","visual_design","","","art/object","","","mystery","","","inclusive","","","mystery - moments of learning or discovery"],
-  [-71.0798,42.36766,"Giant Squash Sculptures at Costa Lopez Taylor Park","CRA","walk","y","n","n","n","y","n","linear","park","timeless","visual_design","","","art/object","","","mystery","","","inclusive","","","mystery in discovery; wonder and appreciation"],
-  [-71.145,42.37521,"Mount Auburn Cemetery","gardener","walk","n","y","n","n","n","y","cyclical","park","timeless","nature","visual_design","","park/garden","building","","vastness","wonder","","intimate","impressive","","wonder + vastness: lots of old plants and burial plots"],
-  [-71.0815,42.36522,"Walkway between Linskey & Binney","CRA","walk","n","n","y","n","n","n","cyclical","park","timeless","nature","","","park/garden","","","wonder","","","intimate","","","wonder - pocket parks can be charming"],
-  [-71.0886,42.36417,"Danny Lewin Park","CRA","walk","n","n","y","n","n","n","cyclical","park","timeless","nature","","","park/garden","","","wonder","","","intimate","","","pocket parks can be charming; things that you stumble upon"],
-  [-71.0815,42.36463,"Henri A. Termeer Square","CRA","walk","n","n","y","n","n","n","cyclical","park","timeless","nature","","","park/garden","","","wonder","","","intimate","","","pocket parks can be charming"],
-  [-71.0844,42.36237,"Galaxy Park","CRA","walk","n","n","y","n","n","n","cyclical","park","timeless","nature","","","park/garden","","","wonder","","","intimate","","","pocket parks can be charming"],
-  [-71.1051,42.35329,"Experiencing the Water's Edge","CRA","walk","n","y","n","n","n","n","cyclical","park","timeless","nature","","","water","","","beauty","","","intimate","","","nature- It feels different from other place in Cambridge"],
-  [-71.1365,42.31186,"Forest to Meadow Ecotone","CRA","walk","y","n","y","y","n","n","cyclical","park","timeless","nature","","","plant","","","interconnection","","","intimate","","","awe walk - appreciation of shift from one landscape to another"],
-  [-71.0742,42.3668,"Ducks, Geese, Ice, Waters & Seasonal Transitions","gardener","walk","y","","n","y","n","n","cyclical","park","seasonal","nature","life/death","nature","water","animal","sound","beauty","wonder","wonder","intimate","wild","novel","observed river water/ice and ducks/geese; dead goose frozen in ice"],
-  [-71.0813,42.36285,"Broad Canal Walk","CRA","walk","n","n","y","n","n","n","linear","park","timeless","nature","","","water","","","wonder","","","intimate","","","pocket parks can be charming"],
-  [-71.0849,42.36497,"Maya Lin - Sound Waves","CRA","walk","n","n","n","n","n","n","linear","park","timeless","visual_design","nature","","art/object","park/garden","","wonder","","","intimate","","","pocket parks can be charming"],
-  [-71.1363,42.31136,"Asphalt to Stone","CRA","walk","y","n","y","n","n","n","linear","park","timeless","nature","","","park/garden","","","interconnection","","","intimate","","","awe walk - feeling of 'immersion' when walking on stone"],
-  [-71.1294,42.37596,"Beautiful Homes at Night","CRA","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","intimate","","","beauty/visual design; going by longfellow park"],
-  [-71.0807,42.37043,"Centanni Way","personal","walk","y","y","n","n","n","n","linear","street","timeless","nature","visual_design","","park/garden","building","","beauty","beauty","","intimate","ornate","",""],
-  [-71.1322,42.38292,"Glistening Branches","gardener","walk","n","n","n","n","n","n","cyclical","street","periodic","nature","","","plant","","","beauty","wonder","","novel","","","observing branches covered in ice and glistening"],
-  [-71.125,42.33392,"Dappled Light and Frozen Branches","CRA","bike","n","n","n","n","n","n","cyclical","street","periodic","nature","","","plant","","","beauty","","","novel","","","nature - morning sleet; beautiful atmospheric experience"],
-  [-71.0921,42.36039,"Sunset from Outfinite Corridor","personal","walk","n","n","n","n","n","n","cyclical","street","periodic","nature","","","light","","","beauty","","","novel","","",""],
-  [-71.1267,42.39037,"Pink Triangle on Roof of House","gardener","walk","n","n","n","n","n","n","cyclical","home","seasonal","nature","","","light","","","wonder","","","novel","","","wonder; pink rectangle in winter"],
-  [-71.1107,42.37412,"Cambridge Public Library","gardener","walk","n","y","n","n","n","n","cyclical","institution","seasonal","nature","","","light","","","beauty","","","novel","","","attention/appreciation; afternoon light"],
-  [-71.1398,42.37588,"Sunset Snow in Lowell Park","gardener","walk","y","n","n","n","n","n","cyclical","park","seasonal","nature","","","light","","","beauty","","","novel","","","observing pink and blueish snow while the sun was setting"],
-  [-71.1428,42.37378,"Budding Trees and Hungry Squirrels","gardener","walk","y","n","n","y","n","n","cyclical","park","seasonal","nature","","","plant","","","wonder","","","novel","","","familiar feeling unfamiliar - trees budding sooner than she realized"],
-  [-71.083,42.37065,"Sound of Oak Leaves","personal","walk","y","n","y","n","n","n","cyclical","street","seasonal","nature","","","plant","","","wonder","","","novel","","",""],
-  [-71.132,42.38281,"Softened Edges","gardener","walk","n","n","n","n","n","n","cyclical","street","seasonal","nature","","","water","","","beauty","","","novel","","","noticing the amount of snow this winter"],
-  [-71.0888,42.36114,"Witchhazel","personal","walk","n","n","n","y","n","n","cyclical","street","seasonal","nature","","","plant","","","beauty","","","novel","","","first time seeing witchhazel flower and getting to smell it"],
-  [-71.1323,42.40048,"Learning Woodworking","gardener","walk","n","n","n","n","n","n","linear","home","ephemeral","epiphany/knowledge","","","art/object","","","wonder","","","novel","","","Delightful to find out she's good at it; Learning about wood"],
-  [-71.0975,42.36295,"Smell of Candy from Cambridge Brands Inc","personal","walk","n","n","y","n","n","n","linear","street","recurring","epiphany/knowledge","","","smell","","","wonder","","","novel","","",""],
-  [-71.0953,42.37632,"Cobblestones Revealed","personal","walk","n","n","n","n","n","y","linear","street","periodic","epiphany/knowledge","","","art/object","","","beauty","","","novel","","",""],
-  [-71.1455,42.37359,"Mount Auburn Solstice Winter Lights Festival","gardener","walk","n","n","n","n","n","n","linear","park","seasonal","visual_design","collective_effervescence","","light","event","","wonder","wonder","","novel","inclusive","","wonder"],
-  [-71.0958,42.36628,"Witnessing Connection on Street Corner","personal","bike","n","n","n","y","n","n","linear","street","periodic","moral_beauty","","","people","","","interconnection","","","novel","","",""],
-  [-71.0835,42.37014,"Indigenous Street Sign","personal","walk","y","n","n","n","n","n","linear","street","timeless","epiphany/knowledge","","","art/object","","","wonder","","","novel","","",""],
-  [-71.1209,42.37299,"A warm late winter day at Harvard Square","gardener","walk","n","n","n","n","n","n","linear","plaza","seasonal","collective_effervescence","","","people","","","interconnection","","","novel","","","collective effervescence - seeing so many people outside interacting"],
-  [-71.1038,42.35626,"Dead Screech Owl by Train Car","gardener","walk","n","n","n","y","y","n","cyclical","corridor","ephemeral","life/death","","","animal","","","wonder","","","novel","","","wonder"],
-  [-71.1036,42.35643,"Elephant Droppings","gardener","walk","n","n","n","y","y","n","cyclical","corridor","ephemeral","nature","","","animal","","","wonder","","","novel","","","wonder; Barnham and Baileys circus cars"],
-  [-71.1212,42.37293,"Turkeys in Harvard Square","gardener","walk","n","n","n","y","y","n","cyclical","street","periodic","nature","","","animal","","","wonder","","","novel","","","nature; unexpectedness; noticing what she might otherwise have missed"],
-  [-71.0965,42.3793,"Birds on the Roof of a Church","personal","bike","n","n","n","y","y","n","cyclical","street","periodic","nature","","","animal","","","wonder","","","novel","","","wondering what the birds are all doing there"],
-  [-71.0949,42.36805,"Morning Light on Kitchen Table","personal","walk","n","n","n","n","y","n","cyclical","home","seasonal","nature","","","light","","","wonder","","","novel","","","beautiful light on kitchen table that seems to be seasonal"],
-  [-71.1287,42.38598,"Melting Snow Piles","gardener","walk","n","n","n","n","y","n","cyclical","street","seasonal","nature","","","water","","","wonder","","","novel","","","amazed how quickly the snow piles have been melting"],
-  [-71.0941,42.36704,"Spring Flowers","personal","walk","n","n","n","n","y","n","cyclical","street","seasonal","nature","","","plant","","","beauty","","","novel","","","beautiful"],
-  [-71.1034,42.35647,"Cultural Experience near Train Cars","gardener","walk","n","n","n","y","y","n","linear","corridor","ephemeral","epiphany/knowledge","","","people","","","wonder","","","novel","","","wonder; experience native american man near train car"],
-  [-71.0814,42.36444,"Canal District Kendall","CRA","walk","n","n","n","n","y","n","linear","park","timeless","nature","","","water","","","beauty","","","novel","","","beautiful/discovery"],
-  [-71.1203,42.37605,"Curious Art Installation in Cambridge Common","personal","walk","y","n","n","n","y","n","linear","park","timeless","visual_design","","","art/object","","","mystery","","","novel","","",""],
-  [-71.0791,42.37255,"A Newly Discovered Mural","gardener","walk","n","n","n","n","y","n","linear","street","timeless","visual_design","","","art/object","","","beauty","","","novel","","","noticing something new"],
-  [-71.0764,42.36813,"CambridgeSide Smells","gardener","walk","n","n","y","n","y","n","linear","institution","periodic","epiphany/knowledge","","","smell","","","wonder","","","novel","","","attention; smell of food, river and algae"],
-  [-71.0941,42.37028,"The Sound of a Stream","CRA","walk","y","n","n","n","y","n","linear","street","ephemeral","epiphany/knowledge","","","sound","","","beauty","","","novel","","","beauty/joy/curiosity - stopped to notice the sound of a stream"],
-  [-71.1271,42.39246,"Bell Hanging from Tree","CRA","walk","y","n","n","n","y","n","linear","street","timeless","visual_design","","","art/object","","","beauty","","","novel","","","moment of whimsy and appreciation"],
-  [-71.0878,42.35851,"Bubbling Water","CRA","walk","y","n","n","n","y","n","linear","park","seasonal","nature","","","water","","","beauty","","","novel","","","beautiful/cool; Interface of bubble water, ice and dock"],
-  [-71.0912,42.35414,"Busy Bridge Due to Warmer Weather","gardener","walk","n","n","n","n","y","n","linear","street","seasonal","collective_effervescence","","","people","","","interconnection","","","novel","","","interconnection; more people outside"],
-  [-71.1424,42.39841,"Rhythm of the Reeds","gardener","bike","n","n","y","n","n","n","cyclical","park","timeless","nature","","","park/garden","","","wonder","","","ordinary","","","pleasing transition from sandy to wooden path"],
-  [-71.1015,42.36381,"Mural outside the Middle East","CRA","walk","n","n","n","n","n","n","linear","street","timeless","visual_design","","","art/object","","","wonder","","","ordinary","","","wonder - enjoys murals that depict real life in Cambridge"],
-  [-71.1223,42.39278,"City Limits","CRA","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","art/object","","","wonder","","","ordinary","","","awe in the change of street signs between cities"],
-  [-71.1237,42.39191,"Russell Apartments and Townhouse Row","CRA","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","ordinary","","","beauty - appreciation of the mixed used nature of the area"],
-  [-71.1201,42.37202,"Beautiful Brick Facade","personal","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","ordinary","","","the color of the brick seemed quite beautiful"],
-  [-71.0807,42.35489,"A Familiar Cherry Tree","gardener","walk","n","n","n","y","n","n","linear","park","timeless","nature","","","plant","","","wonder","","","familiar","","","familiarity of cherry tree she uses as marker for walking loops"],
-  [-71.0928,42.34144,"People Watching on Bench","gardener","walk","y","n","n","y","n","n","linear","park","daily","collective_effervescence","nature","nature","people","light","plant","interconnection","beauty","wonder","ordinary","novel","impressive","interconnection on awe walk- noticing and appreciating life around him"],
-  [-71.1143,42.37167,"Old Cambridge Baptist Church","gardener","walk","n","n","n","n","y","n","linear","institution","timeless","visual_design","","","building","","","beauty","","","ornate","","","visual design; seeing the familiar as new"],
-  [-71.1221,42.36937,"Weld Boat House","CRA","walk","n","n","n","n","n","y","linear","institution","timeless","visual_design","","","building","","","beauty","","","ornate","","","wonder, beauty, excellence and history; viking motif"],
-  [-71.0787,42.34924,"Boston Public Library Courtyard","personal","walk","n","y","n","n","n","y","linear","institution","timeless","visual_design","","","building","","","beauty","","","ornate","","","beautiful courtyard"],
-  [-71.0916,42.34624,"Boylston Street Bridge","gardener","walk","y","n","n","n","n","y","linear","park","timeless","visual_design","","","building","","","beauty","","","ornate","","","beauty of old bridge"],
-  [-71.1445,42.37327,"Sphinx and Chapel","personal","walk","y","n","n","n","n","n","linear","park","timeless","visual_design","","","building","","","beauty","","","ornate","","","architectural variety of tombstones in cemetery"],
-  [-71.0753,42.3615,"Longfellow Bridge","CRA","walk","n","n","n","n","n","y","linear","street","timeless","visual_design","","","building","","","beauty","","","ornate","","","visual design, beauty and history; unnecessarily ornate"],
-  [-71.1272,42.39268,"Woodworking Design Flourishes","CRA","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","ornate","","","beauty - appreciation of beautiful design flourishes"],
-  [-71.1145,42.39133,"Yard Ornaments","CRA","walk","n","n","n","n","n","n","linear","street","timeless","visual_design","","","art/object","","","mystery","","","ornate","","","mystery of why these people are putting out yard ornaments"],
-  [-71.1234,42.39472,"Tiffany Lamp","CRA","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","art/object","","","wonder","","","ornate","","","mystery/wonder - noticing these lamps more frequently"],
-  [-71.0797,42.36852,"Fox Decoration","CRA","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","art/object","","","wonder","","","ornate","","","something left to be discovered and enjoyed"],
-  [-71.0797,42.36644,"Sidewalk Poem","CRA","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","art/object","","","interconnection","","","ornate","","","a conversation started by someone else and left for me to discover"],
-  [-71.0787,42.37006,"Row of Columns","CRA","walk","y","","n","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","ornate","","","They represent someone making a choice that I enjoyed"],
-  [-71.0789,42.36993,"Mural of Working Life","CRA","walk","n","n","n","n","n","n","linear","street","timeless","visual_design","","","art/object","","","wonder","","","ornate","","","mystery in discovery; interconnection"],
-  [-71.14,42.37641,"Brick House","personal","bike","y","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","ornate","","","lovely small brick home"],
-  [-71.1078,42.37958,"Blue Tiles on Side of Building","personal","bike","n","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","ornate","","","the blueness of these tiles caught my attention"],
-  [-71.1172,42.37158,"The Harvard Lampoon","personal","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","ornate","","","beautiful building well situated within the streetscape"],
-  [-71.1167,42.37187,"Adams House Gates","personal","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","art/object","","","beauty","","","ornate","","","gorgeous gate"],
-  [-71.1173,42.37286,"Radial Doorway","personal","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","ornate","","","beautiful doorway"],
-  [-71.1213,42.37543,"Larsen Hall","personal","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","ornate","","","interesting windows and brick features"],
-  [-71.0938,42.36904,"Ornate Wooden Home","personal","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","ornate","","","something about its ornate quality caught me"],
-  [-71.0928,42.36952,"Mint Colored House","personal","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","ornate","","","the color of the house and the number on the side"],
-  [-71.1181,42.37524,"Holden Chapel","personal","walk","y","n","n","n","y","n","linear","street","timeless","visual_design","","","building","","","beauty","","","ornate","","","beautiful building that caught my attention"],
-  [-71.10702,42.37456,"Peregrine Falcon in Street Tree","CRA","walk","n","n","n","y","n","n","cyclical","street","periodic","nature","","","animal","","","wonder","","","wild","","",""],
-  [-71.0888,42.37021,"Evidence of a Storm","personal","walk","y","n","n","y","n","n","cyclical","street","periodic","nature","","","art/object","","","mystery","","","wild","","","debris and fallen branches from storm earlier in the week"],
-  [-71.1317,42.38471,"The Shady Side of the Street","gardener","walk","n","n","n","n","n","n","cyclical","street","daily","nature","","","light","","","wonder","","","wild","","","noticing the shady side of the street"],
-  [-71.1378,42.38458,"Lilac Bush Bud","gardener","walk","n","n","n","y","n","n","cyclical","home","seasonal","nature","","","plant","","","mystery","","","wild","","","mystery; progression of lilac bud growing during the pandemic"],
-  [-71.0854,42.36268,"Ice Melting on Charles River","CRA","walk","y","n","n","n","n","n","cyclical","institution","seasonal","vista","","","water","","","beauty","","","wild","","","nature, beauty; watching ice melt on Charles River from office"],
-  [-71.1514,42.38942,"Juvenile Owl at Black's Nook","gardener","walk","n","y","n","y","n","n","cyclical","park","ephemeral","nature","nature","","animal","park/garden","","wonder","interconnection","","wild","intimate","","wonder; intimate; nature: intimate space in the city; once saw a juvenile owl"],
-  [-71.1274,42.37472,"Apple Tree","gardener","walk","n","n","n","y","n","n","cyclical","park","timeless","nature","","","plant","","","wonder","","","wild","","","wonder"],
-  [-71.1246,42.38153,"Gnarled Apple Tree","gardener","walk","n","n","n","y","n","y","cyclical","park","timeless","nature","","","plant","","","wonder","","","wild","","","wonder; gnarled apple tree"],
-  [-71.1397,42.37595,"Old Oak Tree in Lowell Park","gardener","walk","n","n","n","y","n","y","cyclical","park","timeless","nature","","","plant","","","interconnection","vastness","","wild","impressive","","nature - interconnection; old oak tree witness to so much history"],
-  [-71.1564,42.3952,"Blair Pond","gardener","walk","n","y","n","n","n","n","cyclical","park","timeless","nature","","","water","","","beauty","","","wild","","","bike path feels green and then weirdly industrial"],
-  [-71.1361,42.39106,"Dodgy Area Behind Danehy","gardener","walk","n","y","n","n","n","n","cyclical","park","timeless","nature","","","park/garden","","","mystery","","","wild","","","where you'll see an owl; nice crab apple trees"],
-  [-71.1511,42.38933,"Mud Season Frogs at Black's Nook","gardener","walk","n","y","n","y","n","n","cyclical","park","seasonal","nature","","","animal","","","wonder","","","wild","","","wonder; intimate; nature: intimate space in the city; enjoying the frogs"],
-  [-71.1273,42.38994,"Mycelium at McMath Park Community Garden","gardener","walk","n","n","n","y","n","n","cyclical","park","seasonal","nature","nature","","plant","smell","","vastness","wonder","","wild","novel","","smell of the soil; vastness of noticing the mycelium"],
-  [-71.1417,42.37209,"Observations from an Awe Walk in Mt. Auburn Cemetery","gardener","walk","y","n","n","y","n","n","cyclical","park","seasonal","nature","nature","","animal","plant","","wonder","wonder","","wild","wild","","Cardinal song, mind settling, breathing deeply, ice becoming liquid"],
-  [-71.1284,42.398,"Half Dome of Moss Growing in Pavement","gardener","walk","n","n","n","y","n","n","cyclical","street","periodic","nature","","","plant","","","wonder","","","wild","","","Ball like green and furry; Random; not where you expected it to be"],
-  [-71.0778,42.37212,"Birds Punctuating Corrugated Metal","CRA","transit","y","n","n","n","y","n","cyclical","corridor","ephemeral","nature","","","animal","","","wonder","","","wild","","","a feeling of whimsy and magic; birds sitting in pockets of corrugated steel"],
-  [-71.1441,42.36962,"Hawks at Washington Tower","personal","walk","y","n","n","y","y","n","cyclical","park","ephemeral","nature","","","animal","","","wonder","","","wild","","","beholding three hawks circling the washington tower"],
-  [-71.1296,42.38981,"Abandoned land covered in clover","gardener","walk","n","n","n","n","y","n","cyclical","park","seasonal","nature","","","plant","","","wonder","","","wild","","","wonder; strangeness of land covered in clover"],
-  [-71.1283,42.3857,"Snowdrops near Sidewalk","gardener","walk","n","n","n","n","y","n","cyclical","street","seasonal","nature","","","plant","","","wonder","","","wild","","","nature - spring ephemerals"],
-  [-71.0817,42.36385,"Kendall Square Association Social","CRA","walk","n","n","n","n","n","n","linear","institution","recurring","collective_effervescence","","","group/community","","","interconnection","","","inclusive","","","interconnection; connecting with different types of people"],
-  [-71.0434,42.37,"View of Boston Skyline from East Boston","personal","walk","y","n","n","n","n","n","cyclical","park","timeless","nature","","","vista","","","beauty","","","expansive","","",""],
-  [-70.9286,42.47105,"Fluff Factory","CRA","walk","n","n","n","n","n","n","linear","institution","timeless","epiphany/knowledge","","","building","","","interconnection","","","impressive","","","interconnection through global distribution"],
-  [-70.9859,42.42023,"Revere Beach","gardener","walk","y","n","n","n","n","n","linear","park","timeless","nature","collective_effervescence","","water","people","","vastness","interconnection","","impressive","inclusive","","interconnection, vastness, nature"],
-  [-71.0766,42.35001,"Protest at Copley Square","personal","walk","n","n","n","n","n","n","linear","plaza","periodic","collective_effervescence","","","people","","","interconnection","","","impressive","","",""],
-  [-71.0865,42.37055,"Red and Green Buildings","personal","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","wonder","","","impressive","","","the juxtaposition of these buildings and their colors created a moment of awe"],
-  [-71.0814,42.36446,"Figure Skating Event at Kendall Sq. Ice Rink","gardener","walk","n","n","n","n","n","n","linear","park","seasonal","collective_effervescence","","","event","","","wonder","","","impressive","","","wonder, figure skating"],
-  [-71.0857,42.37097,"Juxtaposition of Church and Brick Building","personal","walk","y","n","n","n","n","n","linear","street","timeless","visual_design","","","building","","","beauty","","","impressive","","",""],
-  [-71.0683,42.35555,"Social Responsibility in Beacon Hill","gardener","walk","n","n","n","n","n","y","linear","street","timeless","moral_beauty","","","people","","","vastness","","","inclusive","","","vastness; history and social responsibility"],
-],
-
-// ═══════════════════════════════════════════════════════════
-// PARSE data into structured objects
-// ═══════════════════════════════════════════════════════════
-FIELDS = ["lng","lat","name","affiliation","transport","awe_walk","sanctuary","threshold","other","surprise","history","rhythm","where","potential","wol","wol2","wol3","what1","what2","what3","perception1","perception2","perception3","tension1","tension2","tension3","description"],
-
-POINTS = RAW.map(r => {
-  const obj = {};
-  FIELDS.forEach((f, i) => { obj[f] = r[i] ?? ""; });
-  // Normalise: pick first non-empty WOL / perception / tension
-  obj.wol_primary = [obj.wol, obj.wol2, obj.wol3].find(v => v && v.trim()) || "other";
-  obj.perception   = [obj.perception1, obj.perception2, obj.perception3].find(v => v && v.trim()) || "other";
-  obj.tension      = [obj.tension1, obj.tension2, obj.tension3].find(v => v && v.trim()) || "other";
-  return obj;
-});
-
-// ═══════════════════════════════════════════════════════════
-// COLOR SCHEMES
-// Each scheme maps a field value → hex color
-// ═══════════════════════════════════════════════════════════
-const SCHEMES = {
-  wol: {
-    field: "wol_primary",
-    label: "Way of Life",
-    colors: {
-      "nature":                "#6a9e4f",
-      "epiphany/knowledge":    "#6b5b8a",
-      "collective_effervescence": "#4a7a8a",
-      "moral_beauty":          "#c4a882",
-      "visual_design":         "#b05a3a",
-      "life/death":            "#888888",
-      "music":                 "#e07040",
-      "vista":                 "#5890b8",
-      "other":                 "#999999",
-    }
-  },
-  perception: {
-    field: "perception",
-    label: "Perception",
-    colors: {
-      "wonder":        "#6a9e4f",
-      "beauty":        "#d4845a",
-      "vastness":      "#5890b8",
-      "interconnection": "#c4a882",
-      "mystery":       "#7a6aaa",
-      "other":         "#999999",
-    }
-  },
-  tension: {
-    field: "tension",
-    label: "Atmosphere",
-    colors: {
-      "wild":       "#4e8c4a",
-      "impressive": "#8c4518",
-      "intimate":   "#c4a882",
-      "inclusive":  "#4a7a8a",
-      "ornate":     "#b05a3a",
-      "novel":      "#6b5b8a",
-      "ordinary":   "#888888",
-      "familiar":   "#a88058",
-      "expansive":  "#5890b8",
-      "exclusive":  "#74120c",
-      "curated":    "#97ba74",
-      "functional": "#7a6e5f",
-      "other":      "#999999",
-    }
-  },
-  rhythm: {
-    field: "rhythm",
-    label: "Rhythm",
-    colors: {
-      "cyclical": "#6a9e4f",
-      "linear":   "#8c4518",
-      "other":    "#999",
-    }
-  },
-  experienced_where: {
-    field: "where",
-    label: "Experienced where",
-    colors: {
-      "park":        "#6a9e4f",
-      "street":      "#8c4518",
-      "institution": "#6b5b8a",
-      "home":        "#c4a882",
-      "plaza":       "#4a7a8a",
-      "corridor":    "#888",
-      "other":       "#999",
-    }
-  },
-  potential: {
-    field: "potential",
-    label: "Temporal potential",
-    colors: {
-      "timeless":  "#4a7a8a",
-      "seasonal":  "#6a9e4f",
-      "daily":     "#c4a882",
-      "periodic":  "#6b5b8a",
-      "ephemeral": "#8c4518",
-      "recurring": "#d4845a",
-      "other":     "#999",
-    }
-  },
-  affiliation: {
-    field: "affiliation",
-    label: "Contributor",
-    colors: {
-      "gardener": "#6a9e4f",
-      "CRA":      "#8c4518",
-      "personal": "#6b5b8a",
-      "other":    "#999",
-    }
-  }
-};
-
-// ═══════════════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════════════
-let state = {
-  scheme: "wol",
-  hiddenValues: new Set(),
-  filterAffil: new Set(["gardener","CRA","personal"]),
-  filterAweWalk: "all",
-  markers: [],
-};
-
-// ═══════════════════════════════════════════════════════════
-// MAP INIT
-// ═══════════════════════════════════════════════════════════
-const map = L.map("map", {
-  center: [42.374, -71.105],
-  zoom: 14,
-  zoomControl: true,
-});
-
-// Tile layer — CartoDB Positron (light, minimal, works offline once cached)
-L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-  subdomains: "abcd",
-  maxZoom: 19,
-}).addTo(map);
-
-// ═══════════════════════════════════════════════════════════
-// MARKER UTILS
-// ═══════════════════════════════════════════════════════════
-function getColor(point) {
-  const scheme = SCHEMES[state.scheme];
-  const val = (point[scheme.field] || "").trim().toLowerCase();
-  return scheme.colors[val] || scheme.colors["other"] || "#999";
-}
-
-function isVisible(point) {
-  const scheme = SCHEMES[state.scheme];
-  const val = (point[scheme.field] || "").trim().toLowerCase();
-  if (state.hiddenValues.has(val)) return false;
-  if (!state.filterAffil.has(point.affiliation)) return false;
-  if (state.filterAweWalk !== "all" && point.awe_walk !== state.filterAweWalk) return false;
-  return true;
-}
-
-function makeMarker(point) {
-  const color = getColor(point);
-  const icon = L.divIcon({
-    className: "",
-    html: `<div class="awe-marker" style="width:11px;height:11px;background:${color};"></div>`,
-    iconSize: [11, 11],
-    iconAnchor: [5.5, 5.5],
-  });
-  const m = L.marker([point.lat, point.lng], { icon })
-    .addTo(map)
-    .on("click", () => showDetail(point));
-  return m;
-}
-
-// ═══════════════════════════════════════════════════════════
-// RENDER MARKERS
-// ═══════════════════════════════════════════════════════════
-function renderMarkers() {
-  // Remove old
-  state.markers.forEach(m => map.removeLayer(m));
-  state.markers = [];
-
-  let visible = 0;
-  POINTS.forEach(p => {
-    if (!isVisible(p)) return;
-    visible++;
-    state.markers.push(makeMarker(p));
-  });
-
-  document.getElementById("stat-visible").textContent = visible;
-}
-
-// ═══════════════════════════════════════════════════════════
-// LEGEND
-// ═══════════════════════════════════════════════════════════
-function renderLegend() {
-  const scheme = SCHEMES[state.scheme];
-  const counts = {};
-  POINTS.forEach(p => {
-    const val = (p[scheme.field] || "").trim().toLowerCase() || "other";
-    counts[val] = (counts[val] || 0) + 1;
-  });
-
-  const entries = Object.entries(scheme.colors)
-    .filter(([k]) => counts[k])
-    .sort((a, b) => (counts[b[0]] || 0) - (counts[a[0]] || 0));
-
-  const legend = document.getElementById("legend");
-  legend.innerHTML = entries.map(([val, color]) => `
-    <div class="legend-item ${state.hiddenValues.has(val) ? "dimmed" : ""}" data-val="${val}">
-      <div class="legend-dot" style="background:${color};"></div>
-      <span class="legend-label">${val}</span>
-      <span class="legend-count">${counts[val] || 0}</span>
-    </div>
-  `).join("");
-
-  legend.querySelectorAll(".legend-item").forEach(el => {
-    el.addEventListener("click", () => {
-      const val = el.dataset.val;
-      if (state.hiddenValues.has(val)) state.hiddenValues.delete(val);
-      else state.hiddenValues.add(val);
-      renderLegend();
-      renderMarkers();
-    });
-  });
-}
-
-// ═══════════════════════════════════════════════════════════
-// DETAIL PANEL
-// ═══════════════════════════════════════════════════════════
-function showDetail(point) {
-  const panel = document.getElementById("detailPanel");
-  panel.classList.remove("empty");
-
-  const scheme = SCHEMES[state.scheme];
-  const activeVal = (point[scheme.field] || "").trim().toLowerCase();
-  const color = getColor(point);
-
-  const tags = [
-    point.wol_primary, point.perception, point.tension,
-    point.rhythm, point.where, point.potential,
-    point.affiliation,
-    point.awe_walk === "y" ? "awe walk" : null,
-    point.sanctuary === "y" ? "sanctuary" : null,
-  ].filter(Boolean);
-
-  const desc = (point.description || "").replace(/^"|"$/g, "").trim();
-
-  panel.innerHTML = `
-    <div class="detail-title">${point.name}</div>
-    <div class="detail-tags">
-      ${tags.map(t => `<span class="tag ${t === activeVal ? "highlight" : ""}" style="${t === activeVal ? `background:${color}` : ""}">${t}</span>`).join("")}
-    </div>
-    <div class="detail-grid">
-      <div class="detail-cell"><div class="k">What</div><div class="v">${[point.what1, point.what2, point.what3].filter(Boolean).join(", ") || "—"}</div></div>
-      <div class="detail-cell"><div class="k">Transport</div><div class="v">${point.transport || "—"}</div></div>
-      <div class="detail-cell"><div class="k">Rhythm</div><div class="v">${point.rhythm || "—"}</div></div>
-      <div class="detail-cell"><div class="k">Potential</div><div class="v">${point.potential || "—"}</div></div>
-    </div>
-    ${desc ? `<div class="detail-desc">"${desc}"</div>` : ""}
-  `;
-
-  // Pan to point
-  map.panTo([point.lat, point.lng]);
-}
-
-// ═══════════════════════════════════════════════════════════
-// FILTER CHIPS
-// ═══════════════════════════════════════════════════════════
-function initAffilChips() {
-  const container = document.getElementById("filter-affiliation");
-  const affiliations = [...new Set(POINTS.map(p => p.affiliation).filter(Boolean))];
-  container.innerHTML = affiliations.map(a => `
-    <span class="chip active" data-val="${a}">${a}</span>
-  `).join("");
-  container.querySelectorAll(".chip").forEach(c => {
-    c.addEventListener("click", () => {
-      const val = c.dataset.val;
-      if (state.filterAffil.has(val)) {
-        state.filterAffil.delete(val);
-        c.classList.remove("active");
-      } else {
-        state.filterAffil.add(val);
-        c.classList.add("active");
-      }
-      renderMarkers();
-    });
-  });
-}
-
-function initAweWalkChips() {
-  document.getElementById("filter-awewalk").querySelectorAll(".chip").forEach(c => {
-    c.addEventListener("click", () => {
-      document.querySelectorAll("#filter-awewalk .chip").forEach(x => x.classList.remove("active"));
-      c.classList.add("active");
-      state.filterAweWalk = c.dataset.val;
-      renderMarkers();
-    });
-  });
-}
-
-// ═══════════════════════════════════════════════════════════
-// COLOR-BY SELECTOR
-// ═══════════════════════════════════════════════════════════
-document.getElementById("colorBy").addEventListener("change", e => {
-  state.scheme = e.target.value;
-  state.hiddenValues.clear();
-  renderLegend();
-  renderMarkers();
-});
-
-// ═══════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════
-document.getElementById("stat-total").textContent = POINTS.length;
-document.getElementById("stat-awe-walks").textContent = POINTS.filter(p => p.awe_walk === "y").length;
-
-initAffilChips();
-initAweWalkChips();
-renderLegend();
-renderMarkers();
-</script>
 </body>
 </html>
