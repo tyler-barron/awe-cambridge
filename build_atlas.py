@@ -478,13 +478,13 @@ function selectInstance(idx) {
     {label:"Surprise",  val:r.binary_surprise},
     {label:"Sanctuary", val:r.binary_sanctuary},
     {label:"Other",     val:r.binary_other},
+    {label:"History",   val:r["history(y/n)"]},
   ].filter(b => b.val);
 
   const locLabel   = DIM_MAP["location"].labels[r.location]   || r.location   || "—";
   const modeLabel  = r.mode || "—";
   const phenLabel  = DIM_MAP["phenom1"].labels[r.phenomenology1] || r.phenomenology1 || "—";
-  const freqLabel  = r.frequency || "—";
-  const histLabel  = r["history(y/n)"] === "y" ? "Yes" : r["history(y/n)"] === "n" ? "No" : (r["history(y/n)"] || "—");
+  const freqLabel  = r.frequency ? r.frequency.charAt(0).toUpperCase() + r.frequency.slice(1) : "—";
   const walkLabel  = r["awe_walk(y/n)"] === "y" ? "Yes" : r["awe_walk(y/n)"] === "n" ? "No" : (r["awe_walk(y/n)"] || "—");
   const morph2Label = (r.morphology2 || "").replace(/_/g," ");
   const phenom2Label = (r.phenomenology2 || "").replace(/_/g," ");
@@ -513,7 +513,7 @@ function selectInstance(idx) {
     `</div>` +
 
     `<div><div class="d-section-label">Temporality</div><div class="d-grid">` +
-      cell("Frequency", freqLabel) + cell("History", histLabel) +
+      cell("Frequency", freqLabel) +
     `</div></div>`;
 
   document.getElementById("detail-panel").classList.add("open");
