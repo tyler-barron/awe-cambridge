@@ -1142,7 +1142,7 @@ h1.title em { font-style: italic; color: var(--accent); }
       <div id="walk-cards-container">
       <div class="walk-card" data-walk="0">
         <div class="walk-card-top">
-          <div class="walk-card-date"><div class="walk-date-month">Mar</div><div class="walk-date-day">8</div></div>
+          <div class="walk-card-date" id="walk-seed-date-0"><div class="walk-date-month">Mar</div><div class="walk-date-day">8</div></div>
           <div class="walk-card-info">
             <div class="walk-card-name">Dawn walk to <em>the Nave at Noon</em></div>
             <div class="walk-card-meta">Sat 7:00am · Elm &amp; 3rd · 0.4 mi away<br>Hosted by Mira S. · up to 6 people</div>
@@ -1157,7 +1157,7 @@ h1.title em { font-style: italic; color: var(--accent); }
       </div>
       <div class="walk-card" data-walk="1">
         <div class="walk-card-top">
-          <div class="walk-card-date"><div class="walk-date-month">Mar</div><div class="walk-date-day">12</div></div>
+          <div class="walk-card-date" id="walk-seed-date-1"><div class="walk-date-month">Mar</div><div class="walk-date-day">12</div></div>
           <div class="walk-card-info">
             <div class="walk-card-name"><em>Spring emergence</em> garden wander</div>
             <div class="walk-card-meta">Wed 6:30pm · Davis Sq · 0.7 mi away<br>Hosted by Theo R. · up to 8 people</div>
@@ -1172,7 +1172,7 @@ h1.title em { font-style: italic; color: var(--accent); }
       </div>
       <div class="walk-card" data-walk="2">
         <div class="walk-card-top">
-          <div class="walk-card-date"><div class="walk-date-month">Mar</div><div class="walk-date-day">15</div></div>
+          <div class="walk-card-date" id="walk-seed-date-2"><div class="walk-date-month">Mar</div><div class="walk-date-day">15</div></div>
           <div class="walk-card-info">
             <div class="walk-card-name">Saturday dawn swimmers + <em>collective awe</em></div>
             <div class="walk-card-meta">Sat 6:30am · reservoir path · 0.8 mi away<br>Hosted by Anonymous · open group</div>
@@ -1205,7 +1205,7 @@ h1.title em { font-style: italic; color: var(--accent); }
       <!-- Talk card 1 -->
       <div class="walk-card">
         <div class="walk-card-top">
-          <div class="walk-card-date"><div class="walk-date-month">Mar</div><div class="walk-date-day">18</div></div>
+          <div class="walk-card-date" id="talk-seed-date-0"><div class="walk-date-month">Mar</div><div class="walk-date-day">18</div></div>
           <div class="walk-card-info">
             <div class="walk-card-name"><em>What has nature done to you?</em></div>
             <div class="walk-card-meta">Tue 7:00pm · Bloc Café, Somerville · 0.3 mi away<br>Hosted by Priya K. · up to 10 people</div>
@@ -1227,7 +1227,7 @@ h1.title em { font-style: italic; color: var(--accent); }
       <!-- Talk card 2 -->
       <div class="walk-card">
         <div class="walk-card-top">
-          <div class="walk-card-date"><div class="walk-date-month">Mar</div><div class="walk-date-day">22</div></div>
+          <div class="walk-card-date" id="talk-seed-date-1"><div class="walk-date-month">Mar</div><div class="walk-date-day">22</div></div>
           <div class="walk-card-info">
             <div class="walk-card-name"><em>The moment before I understood</em></div>
             <div class="walk-card-meta">Sat 4:00pm · Bloc Café, Somerville · 0.3 mi away<br>Hosted by Anonymous · up to 8 people</div>
@@ -1248,7 +1248,7 @@ h1.title em { font-style: italic; color: var(--accent); }
       <!-- Talk card 3 -->
       <div class="walk-card">
         <div class="walk-card-top">
-          <div class="walk-card-date"><div class="walk-date-month">Apr</div><div class="walk-date-day">3</div></div>
+          <div class="walk-card-date" id="talk-seed-date-2"><div class="walk-date-month">Apr</div><div class="walk-date-day">3</div></div>
           <div class="walk-card-info">
             <div class="walk-card-name"><em>Awe &amp; grief</em> — holding both</div>
             <div class="walk-card-meta">Thu 6:30pm · Lyndell's Bakery backroom · 1.1 mi away<br>Hosted by Mira S. · up to 6 people · intimate</div>
@@ -2300,6 +2300,7 @@ var places = [
 ];
 
 
+
 var walkDetails = [
   { date:'Saturday, March 8 · 7:00am', title:'Dawn walk to <em>the Nave at Noon</em>', meet:'Elm & 3rd St', dist:'0.4 mi from you', host:'Mira S.', size:'Up to 6', desc:'We\'ll meet at dawn and walk quietly to the stone church. The rose window lights up at noon — we\'ll arrive just before and wait together. Bring something warm to drink.', attendees:[{e:'😊',n:'Mira S. (host)'},{e:'🧡',n:'Priya K.'},{e:'🌿',n:'Tom A.'},{e:'✨',n:'Anonymous'}] },
   { date:'Wednesday, March 12 · 6:30pm', title:'<em>Spring emergence</em> garden wander', meet:'Davis Sq fountain', dist:'0.7 mi from you', host:'Theo R.', size:'Up to 8', desc:'Following whatever is blooming. No fixed path — we\'ll let the flowers decide.', attendees:[{e:'🌸',n:'Theo R. (host)'},{e:'🔵',n:'Sam L.'}] },
@@ -2336,7 +2337,11 @@ var routeStopNotes = {
 var currentPlace = null, currentPlaceIdx = 0, navMode = 'guided';
 var runtimeNotes = {}, aiDirIndex = 0;
 var joinedWalks = {}, currentWalkDetailIdx = 0;
-var runtimeExperiences = [], currentFeedFilter = 'all', reactedCards = {};
+var runtimeExperiences = [], currentFeedFilter = 'all', reactedCards = {}, visitedCards = {};
+// Restore visitedCards from localStorage
+(function() {
+  try { var v = JSON.parse(localStorage.getItem('awe_visited_v1') || '{}'); Object.assign(visitedCards, v); } catch(e) {}
+})();
 var subMap = null, subMarker = null;
 var currentRouteTheme = 'contrast', currentRouteStops = [];
 
@@ -2358,7 +2363,7 @@ function setActiveTab(tab) {
 function switchTab(tab) {
   setActiveTab(tab);
   if (tab === 'home') { showScreen('screen-home'); }
-  else if (tab === 'walks') { showScreen('screen-walks'); renderScheduledWalks && renderScheduledWalks(); }
+  else if (tab === 'walks') { showScreen('screen-walks'); renderScheduledWalks && renderScheduledWalks(); renderScheduledTalks && renderScheduledTalks(); }
   else if (tab === 'share') { showScreen('screen-share'); renderFeed(currentFeedFilter); }
 }
 
@@ -2756,11 +2761,73 @@ document.querySelectorAll('.walk-card').forEach(function(card) {
   });
 });
 
-document.querySelectorAll('.join-walk-btn').forEach(function(btn) {
+// ── Seed card dates — always upcoming relative to today ─────────────────────
+(function() {
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function futureDate(daysFromNow) {
+    var d = new Date(); d.setDate(d.getDate() + daysFromNow); return d;
+  }
+  function setCardDate(id, daysFromNow) {
+    var el = document.getElementById(id); if (!el) return;
+    var d = futureDate(daysFromNow);
+    el.querySelector('.walk-date-month').textContent = MONTHS[d.getMonth()];
+    el.querySelector('.walk-date-day').textContent   = d.getDate();
+  }
+  // Walks: next Sat, following Wed, following Sat
+  setCardDate('walk-seed-date-0',  (6 - new Date().getDay() + 7) % 7 || 7);
+  setCardDate('walk-seed-date-1',  (6 - new Date().getDay() + 7) % 7 + 4);
+  setCardDate('walk-seed-date-2',  (6 - new Date().getDay() + 7) % 7 + 7);
+  // Talks: ~2, ~3, ~4 weeks out
+  setCardDate('talk-seed-date-0', 12);
+  setCardDate('talk-seed-date-1', 18);
+  setCardDate('talk-seed-date-2', 25);
+})();
+
+// ── Persist join state ──────────────────────────────────────────────────────
+var AWE_JOINED_KEY = 'awe_joined_v1';
+function getJoined() {
+  try { return JSON.parse(localStorage.getItem(AWE_JOINED_KEY) || '{}'); }
+  catch(e) { return {}; }
+}
+function saveJoined(obj) { localStorage.setItem(AWE_JOINED_KEY, JSON.stringify(obj)); }
+
+// Restore joinedWalks from localStorage on load
+(function() {
+  var stored = getJoined();
+  Object.keys(stored).forEach(function(k) { if (stored[k]) joinedWalks[k] = true; });
+  // Re-apply visual state to seed walk buttons
+  ['join-0','join-1','join-2'].forEach(function(id) {
+    var btn = document.getElementById(id);
+    if (btn && joinedWalks[id]) { btn.textContent = 'You\'re going \u2713'; btn.classList.add('joined'); }
+  });
+  // Re-apply visual state to seed talk buttons
+  ['join-talk-0','join-talk-1','join-talk-2'].forEach(function(id) {
+    var btn = document.getElementById(id);
+    if (btn && joinedWalks[id]) { btn.textContent = 'You\'re going \u2713'; btn.classList.add('joined'); }
+  });
+})();
+
+// Wire seed walk join buttons (join-0, join-1, join-2)
+document.querySelectorAll('[id^="join-"]:not([id^="join-talk"])').forEach(function(btn) {
   btn.addEventListener('click', function(e) {
     e.stopPropagation();
-    var idx = parseInt(btn.id.split('-')[1]);
-    joinedWalks[idx] = true;
+    var key = btn.id;
+    var joined = getJoined();
+    if (joined[key]) return; // already joined
+    joined[key] = true; saveJoined(joined);
+    joinedWalks[key] = true;
+    btn.textContent = 'You\'re going \u2713'; btn.classList.add('joined');
+  });
+});
+
+// Wire seed talk join buttons (join-talk-0, join-talk-1, join-talk-2)
+document.querySelectorAll('[id^="join-talk-"]').forEach(function(btn) {
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    var key = btn.id;
+    var joined = getJoined();
+    if (joined[key]) return;
+    joined[key] = true; saveJoined(joined);
     btn.textContent = 'You\'re going \u2713'; btn.classList.add('joined');
   });
 });
@@ -2787,14 +2854,22 @@ function showWalkDetail(idx) {
 
 document.getElementById('wd-join-btn').addEventListener('click', function() {
   var idx = currentWalkDetailIdx;
-  joinedWalks[idx] = true;
+  var key = 'join-' + idx;
+  var joined = getJoined();
+  joined[key] = true; saveJoined(joined);
+  joinedWalks[key] = true;
   this.textContent = 'You\'re going \u2713'; this.style.background = 'var(--green)'; this.style.color = 'var(--parchment)';
-  var listBtn = document.getElementById('join-' + idx);
+  var listBtn = document.getElementById(key);
   if (listBtn) { listBtn.textContent = 'You\'re going \u2713'; listBtn.classList.add('joined'); }
 });
 document.getElementById('wd-back-btn').addEventListener('click', function() { showScreen('screen-walks'); });
 document.getElementById('schedule-new-btn').addEventListener('click', function() { showScreen('screen-schedule'); });
-document.getElementById('discord-join-btn').addEventListener('click', function() { alert('Opens Discord in the real app.'); });
+document.getElementById('discord-join-btn').addEventListener('click', function() {
+  var btn = this;
+  btn.textContent = 'Discord invite coming soon →';
+  btn.style.opacity = '.6';
+  setTimeout(function() { btn.textContent = 'Join the Discord →'; btn.style.opacity = ''; }, 2800);
+});
 
 // schedule form chips
 document.querySelectorAll('.form-chip[data-single]').forEach(function(btn) {
@@ -2949,12 +3024,12 @@ function renderFeed(filter) {
       '<div class="exp-body">' + exp.body + '</div>' +
       '<div class="exp-footer">' +
         '<button class="exp-react-btn' + (reacted ? ' reacted' : '') + '" data-key="' + key + '">' + (reacted ? '\u2736' : '\u25c7') + ' <span class="react-count">' + ((exp.reactions ? exp.reactions.moved : 0) + (reacted ? 1 : 0)) + '</span> moved</button>' +
-        '<button class="exp-react-btn" onclick="alert(\'Marks you as having visited.\')">○ ' + (exp.reactions ? exp.reactions.there : 0) + ' been there</button>' +
+        '<button class="exp-react-btn been-there-btn' + (visitedCards[key] ? ' reacted' : '') + '" data-bkey="' + key + '">' + (visitedCards[key] ? '◉' : '○') + ' <span class="there-count">' + ((exp.reactions ? exp.reactions.there : 0) + (visitedCards[key] ? 1 : 0)) + '</span> been there</button>' +
         '<span class="exp-location-tag">' + exp.location + '</span>' +
       '</div></div>';
   }).join('');
   if (!filtered.length) feed.innerHTML = '<p style="padding:20px 0;font-style:italic;color:var(--muted);font-size:15px">No experiences yet for this type. Be the first.</p>';
-  // bind react buttons
+  // bind "moved" react buttons
   feed.querySelectorAll('.exp-react-btn[data-key]').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var key = btn.dataset.key;
@@ -2964,6 +3039,19 @@ function renderFeed(filter) {
       var countEl = btn.querySelector('.react-count');
       if (countEl) countEl.textContent = parseInt(countEl.textContent) + 1;
       btn.childNodes[0].textContent = '\u2736 ';
+    });
+  });
+  // bind "been there" buttons
+  feed.querySelectorAll('.been-there-btn[data-bkey]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var key = btn.dataset.bkey;
+      if (visitedCards[key]) return;
+      visitedCards[key] = true;
+      try { localStorage.setItem('awe_visited_v1', JSON.stringify(visitedCards)); } catch(e) {}
+      btn.classList.add('reacted');
+      var countEl = btn.querySelector('.there-count');
+      if (countEl) countEl.textContent = parseInt(countEl.textContent) + 1;
+      btn.childNodes[0].textContent = '\u25c9 ';
     });
   });
 }
@@ -3604,6 +3692,7 @@ var placeCoords = [
   [42.39268, -71.1272],
   [42.39133, -71.1145]
 ];
+
 
 
 var typeColors = {
@@ -4382,6 +4471,11 @@ talkBtnIds.forEach(function(id) {
     });
   }
 });
+
+// ── On load: render any saved talks ─────────────────────────────────────────
+(function() {
+  renderScheduledTalks && renderScheduledTalks();
+})();
 </script>
 
 <div class="screen" id="screen-submit-success">
