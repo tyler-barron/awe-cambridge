@@ -46,7 +46,7 @@ FREQ_SEASON = {
     'periodic':  'Periodic',
     'recurring': 'Recurring',
     'seasonal':  'Seasonal',
-    'timeless':  'Year-round',
+    'timeless':  'Always',
 }
 
 # Compass-step templates indexed by 8-point bearing
@@ -662,15 +662,13 @@ html = html.replace(
     '      <div style="padding-top:16px">\n'
     '        <div class="section-label">When do you want to find it?</div>\n'
     '        <div class="tempo-chips" id="tempo-chips">\n'
-    '          <button class="chip selected" data-tempo="timeless">Timeless</button>\n'
+    '          <button class="chip all-chip" data-tempo="all">All</button>\n'
+    '          <button class="chip selected" data-tempo="timeless">Always</button>\n'
     '          <button class="chip" data-tempo="daily">Daily</button>\n'
     '          <button class="chip" data-tempo="recurring">Recurring</button>\n'
     '          <button class="chip" data-tempo="seasonal">Seasonal</button>\n'
-    '          <button class="chip" data-tempo="periodic">Periodic</button>\n'
-    '          <button class="chip" data-tempo="ephemeral">Ephemeral</button>\n'
-    '          <button class="chip all-chip" data-tempo="all">Any time</button>\n'
     '        </div>\n'
-    '        <p class="nav-desc" id="tempo-note" style="font-size:11px;margin-top:6px;margin-bottom:0">Timeless places are available whenever you arrive — no timing required.</p>\n'
+    '        <p class="nav-desc" id="tempo-note" style="font-size:11px;margin-top:6px;margin-bottom:0">Always — these places are there whenever you arrive. No timing required.</p>\n'
     '      </div>\n'
     '      <div style="padding-top:14px">\n'
     '        <div class="section-label">Only show places that are... <span style="font-style:italic;font-family:\'Cormorant Garamond\',serif;text-transform:none;letter-spacing:0;font-size:12px;color:var(--muted)">(optional)</span></div>\n'
@@ -826,13 +824,11 @@ document.querySelectorAll('[data-tempo]').forEach(function(btn) {
     var note = document.getElementById('tempo-note');
     if (note) {
       var msgs = {
-        'timeless':  'Timeless places are available whenever you arrive.',
-        'daily':     'These places renew every day — go whenever you like.',
-        'recurring': 'These places repeat on a cycle. Check before you go.',
-        'seasonal':  'These places are tied to a specific season.',
-        'periodic':  'These places happen periodically — timing matters.',
-        'ephemeral': 'Warning: these moments may already be gone. They are documented for their beauty, not their availability.',
-        'all':       'Showing all places regardless of timing.'
+        'timeless':  'Always — these places are there whenever you arrive. No timing required.',
+        'daily':     'Daily — available within an ordinary day, timed to diurnal rhythms or regular hours.',
+        'recurring': 'Recurring — these places repeat on a schedule. Check before you go.',
+        'seasonal':  'Seasonal — tied to a specific time of year. Come back at the right season.',
+        'all':       'Showing all places regardless of when they\'re available.'
       };
       note.textContent = msgs[selectedTempo] || '';
     }

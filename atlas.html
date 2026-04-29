@@ -258,7 +258,7 @@ const FILTER_GROUPS = [
   { id:"tempo",  label:"Temporality",  color:"#7a8a4a",
     dims:[
       { key:"frequency", csvCol:"frequency",    label:"Frequency",
-        labels:{ "daily":"Daily","ephemeral":"Ephemeral","periodic":"Periodic","recurring":"Recurring","seasonal":"Seasonal","timeless":"Year-round" } },
+        labels:{ "daily":"Daily","ephemeral":"Ephemeral","periodic":"Periodic","recurring":"Recurring","seasonal":"Seasonal","timeless":"Always" } },
       { key:"history",   csvCol:"history(y/n)", label:"History",
         labels:{ "y":"Yes","n":"No" } },
     ]
@@ -504,7 +504,7 @@ function selectInstance(idx) {
   const locLabel   = DIM_MAP["location"].labels[r.location]   || r.location   || "—";
   const modeLabel  = r.mode || "—";
   const phenLabel  = DIM_MAP["phenom1"].labels[r.phenomenology1] || r.phenomenology1 || "—";
-  const freqLabel  = r.frequency ? r.frequency.charAt(0).toUpperCase() + r.frequency.slice(1) : "—";
+  const freqLabel  = r.frequency ? (DIM_MAP["frequency"].labels[r.frequency] || (r.frequency.charAt(0).toUpperCase() + r.frequency.slice(1))) : "—";
   const walkLabel  = r["awe_walk(y/n)"] === "y" ? "Yes" : r["awe_walk(y/n)"] === "n" ? "No" : (r["awe_walk(y/n)"] || "—");
   const morph2Label = (r.morphology2 || "").replace(/_/g," ");
   const phenom2Label = (r.phenomenology2 || "").replace(/_/g," ");
