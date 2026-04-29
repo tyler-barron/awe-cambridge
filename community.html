@@ -897,7 +897,7 @@ h1.title em { font-style: italic; color: var(--accent); }
           <button class="chip selected" data-tempo="timeless">Always</button>
           <button class="chip" data-tempo="daily">Daily</button>
           <button class="chip" data-tempo="recurring">Recurring</button>
-          <button class="chip" data-tempo="seasonal">Seasonal</button>
+          <button class="chip" data-tempo="seasonal">Seasonally</button>
         </div>
         <p class="nav-desc" id="tempo-note" style="font-size:11px;margin-top:6px;margin-bottom:0">Always — these places are there whenever you arrive. No timing required.</p>
       </div>
@@ -2571,17 +2571,87 @@ document.getElementById('change-filters-btn').addEventListener('click', function
 document.getElementById('place-walk-banner').addEventListener('click', function() { switchTab('walks'); showWalkDetail(0); });
 
 // ============================================================
-// COMPASS
+// COMPASS — geolocation helpers
 // ============================================================
+var compassWatcher   = null;
+var compassArrived   = false;
+var ARRIVE_THRESHOLD = 50; // metres
+
+function calcBearingDeg(lat1, lon1, lat2, lon2) {
+  var dLon = (lon2 - lon1) * Math.PI / 180;
+  var y = Math.sin(dLon) * Math.cos(lat2 * Math.PI / 180);
+  var x = Math.cos(lat1 * Math.PI / 180) * Math.sin(lat2 * Math.PI / 180) -
+          Math.sin(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.cos(dLon);
+  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+function calcDistMeters(lat1, lon1, lat2, lon2) {
+  var R = 6371000, dLat = (lat2-lat1)*Math.PI/180, dLon = (lon2-lon1)*Math.PI/180;
+  var a = Math.sin(dLat/2)*Math.sin(dLat/2) +
+          Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+function bearingToLabel(deg) {
+  return ['N','NE','E','SE','S','SW','W','NW'][Math.round(deg/45) % 8];
+}
+function distToWarmth(m) {
+  if (m > 1500) return 0.05;
+  if (m < ARRIVE_THRESHOLD) return 1.0;
+  return Math.max(0.05, 1 - (m / 1500));
+}
+
+function updateCompassFromPos(pos) {
+  if (compassArrived) return;
+  var coord = placeCoords[currentPlaceIdx];
+  if (!coord) return;
+  var deg  = calcBearingDeg(pos.coords.latitude, pos.coords.longitude, coord[0], coord[1]);
+  var dist = calcDistMeters(pos.coords.latitude, pos.coords.longitude, coord[0], coord[1]);
+  document.getElementById('compass-needle').style.transform = 'rotate(' + deg + 'deg)';
+  document.getElementById('bearing-big').textContent = bearingToLabel(deg);
+  setWarmth(distToWarmth(dist));
+  if (dist < ARRIVE_THRESHOLD) triggerCompassFound();
+}
+
+function startCompassGeo() {
+  compassArrived = false;
+  if (!navigator.geolocation) return; // fallback: static bearing already set
+  navigator.geolocation.getCurrentPosition(updateCompassFromPos, function(){}, {enableHighAccuracy:true});
+  compassWatcher = navigator.geolocation.watchPosition(
+    updateCompassFromPos, function(){},
+    {enableHighAccuracy:true, maximumAge:4000, timeout:15000}
+  );
+}
+function stopCompassGeo() {
+  if (compassWatcher !== null) { navigator.geolocation.clearWatch(compassWatcher); compassWatcher = null; }
+}
+
+function triggerCompassFound() {
+  if (compassArrived) return;
+  compassArrived = true;
+  stopCompassGeo();
+  setWarmth(1.0);
+  document.getElementById('compass-found-state').style.display = 'block';
+  document.getElementById('compass-found-btn').style.display   = 'none';
+}
+
 function showCompassScreen() {
   var p = currentPlace;
+  compassArrived = false;
   document.getElementById('compass-dest').textContent = p.name.replace(/<[^>]+>/g,'').toUpperCase();
-  document.getElementById('bearing-big').textContent = p.bearing;
-  setTimeout(function() { document.getElementById('compass-needle').style.transform = 'rotate(' + (p.bearingDeg - 90) + 'deg)'; }, 400);
+  document.getElementById('bearing-big').textContent  = p.bearing;
+  document.getElementById('compass-found-state').style.display = 'none';
+  document.getElementById('compass-found-btn').style.display   = 'block';
+  // Set needle to static bearing immediately (correct rotation: rotate(bearingDeg))
+  setTimeout(function() {
+    document.getElementById('compass-needle').style.transform = 'rotate(' + p.bearingDeg + 'deg)';
+  }, 300);
   document.getElementById('compass-steps').innerHTML = p.compassSteps.map(function(s, i) {
     return '<div class="walk-step"><span class="step-num">0' + (i+1) + '</span><div class="step-text">' + s + '</div></div>';
   }).join('');
-  setWarmth(0.5); showScreen('screen-compass'); setActiveTab('home');
+  setWarmth(0.15);
+  showScreen('screen-compass');
+  setActiveTab('home');
+  // Kick off live GPS (updates needle + warmth in real time)
+  setTimeout(startCompassGeo, 400);
 }
 
 function setWarmth(val) {
@@ -2606,7 +2676,42 @@ document.querySelectorAll('.sim-btn').forEach(function(btn) {
   btn.addEventListener('click', function() { setWarmth(parseFloat(btn.dataset.warmth)); });
 });
 
-document.getElementById('compass-back-btn').addEventListener('click', function() { showScreen('screen-place'); setActiveTab('home'); });
+document.getElementById('compass-back-btn').addEventListener('click', function() {
+  stopCompassGeo();
+  showScreen('screen-place');
+  setActiveTab('home');
+});
+
+document.getElementById('compass-found-btn').addEventListener('click', function() {
+  triggerCompassFound();
+});
+
+document.getElementById('compass-share-btn').addEventListener('click', function() {
+  // Reveal inline awe-rating section
+  document.getElementById('compass-rating-reveal').style.display = 'block';
+  document.getElementById('compass-share-btn').style.display = 'none';
+  document.getElementById('compass-keep-wandering-btn').style.display = 'none';
+});
+
+document.getElementById('compass-keep-wandering-btn').addEventListener('click', function() {
+  stopCompassGeo();
+  findAwe();
+});
+
+document.getElementById('compass-rating-done-btn').addEventListener('click', function() {
+  var rating = parseInt(document.getElementById('compass-rating-slider').value, 10);
+  var p = currentPlace || {};
+  saveSubmission({
+    source:      'compass_wander',
+    place_name:  p.name ? p.name.replace(/<[^>]+>/g,'') : '',
+    awe_rating:  rating,
+    description: 'Compass wander — rated ' + rating + '/7',
+    morphology1: p.type || '',
+  });
+  stopCompassGeo();
+  showScreen('screen-share');
+  setActiveTab('share');
+});
 
 // ============================================================
 // AI DIRECTIONS SCREEN
