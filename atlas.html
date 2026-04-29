@@ -121,6 +121,41 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
 .d-binary-row{display:flex;flex-wrap:wrap;gap:3px;}
 .d-binary{font-family:"Space Mono",monospace;font-size:7px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:1px;border:1px solid rgba(140,69,24,.18);color:var(--stone);}
 .d-binary.yes{background:var(--ink);border-color:var(--ink);color:var(--parchment);}
+
+/* ── Share drawer ── */
+.map-share-btn{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:500;display:flex;align-items:center;gap:8px;padding:10px 20px;background:var(--parchment);border:2px solid var(--ink);border-radius:2px;font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink);cursor:pointer;box-shadow:0 2px 14px rgba(28,25,20,.18);transition:background .18s,color .18s,border-color .18s;white-space:nowrap;}
+.map-share-btn:hover{background:var(--ink);color:var(--parchment);}
+.map-share-btn .sbtn-icon{font-size:14px;transition:color .18s;}
+.share-backdrop{display:none;position:fixed;inset:0;z-index:2000;background:rgba(28,25,20,.35);}
+.share-backdrop.open{display:block;}
+.share-drawer{position:fixed;bottom:-100%;left:0;right:0;z-index:2001;background:var(--parchment);border-top:2px solid var(--ink);box-shadow:0 -8px 32px rgba(28,25,20,.2);transition:bottom .35s cubic-bezier(.22,.61,.36,1);max-height:80vh;overflow-y:auto;}
+.share-drawer.open{bottom:0;}
+.share-dhd{display:flex;align-items:center;gap:12px;padding:16px 24px 14px;border-bottom:1px solid rgba(140,69,24,.14);position:sticky;top:0;background:var(--parchment);z-index:2;}
+.share-dtitle{font-size:22px;font-weight:300;flex:1;}
+.share-dtitle em{font-style:italic;color:var(--accent);}
+.share-dcls{background:none;border:none;font-size:16px;color:var(--stone);cursor:pointer;padding:0;transition:color .15s;}
+.share-dcls:hover{color:var(--accent);}
+.share-dbody{padding:18px 24px 32px;}
+.share-intro{font-size:14px;font-style:italic;color:var(--muted);line-height:1.65;margin-bottom:18px;padding:12px 14px;background:rgba(140,69,24,.04);border:1px solid rgba(140,69,24,.1);border-radius:2px;}
+.share-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:600px){.share-grid{grid-template-columns:1fr;}}
+.share-full{grid-column:1/-1;}
+.share-field{display:flex;flex-direction:column;gap:6px;}
+.share-flabel{font-family:"Space Mono",monospace;font-size:8px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);}
+.share-finput{padding:9px 12px;border:1px solid rgba(140,69,24,.25);background:rgba(255,255,255,.4);font-family:"Cormorant Garamond",serif;font-size:16px;color:var(--ink);border-radius:2px;outline:none;width:100%;transition:border-color .2s;}
+.share-finput:focus{border-color:var(--ink);}
+.share-chips{display:flex;flex-wrap:wrap;gap:5px;}
+.share-chip{padding:4px 11px;border:1px solid rgba(140,69,24,.22);border-radius:20px;font-family:"Cormorant Garamond",serif;font-size:13px;font-style:italic;background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;}
+.share-chip:hover{border-color:var(--accent);color:var(--ink);}
+.share-chip.sel{background:var(--ink);border-color:var(--ink);color:var(--parchment);font-style:normal;}
+.share-sbtn{margin-top:20px;width:100%;padding:13px;background:var(--ink);color:var(--parchment);border:none;font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:background .2s;}
+.share-sbtn:hover{background:var(--accent);}
+.share-success{display:none;text-align:center;padding:28px 0 8px;}
+.share-success-icon{font-size:30px;color:var(--accent);margin-bottom:10px;}
+.share-success-msg{font-size:18px;font-weight:300;font-style:italic;color:var(--ink);margin-bottom:6px;}
+.share-success-sub{font-size:13px;font-style:italic;color:var(--muted);margin-bottom:20px;line-height:1.55;}
+.share-success-done{font-family:"Space Mono",monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;background:none;border:1px solid rgba(140,69,24,.25);color:var(--muted);padding:7px 18px;border-radius:1px;cursor:pointer;transition:all .15s;}
+.share-success-done:hover{border-color:var(--accent);color:var(--accent);}
 </style>
 </head>
 <body>
@@ -153,6 +188,9 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
   <div class="map-wrap">
     <div id="atlas-map"></div>
     <div class="map-badge" id="map-badge">220 shown</div>
+    <button class="map-share-btn" id="map-share-btn" onclick="openShareDrawer()">
+      <span class="sbtn-icon">◇</span> Share a moment of awe
+    </button>
   </div>
 
   <!-- ── Detail panel ── -->
@@ -569,6 +607,88 @@ function buildMarkers() {
 buildFilters();
 buildMarkers();
 renderList(new Set(AWE_DATA.map((_,i) => i)));
+
+/* ── Share drawer ── */
+var AWE_SUBMISSIONS_KEY = 'awe_submissions_v1';
+
+function openShareDrawer() {
+  document.getElementById('share-drawer').classList.add('open');
+  document.getElementById('share-backdrop').classList.add('open');
+  document.getElementById('share-success').style.display = 'none';
+  document.getElementById('share-form-content').style.display = 'block';
+}
+function closeShareDrawer() {
+  document.getElementById('share-drawer').classList.remove('open');
+  document.getElementById('share-backdrop').classList.remove('open');
+  document.getElementById('atlas-sub-name').value = '';
+  document.getElementById('atlas-sub-desc').value = '';
+  document.querySelectorAll('#atlas-type-chips .share-chip').forEach(function(c){ c.classList.remove('sel'); });
+}
+document.querySelectorAll('#atlas-type-chips .share-chip').forEach(function(chip) {
+  chip.addEventListener('click', function() {
+    document.querySelectorAll('#atlas-type-chips .share-chip').forEach(function(c){ c.classList.remove('sel'); });
+    chip.classList.toggle('sel');
+  });
+});
+document.getElementById('atlas-submit-btn').addEventListener('click', function() {
+  var name = document.getElementById('atlas-sub-name').value.trim();
+  var desc = document.getElementById('atlas-sub-desc').value.trim();
+  var sel  = document.querySelector('#atlas-type-chips .share-chip.sel');
+  if (!name && !desc) { alert('Please add at least a name or description.'); return; }
+  var sub = { id:Date.now(), submitted_at:new Date().toISOString(), source:'atlas_map',
+    name:name, description:desc, morphology1: sel ? sel.dataset.val : '' };
+  try {
+    var all = JSON.parse(localStorage.getItem(AWE_SUBMISSIONS_KEY) || '[]');
+    all.push(sub); localStorage.setItem(AWE_SUBMISSIONS_KEY, JSON.stringify(all));
+  } catch(e) {}
+  document.getElementById('share-form-content').style.display = 'none';
+  document.getElementById('share-success').style.display = 'block';
+});
 </script>
+
+<!-- ── Share backdrop + drawer ── -->
+<div class="share-backdrop" id="share-backdrop" onclick="closeShareDrawer()"></div>
+<div class="share-drawer" id="share-drawer">
+  <div class="share-dhd">
+    <div class="share-dtitle"><em>Share</em> a moment of awe</div>
+    <button class="share-dcls" onclick="closeShareDrawer()">&#x2715;</button>
+  </div>
+  <div class="share-dbody">
+    <div class="share-intro">Something stopped you in your tracks? Add it to the atlas — your submission is saved to this device and reviewed by the research team.</div>
+    <div id="share-form-content">
+      <div class="share-grid">
+        <div class="share-field">
+          <div class="share-flabel">Place or moment name</div>
+          <input class="share-finput" type="text" placeholder="What would you call it?" id="atlas-sub-name">
+        </div>
+        <div class="share-field">
+          <div class="share-flabel">Awe type</div>
+          <div class="share-chips" id="atlas-type-chips">
+            <button class="share-chip" data-val="nature">Nature</button>
+            <button class="share-chip" data-val="visual_design">Visual Design</button>
+            <button class="share-chip" data-val="collective_effervescence">Collective</button>
+            <button class="share-chip" data-val="moral_beauty">Moral Beauty</button>
+            <button class="share-chip" data-val="music">Music</button>
+            <button class="share-chip" data-val="epiphany/knowledge">Epiphany</button>
+            <button class="share-chip" data-val="life/death">Life &amp; Death</button>
+            <button class="share-chip" data-val="spirituality">Spiritual</button>
+          </div>
+        </div>
+        <div class="share-field share-full">
+          <div class="share-flabel">Describe the moment</div>
+          <textarea class="share-finput" style="height:100px;resize:none" placeholder="What did you see, hear, feel? What shifted?" id="atlas-sub-desc"></textarea>
+        </div>
+      </div>
+      <button class="share-sbtn" id="atlas-submit-btn">Submit to atlas →</button>
+    </div>
+    <div class="share-success" id="share-success">
+      <div class="share-success-icon">✦</div>
+      <div class="share-success-msg">Thank you for submitting.</div>
+      <div class="share-success-sub">Your moment of awe has been saved to this device. The research team reviews submissions regularly.</div>
+      <button class="share-success-done" onclick="closeShareDrawer()">Done →</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

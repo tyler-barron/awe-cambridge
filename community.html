@@ -161,11 +161,11 @@ h1.title em { font-style: italic; color: var(--accent); }
 .avail-note { font-size: 12px; color: var(--muted); font-style: italic; margin-top: 9px; text-align: center; }
 
 .home-secondary-btns { margin-top: 11px; display: flex; flex-direction: column; gap: 8px; }
-.home-cta-btn { width: 100%; padding: 12px 18px; background: transparent; border: 1px solid rgba(140,69,24,.26); border-radius: 2px; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: all .2s; text-align: center; }
+.home-cta-btn { width: 100%; padding: 14px 18px; background: transparent; border: 2px solid var(--ink); border-radius: 2px; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: all .2s; text-align: center; }
 .home-cta-btn:hover { border-color: var(--accent); background: rgba(140,69,24,.04); }
-.home-cta-icon { font-size: 15px; color: var(--accent); flex-shrink: 0; width: 20px; text-align: center; }
-.home-cta-text { font-size: 15px; font-style: italic; font-weight: 300; color: var(--ink); }
-.home-cta-sub { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-top: 3px; }
+.home-cta-icon { font-size: 17px; color: var(--ink); flex-shrink: 0; width: 20px; text-align: center; }
+.home-cta-text { font-size: 18px; font-style: italic; font-weight: 300; color: var(--ink); }
+.home-cta-sub { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
 
 /* ===================== PLACE ===================== */
 .place-emoji-hero { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; font-size: 64px; background: var(--warm); position: relative; overflow: hidden; }
@@ -593,7 +593,7 @@ h1.title em { font-style: italic; color: var(--accent); }
 }
 .welcome-wordmark-sub {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 14px; font-style: italic; font-weight: 300;
+  font-size: 20px; font-style: italic; font-weight: 300;
   color: rgba(244,240,231,.4); margin-top: 8px;
 }
 
@@ -790,17 +790,16 @@ h1.title em { font-style: italic; color: var(--accent); }
 
     <!-- Fading lines -->
     <div class="welcome-lines" id="welcome-lines">
-      <div class="wl wl-sm" id="wl-0">There are places in this city</div>
+      <div class="wl wl-sm" id="wl-0">There are moments in the city</div>
       <div class="wl wl-sm" id="wl-1">that stop people in their tracks.</div>
-      <div class="wl wl-md" style="margin-top:20px" id="wl-2">A garden hidden behind a building.</div>
-      <div class="wl wl-md" id="wl-3">Light through a window at exactly noon.</div>
-      <div class="wl wl-md" id="wl-4">A stranger's kindness that changes your afternoon.</div>
-      <div class="wl wl-lg" style="margin-top:24px" id="wl-5">Most of us walk past them every day.</div>
+      <div class="wl wl-md" style="margin-top:20px" id="wl-2">A hidden garden.</div>
+      <div class="wl wl-md" id="wl-3">The pink glow of afternoon light.</div>
+      <div class="wl wl-md" id="wl-4">A stranger's kindness.</div>
+      <div class="wl wl-lg" style="margin-top:24px" id="wl-5">All too often these things go unnoticed.</div>
     </div>
 
     <!-- Wordmark reveal -->
     <div class="welcome-wordmark" id="welcome-wordmark">
-      <div class="welcome-wordmark-label">Awe in Cambridge</div>
       <div class="welcome-wordmark-title">Awe <em>Atlas</em></div>
       <div class="welcome-wordmark-sub">Find the places that will move you.</div>
     </div>
@@ -905,12 +904,12 @@ h1.title em { font-style: italic; color: var(--accent); }
         <p class="nav-desc" id="tempo-note" style="font-size:11px;margin-top:6px;margin-bottom:0">Timeless places are available whenever you arrive — no timing required.</p>
       </div>
       <div style="padding-top:14px">
-        <div class="section-label">Only show places that are... <span style="font-style:italic;font-family:'Cormorant Garamond',serif;text-transform:none;letter-spacing:0;font-size:12px;color:var(--muted)">(optional)</span></div>
+        <div class="section-label">Only show places that invoke<span style="font-style:italic;font-family:'Cormorant Garamond',serif;text-transform:none;letter-spacing:0;font-size:12px;color:var(--muted)">(optional)</span></div>
         <div class="binary-toggles" id="binary-toggles">
-          <button class="binary-toggle" data-binary="threshold">Threshold Crossing</button>
-          <button class="binary-toggle" data-binary="sanctuary">Sanctuary</button>
-          <button class="binary-toggle" data-binary="historyPlace">Historical</button>
-          <button class="binary-toggle" data-binary="alterity">Alterity</button>
+          <button class="binary-toggle" data-binary="threshold">A threshold</button>
+          <button class="binary-toggle" data-binary="sanctuary">A sanctuary</button>
+          <button class="binary-toggle" data-binary="historyPlace">History</button>
+          <button class="binary-toggle" data-binary="alterity">Otherness</button>
         </div>
       </div>
       <div style="padding-top:16px">
