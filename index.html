@@ -139,12 +139,12 @@ body::before {
 }
 /* The whole sentence is the hero — no isolated "Awe" word */
 .def-sentence {
-  font-size: clamp(30px, 4.5vw, 54px);
+  font-size: clamp(22px, 3.2vw, 40px);
   font-weight: 300;
   font-style: italic;
   line-height: 1.45;
   color: var(--parchment);
-  margin-bottom: 52px;
+  margin-bottom: 36px;
 }
 .def-stats {
   display: flex;
@@ -181,13 +181,13 @@ body::before {
 .land-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 36px;
+  gap: 20px;
   width: 100%;
   max-width: 1060px;
 }
 .land-intro {
   grid-column: 1 / -1;
-  margin-bottom: 4px;
+  margin-bottom: 0;
 }
 .land-headline {
   font-size: clamp(26px, 3.2vw, 38px);
@@ -222,13 +222,13 @@ body::before {
 .tax-box {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 13px;
+  gap: 5px;
+  padding: 5px 10px;
   border: 1px solid rgba(140,69,24,.22);
   border-radius: 2px;
   font-family: 'Space Mono', monospace;
-  font-size: 11px;
-  letter-spacing: .08em;
+  font-size: 9.5px;
+  letter-spacing: .07em;
   text-transform: uppercase;
   color: var(--muted);
   white-space: nowrap;
@@ -238,8 +238,8 @@ body::before {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--parchment);
-  font-size: 12px;
-  padding: 8px 15px;
+  font-size: 10px;
+  padding: 6px 12px;
 }
 .tax-box.hi .tax-n { opacity: .75; }
 .tax-box.md { background: rgba(140,69,24,.07); color: var(--ink); }
@@ -258,7 +258,7 @@ body::before {
   max-width: 1020px;
 }
 .arch-intro {
-  margin-bottom: 22px;
+  margin-bottom: 14px;
 }
 .arch-headline {
   font-size: clamp(22px, 2.8vw, 32px);
@@ -269,7 +269,7 @@ body::before {
 .arch-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 10px;
 }
 .arch-card {
   background: rgba(255,255,255,.6);
@@ -290,7 +290,7 @@ body::before {
 }
 .arch-card-photo {
   width: 100%;
-  height: 155px;
+  height: 110px;
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -301,7 +301,7 @@ body::before {
   display: block;
 }
 .arch-card-body {
-  padding: 14px 18px 16px 22px;
+  padding: 10px 16px 13px 20px;
 }
 .arch-card-num {
   font-family: 'Space Mono', monospace;
@@ -462,23 +462,23 @@ body::before {
 }
 .nav-inner { max-width: 720px; }
 .nav-headline {
-  font-size: clamp(24px, 3vw, 32px);
+  font-size: clamp(20px, 2.6vw, 28px);
   font-weight: 300;
   line-height: 1.3;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
   font-style: italic;
 }
 .nav-tools {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   text-align: left;
 }
 .nav-tool {
   display: flex;
   gap: 16px;
   align-items: flex-start;
-  padding: 16px 20px;
+  padding: 11px 16px;
   border: 1px solid rgba(140,69,24,.22);
   border-radius: 3px;
   background: rgba(255,255,255,.35);
@@ -539,12 +539,12 @@ body::before {
 .site-wrap {
   max-width: 900px;
   margin: 0 auto;
-  padding: 60px 40px 80px;
+  padding: 36px 40px 60px;
 }
 header {
-  margin-bottom: 64px;
+  margin-bottom: 36px;
   border-bottom: 1px solid rgba(140,69,24,.18);
-  padding-bottom: 32px;
+  padding-bottom: 20px;
 }
 .wordmark {
   font-family: 'Space Mono', monospace;
@@ -557,11 +557,11 @@ header {
 h1 { font-size: 52px; font-weight: 300; line-height: 1; }
 h1 em { font-style: italic; color: var(--accent); }
 .lede {
-  font-size: 19px;
-  line-height: 1.75;
+  font-size: 17px;
+  line-height: 1.7;
   color: var(--muted);
   font-style: italic;
-  margin-top: 12px;
+  margin-top: 10px;
   max-width: 560px;
 }
 .tools-grid {
@@ -575,7 +575,7 @@ h1 em { font-style: italic; color: var(--accent); }
 .tool-card {
   display: flex; flex-direction: column;
   text-decoration: none; color: inherit;
-  padding: 28px 30px;
+  padding: 20px 24px;
   border: 1px solid rgba(140,69,24,.22);
   border-radius: 3px;
   background: rgba(255,255,255,.25);
@@ -682,11 +682,9 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
 <section class="panel p-definition">
   <div class="def-inner">
     <p class="def-sentence reveal">
-      Awe is a feeling,<br>
-      of being in the presence<br>
+      Awe is the feeling of being in the presence<br>
       of something vast<br>
-      that transcends your current understanding<br>
-      of the world.
+      that transcends your understanding of the world.
     </p>
     <div class="def-stats">
       <div class="def-stat reveal reveal-delay-1">
