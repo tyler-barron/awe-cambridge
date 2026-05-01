@@ -290,7 +290,7 @@ body::before {
 }
 .arch-card-photo {
   width: 100%;
-  height: 110px;
+  height: 80px;
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -301,15 +301,15 @@ body::before {
   display: block;
 }
 .arch-card-body {
-  padding: 10px 16px 13px 20px;
+  padding: 8px 14px 10px 18px;
 }
 .arch-card-num {
   font-family: 'Space Mono', monospace;
-  font-size: 13px;
-  letter-spacing: .2em;
+  font-size: 10px;
+  letter-spacing: .18em;
   text-transform: uppercase;
   color: var(--a-color);
-  margin-bottom: 5px;
+  margin-bottom: 3px;
 }
 .arch-card-name {
   font-size: clamp(19px, 2vw, 24px);
@@ -362,9 +362,9 @@ body::before {
   margin-bottom: 14px;
 }
 .map-cluster-intro {
-  font-size: 16px;
-  line-height: 1.65;
-  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--ink);
   font-style: italic;
   margin-bottom: 20px;
 }
@@ -539,12 +539,12 @@ body::before {
 .site-wrap {
   max-width: 900px;
   margin: 0 auto;
-  padding: 36px 40px 60px;
+  padding: 24px 40px 40px;
 }
 header {
-  margin-bottom: 36px;
+  margin-bottom: 20px;
   border-bottom: 1px solid rgba(140,69,24,.18);
-  padding-bottom: 20px;
+  padding-bottom: 14px;
 }
 .wordmark {
   font-family: 'Space Mono', monospace;
@@ -554,20 +554,20 @@ header {
   color: var(--muted);
   margin-bottom: 10px;
 }
-h1 { font-size: 52px; font-weight: 300; line-height: 1; }
+h1 { font-size: 40px; font-weight: 300; line-height: 1; }
 h1 em { font-style: italic; color: var(--accent); }
 .lede {
-  font-size: 17px;
-  line-height: 1.7;
+  font-size: 15px;
+  line-height: 1.65;
   color: var(--muted);
   font-style: italic;
-  margin-top: 10px;
+  margin-top: 8px;
   max-width: 560px;
 }
 .tools-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 24px;
+  gap: 14px;
   align-items: stretch;
 }
 @media (max-width: 860px) { .tools-grid { grid-template-columns: 1fr 1fr; } }
@@ -575,7 +575,7 @@ h1 em { font-style: italic; color: var(--accent); }
 .tool-card {
   display: flex; flex-direction: column;
   text-decoration: none; color: inherit;
-  padding: 20px 24px;
+  padding: 14px 18px;
   border: 1px solid rgba(140,69,24,.22);
   border-radius: 3px;
   background: rgba(255,255,255,.25);
@@ -598,12 +598,12 @@ h1 em { font-style: italic; color: var(--accent); }
   content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
   background: var(--collective);
 }
-.pair-header { padding: 24px 30px 14px; border-bottom: 1px solid rgba(140,69,24,.1); }
+.pair-header { padding: 14px 20px 10px; border-bottom: 1px solid rgba(140,69,24,.1); }
 .pair-sub-cards { display: flex; flex-direction: column; flex: 1; }
 .sub-card {
   flex: 1; display: flex; flex-direction: column;
   text-decoration: none; color: inherit;
-  padding: 16px 30px 18px;
+  padding: 10px 20px 12px;
   transition: background .2s;
   position: relative;
 }
@@ -614,9 +614,9 @@ h1 em { font-style: italic; color: var(--accent); }
   text-transform: uppercase; color: var(--sub-accent, var(--collective));
   margin-bottom: 5px;
 }
-.sub-card-title { font-size: 20px; font-weight: 300; line-height: 1.2; margin-bottom: 5px; }
+.sub-card-title { font-size: 17px; font-weight: 300; line-height: 1.2; margin-bottom: 4px; }
 .sub-card-title em { font-style: italic; color: var(--sub-accent, var(--collective)); }
-.sub-card-desc { font-size: 15px; line-height: 1.6; color: var(--muted); flex: 1; }
+.sub-card-desc { font-size: 12px; line-height: 1.55; color: var(--muted); flex: 1; }
 .sub-card-tag {
   margin-top: 10px; display: inline-block; font-family: 'Space Mono', monospace;
   font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
@@ -624,10 +624,10 @@ h1 em { font-style: italic; color: var(--accent); }
   padding: 4px 9px; border-radius: 1px;
 }
 .card-eyebrow { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--card-accent, var(--accent)); margin-bottom: 10px; }
-.card-title { font-size: 26px; font-weight: 300; line-height: 1.15; margin-bottom: 8px; }
+.card-title { font-size: 22px; font-weight: 300; line-height: 1.15; margin-bottom: 6px; }
 .card-title em { font-style: italic; color: var(--card-accent, var(--accent)); }
-.card-desc { font-size: 16px; line-height: 1.7; color: var(--muted); flex: 1; }
-.card-tag { margin-top: 16px; display: inline-block; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--parchment); background: var(--card-accent, var(--accent)); padding: 5px 11px; border-radius: 1px; }
+.card-desc { font-size: 13px; line-height: 1.6; color: var(--muted); flex: 1; }
+.card-tag { margin-top: 10px; display: inline-block; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--parchment); background: var(--card-accent, var(--accent)); padding: 4px 9px; border-radius: 1px; }
 .resource-card {
   display: block; text-decoration: none; color: inherit;
   margin-top: 16px;
@@ -652,7 +652,7 @@ h1 em { font-style: italic; color: var(--accent); }
 .resource-desc { font-size: 15px; line-height: 1.65; color: var(--muted); flex: 1; min-width: 200px; }
 .resource-inner .card-eyebrow { margin-bottom: 0; white-space: nowrap; }
 .resource-inner .card-tag { margin-top: 0; white-space: nowrap; flex-shrink: 0; }
-footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,24,.12); font-family: 'Space Mono', monospace; font-size: 11px; color: var(--stone); letter-spacing: .1em; }
+footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,24,.12); font-family: 'Space Mono', monospace; font-size: 11px; color: var(--stone); letter-spacing: .1em; }
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
@@ -774,8 +774,8 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
   <div class="arch-inner">
     <div class="arch-intro">
       <h2 class="arch-headline reveal">
-        These forms and locations provide the basis of four distinct archetypes
-        that characterize the nature of <em>awe in and around Cambridge.</em>
+        These forms and locations provide the basis of <em>four distinct archetypes</em>
+        that characterize the nature of awe in and around Cambridge.
       </h2>
     </div>
     <div class="arch-grid">
@@ -837,11 +837,11 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
      ═══════════════════════════════════════════════════════════════════════ -->
 <section class="panel p-map" style="--m-color: var(--a1)">
   <div class="map-left">
-    <div class="map-cluster-label reveal">Archetype 01 · Spatial Distribution</div>
-    <p class="map-cluster-intro reveal reveal-delay-1">
+    <p class="map-cluster-intro reveal">
       Most archetypes are spatially clustered within the city, gravitating toward
       hotspots shaped by where moments of awe were recorded.
     </p>
+    <div class="map-cluster-label reveal reveal-delay-1">Archetype 01 · Spatial Distribution</div>
     <div class="map-cluster-name reveal reveal-delay-2"><em>Expansive</em> Nature</div>
     <div class="map-cluster-n reveal reveal-delay-2">19 instances · 2 hotspots</div>
     <p class="map-cluster-desc reveal reveal-delay-3">Vast encounters with water, sky, and landscape — moments where the body's smallness becomes vivid against the city's openings and edges.</p>
@@ -961,9 +961,8 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
 <section class="panel p-question">
   <div class="q-inner">
     <p class="q-line reveal">
-      When you've wandered around Cambridge,<br>
-      what type of awe<br>
-      <em>have you experienced?</em>
+      When you wander around Cambridge,<br>
+      <em>what types of awe do you experience?</em>
     </p>
     <p class="q-line reveal reveal-delay-1">
       What <em>catches your attention?</em>
@@ -984,7 +983,7 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
 <section class="panel p-nav">
   <div class="nav-inner">
     <h2 class="nav-headline reveal">
-      The following tools offer a way to situate yourself<br>with the landscape of awe in Cambridge.
+      To answer these questions, the following tools offer a way to situate yourself within the landscape of awe in Cambridge.
     </h2>
     <div class="nav-tools">
       <a href="community.html" class="nav-tool reveal reveal-delay-1" style="--t-color: #8c4518">
