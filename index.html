@@ -735,15 +735,11 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
 .p-map-overview { background:#e8e8e8; }
 .map-full { position:absolute; inset:0; }
 .map-overview-caption {
-  position:absolute; bottom:90px; left:50%; transform:translateX(-50%);
-  width:min(780px,85%); z-index:10;
-  font-size:clamp(22px,2.8vw,32px); font-weight:300;
-  line-height:1.2; color:var(--ink);
-  text-align:center;
-  background:rgba(232,232,232,0.78);
-  padding:18px 32px; border-radius:3px;
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
+  position:absolute; top:52px; left:56px;
+  max-width:420px; z-index:10;
+  font-size:clamp(26px,3.2vw,38px); font-weight:300;
+  line-height:1.15; color:var(--ink);
+  text-align:left;
 }
 
 /* ── Map panel grey background ── */
@@ -1253,7 +1249,7 @@ lazyMap('map-overview', function() {
     scrollWheelZoom:false, dragging:false,
     doubleClickZoom:false, boxZoom:false,
     keyboard:false, touchZoom:false
-  }).setView([42.373, -71.113], 13);
+  }).setView([42.373, -71.155], 13);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
     maxZoom:18, subdomains:'abcd', opacity:0.15
   }).addTo(m);
