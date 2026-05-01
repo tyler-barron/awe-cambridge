@@ -6,7 +6,7 @@
 <title>Awe Atlas — Alluvial Explorer</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#1c1914;--parchment:#f4f0e7;--linen:#e3d4c5;--stone:#b7aea2;--accent:#8c4518;--saffron:#caa74d;--muted:#6b6259;}
+:root{--ink:#1c1914;--parchment:#f7f7f5;--linen:#e8e5e0;--stone:#b7aea2;--accent:#8c4518;--saffron:#caa74d;--muted:#6b6259;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;background:var(--parchment);color:var(--ink);font-family:"Cormorant Garamond",serif;}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:.4;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");}
@@ -153,14 +153,18 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
   <a href="index.html#awe-atlas" class="header-back">← Homepage</a>
   <div class="header-title"><em>Alluvial</em> Awe</div>
   <div class="header-count" id="hcount">220 instances</div>
+  <a href="guide.html" class="header-guide-link" title="Open the Understanding Awe field guide">Understanding Awe ↗</a>
   <button class="header-guide-btn" id="guide-toggle-btn" onclick="toggleGuide()" title="Understanding Awe — dimension reference">
     <span>?</span> Guide
   </button>
 </header>
 <style>
-.header-guide-btn{margin-left:12px;padding:5px 11px;background:none;border:1px solid rgba(140,69,24,.28);border-radius:2px;font-family:"Space Mono",monospace;font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px;transition:color .15s,border-color .15s;}
+.header-guide-link{font-family:"Space Mono",monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .15s;white-space:nowrap;}
+.header-guide-link:hover{color:var(--accent);}
+.header-guide-btn{margin-left:6px;padding:5px 11px;background:none;border:1px solid rgba(140,69,24,.28);border-radius:2px;font-family:"Space Mono",monospace;font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px;transition:color .15s,border-color .15s;}
 .header-guide-btn:hover,.header-guide-btn.active{border-color:var(--accent);color:var(--accent);}
 .header-guide-btn span{font-size:10px;font-weight:bold;}
+@media(max-width:700px){.header-guide-link{display:none;}}
 </style>
 
 <div class="controls-bar">
@@ -186,6 +190,13 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
 .usage-step{font-family:"Space Mono",monospace;font-size:10px;color:var(--muted);letter-spacing:.04em;display:flex;align-items:center;gap:6px;}
 .usage-step strong{color:var(--ink);}
 .usage-num{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:var(--linen);border:1px solid rgba(140,69,24,.18);font-size:9px;color:var(--muted);flex-shrink:0;}
+@media(max-width:700px){
+  .usage-hint{display:none;}
+  .site-header{padding:10px 14px;gap:10px;}
+  .header-title{font-size:16px;}
+  .controls-bar{padding:6px 14px 5px;}
+  .ctrl-top{gap:6px;}
+}
 </style>
 
 <div class="filter-bar" id="filter-bar">

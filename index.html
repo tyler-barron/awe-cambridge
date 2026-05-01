@@ -10,8 +10,8 @@
 :root {
   --ink:       #1c1914;
   --charcoal:  #2c2118;
-  --parchment: #f4f0e7;
-  --linen:     #e3d4c5;
+  --parchment: #f7f7f5;
+  --linen:     #e8e5e0;
   --stone:     #7a7268;      /* darkened from #b7aea2 */
   --accent:    #8c4518;
   --muted:     #4a4440;      /* darkened from #6b6259 */
@@ -664,21 +664,33 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
+  /* Panel 2: single column layout, hide low-frequency tags */
   .land-layout { grid-template-columns: 1fr; }
-  .arch-grid { grid-template-columns: 1fr; gap: 10px; }
+  .tax-box:not(.hi):not(.md) { display: none; }
+
+  /* Panel 3: keep 2×2 grid, allow panel to scroll past 100vh */
+  .arch-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .p-archetypes { height: auto; min-height: 100vh; }
+
+  /* Map panels: stack vertically */
   .p-map { flex-direction: column; }
   .map-left { width: 100%; height: auto; padding: 28px 24px; border-right: none; border-bottom: 1px solid rgba(140,69,24,.12); }
   .map-right { padding: 20px 24px; }
-  .nav-tools { gap: 10px; }
-  .nav-tool { flex-direction: column; gap: 8px; }
+
   .def-stats { gap: 32px; }
+}
+@media (max-width: 560px) {
+  /* Tool grid: hide "Open →" tags on mobile to save vertical space */
+  .card-tag, .sub-card-tag { display: none; }
+  /* Panel 2: show only top items on smallest screens */
+  .tax-box:not(.hi) { display: none; }
 }
 @media (max-width: 480px) {
   .p-landscape { padding: 36px 24px 24px; }
-  .p-archetypes { padding: 0 24px; }
-  .p-nav { padding: 0 24px; }
+  .p-archetypes { padding: 32px 24px 0; }
   .def-inner { padding: 0 28px; }
   .q-inner { padding: 0 28px; }
+  .site-wrap { padding: 20px 20px 32px; }
 }
 </style>
 </head>
@@ -987,47 +999,14 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
 </section>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     PANEL 9 — NAVIGATION BRIDGE
-     ═══════════════════════════════════════════════════════════════════════ -->
-<section class="panel p-nav">
-  <div class="nav-inner">
-    <h2 class="nav-headline reveal">
-      To answer these questions, the following tools offer a way to situate yourself within the landscape of awe in Cambridge.
-    </h2>
-    <div class="nav-tools">
-      <a href="community.html" class="nav-tool reveal reveal-delay-1" style="--t-color: #8c4518">
-        <div class="nav-tool-name">Encounter <em>Awe</em></div>
-        <div class="nav-tool-desc">To increase your odds of finding awe in Cambridge, navigate to the Everyday Awe tool — browse 220 instances near you and navigate by compass or AI directions.</div>
-        <div class="nav-tool-arrow">Open →</div>
-      </a>
-      <a href="atlas.html" class="nav-tool reveal reveal-delay-2" style="--t-color: #4a7a8a">
-        <div class="nav-tool-name">Interactive <em>Map</em></div>
-        <div class="nav-tool-desc">To spatially orient yourself towards moments of awe, explore the Interactive Map — 220 georeferenced instances plotted across Cambridge.</div>
-        <div class="nav-tool-arrow">Open →</div>
-      </a>
-      <a href="alluvial.html" class="nav-tool reveal reveal-delay-3" style="--t-color: #6b5b8a">
-        <div class="nav-tool-name">Alluvial <em>Explorer</em></div>
-        <div class="nav-tool-desc">To further investigate the underlying data, the Alluvial Explorer visualizes how instances flow across analytical categories.</div>
-        <div class="nav-tool-arrow">Open →</div>
-      </a>
-    </div>
-  </div>
-  <div class="scroll-cue">
-    <div class="scroll-cue-line"></div>
-    <div class="scroll-cue-label">Scroll</div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════════════════════
-     PANEL 10 — TOOL GRID
+     PANEL 9 — TOOL GRID
      ═══════════════════════════════════════════════════════════════════════ -->
 <section class="p-tools" id="awe-atlas">
 <div class="site-wrap">
 
   <header>
-    <div class="wordmark">Awe in Cambridge</div>
     <h1>The <em>Awe</em> Atlas</h1>
-    <p class="lede">Cambridge is full of places that stop people in their tracks. This is a set of tools for finding them, mapping them, and understanding what it is about those places that moves us.</p>
+    <p class="lede">To answer these questions, the Awe Atlas offers a set of tools to situate yourself within the landscape of awe in Cambridge.</p>
   </header>
 
   <div class="tools-grid">
@@ -1054,7 +1033,7 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
         <a href="alluvial.html" class="sub-card" style="--sub-accent: #6b5b8a">
           <div class="sub-card-eyebrow">Alluvial Explorer</div>
           <div class="sub-card-title"><em>Visualize</em> patterns</div>
-          <div class="sub-card-desc">See how instances flow across analytical categories. Toggle and reorder dimensions to surface patterns in the data.</div>
+          <div class="sub-card-desc">This is a tool for a deeper dive into the research. Use it to see how instances of awe flow across analytical categories.</div>
           <span class="sub-card-tag">Open Explorer →</span>
         </a>
       </div>
