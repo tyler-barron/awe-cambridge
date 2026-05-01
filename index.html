@@ -144,29 +144,37 @@ body::before {
   font-style: italic;
   line-height: 1.45;
   color: var(--parchment);
-  margin-bottom: 36px;
+  margin-bottom: 28px;
+}
+.def-benefits-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin-bottom: 18px;
 }
 .def-stats {
   display: flex;
-  gap: 56px;
+  gap: 48px;
   justify-content: center;
   flex-wrap: wrap;
 }
 .def-stat { text-align: center; }
 .def-stat-up {
   font-family: 'Space Mono', monospace;
-  font-size: 13px;
-  letter-spacing: .18em;
+  font-size: 11px;
+  letter-spacing: .14em;
   color: var(--stone);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   text-transform: uppercase;
 }
 .def-stat-label {
-  font-size: 18px;
+  font-size: 15px;
   font-style: italic;
   color: rgba(244,240,231,.7);
-  line-height: 1.5;
-  max-width: 210px;
+  line-height: 1.45;
+  max-width: 190px;
 }
 
 
@@ -251,14 +259,15 @@ body::before {
    ═══════════════════════════════════════════════════════════════════════════ */
 .p-archetypes {
   background: var(--linen);
-  padding: 0 52px;
+  padding: 32px 52px 0;
+  justify-content: flex-start;
 }
 .arch-inner {
   width: 100%;
   max-width: 1020px;
 }
 .arch-intro {
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 .arch-headline {
   font-size: clamp(22px, 2.8vw, 32px);
@@ -290,7 +299,7 @@ body::before {
 }
 .arch-card-photo {
   width: 100%;
-  height: 80px;
+  height: 115px;
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -686,14 +695,15 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
       of something vast<br>
       that transcends your understanding of the world.
     </p>
+    <div class="def-benefits-label reveal reveal-delay-1">Benefits of Awe</div>
     <div class="def-stats">
-      <div class="def-stat reveal reveal-delay-1">
-        <div class="def-stat-up">↑ Prosocial behavior</div>
-        <div class="def-stat-label">Increases cooperation and tendency toward collective action</div>
-      </div>
       <div class="def-stat reveal reveal-delay-2">
-        <div class="def-stat-up">↑ Time availability</div>
-        <div class="def-stat-label">Expands one's felt sense of time and presence</div>
+        <div class="def-stat-up">It increases</div>
+        <div class="def-stat-label">Prosocial behavior — cooperation and collective engagement</div>
+      </div>
+      <div class="def-stat reveal reveal-delay-3">
+        <div class="def-stat-up">It expands</div>
+        <div class="def-stat-label">Time availability — one's felt sense of time and presence</div>
       </div>
     </div>
   </div>
@@ -1069,7 +1079,7 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
     </div>
   </a>
 
-  <footer>Awe in Cambridge · Cambridge, MA · 2024–2025</footer>
+  <footer>Awe in Cambridge · Cambridge, MA · 2026</footer>
 
 </div>
 </section>
