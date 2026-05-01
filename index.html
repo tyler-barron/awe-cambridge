@@ -433,17 +433,13 @@ body::before {
   padding: 24px 36px;
   background: rgba(255,255,255,.18);
 }
-/* Clip the PNG title by hiding the top ~10% of each map image */
-.map-img-clip {
-  width: 100%;
-  max-height: calc(100vh - 72px);
-  overflow: hidden;
-  border-radius: 2px;
-}
-.map-img-clip img {
-  width: 100%;
+.map-right img {
+  max-width: 100%;
+  max-height: calc(100vh - 80px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
   display: block;
-  margin-top: -10%;  /* hides the "Cluster N: Name / n = X" title area */
 }
 
 
@@ -874,9 +870,7 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
     </div>
   </div>
   <div class="map-right">
-    <div class="map-img-clip">
-      <img src="cluster_map_cluster_1_expansive_nature.png" alt="Spatial distribution of Expansive Nature awe in Cambridge">
-    </div>
+    <img src="cluster_map_cluster_1_expansive_nature.png" alt="Spatial distribution of Expansive Nature awe in Cambridge">
   </div>
   <div class="scroll-cue">
     <div class="scroll-cue-line"></div>
@@ -906,9 +900,7 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
     </div>
   </div>
   <div class="map-right">
-    <div class="map-img-clip">
-      <img src="cluster_map_cluster_2_wild_nature.png" alt="Spatial distribution of Wild Nature awe in Cambridge">
-    </div>
+    <img src="cluster_map_cluster_2_wild_nature.png" alt="Spatial distribution of Wild Nature awe in Cambridge">
   </div>
   <div class="scroll-cue">
     <div class="scroll-cue-line"></div>
@@ -938,9 +930,7 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
     </div>
   </div>
   <div class="map-right">
-    <div class="map-img-clip">
-      <img src="cluster_map_cluster_3_built_beauty.png" alt="Spatial distribution of Built Beauty awe in Cambridge">
-    </div>
+    <img src="cluster_map_cluster_3_built_beauty.png" alt="Spatial distribution of Built Beauty awe in Cambridge">
   </div>
   <div class="scroll-cue">
     <div class="scroll-cue-line"></div>
@@ -970,9 +960,7 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
     </div>
   </div>
   <div class="map-right">
-    <div class="map-img-clip">
-      <img src="cluster_map_cluster_4_inclusive_interaction.png" alt="Spatial distribution of Inclusive Interaction awe in Cambridge">
-    </div>
+    <img src="cluster_map_cluster_4_inclusive_interaction.png" alt="Spatial distribution of Inclusive Interaction awe in Cambridge">
   </div>
   <div class="scroll-cue">
     <div class="scroll-cue-line"></div>
