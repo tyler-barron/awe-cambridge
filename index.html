@@ -272,6 +272,7 @@ body::before {
   font-size: clamp(22px, 2.8vw, 32px);
   font-weight: 300;
   line-height: 1.2;
+  text-align: center;
 }
 .arch-headline em { font-style: italic; color: var(--accent); }
 .arch-grid {
@@ -732,9 +733,17 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
 
 /* ── Overview map panel ── */
 .p-map-overview { background:#e8e8e8; }
+.map-full { position:absolute; inset:0; }
 .map-overview-caption {
-  font-size:clamp(16px,1.8vw,21px); font-style:normal; font-weight:300;
-  line-height:1.65; color:var(--ink);
+  position:absolute; bottom:90px; left:50%; transform:translateX(-50%);
+  width:min(780px,85%); z-index:10;
+  font-size:clamp(22px,2.8vw,32px); font-weight:300;
+  line-height:1.2; color:var(--ink);
+  text-align:center;
+  background:rgba(232,232,232,0.78);
+  padding:18px 32px; border-radius:3px;
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
 }
 
 /* ── Map panel grey background ── */
@@ -942,14 +951,10 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
 <!-- ═══════════════════════════════════════════════════════════════════════
      PANEL 4 — OVERVIEW MAP
      ═══════════════════════════════════════════════════════════════════════ -->
-<section class="panel p-map p-map-overview" style="--m-color: var(--ink)">
-  <div class="map-left">
-    <p class="map-overview-caption reveal">
-      Most archetypes are spatially clustered within the city, gravitating toward hotspots shaped by where moments of awe were recorded.
-    </p>
-  </div>
-  <div class="map-right">
-    <div class="story-map" id="map-overview"></div>
+<section class="panel p-map-overview">
+  <div class="map-full" id="map-overview"></div>
+  <div class="map-overview-caption reveal">
+    Most archetypes are spatially clustered within the city, gravitating toward hotspots shaped by where moments of awe were recorded.
   </div>
   <div class="scroll-cue">
     <div class="scroll-cue-line"></div>
@@ -1131,7 +1136,6 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
       <div class="card-eyebrow">Tool 01</div>
       <div class="card-title">Encounter <em>Awe</em></div>
       <div class="card-desc">Browse 220 georeferenced instances of awe near you, navigate to a place by compass or AI directions, join or schedule awe walks, and attend or host awe talks.</div>
-      <span class="card-tag">Open Tool →</span>
     </a>
 
     <div class="tool-card-pair">
@@ -1144,13 +1148,11 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
           <div class="sub-card-eyebrow">Interactive Map</div>
           <div class="sub-card-title"><em>Locate</em> instances</div>
           <div class="sub-card-desc">220 georeferenced instances plotted across Cambridge. Filter by morphology, phenomenology, temporality, and more.</div>
-          <span class="sub-card-tag">Open Map →</span>
         </a>
         <a href="alluvial.html" class="sub-card" style="--sub-accent: #6b5b8a">
           <div class="sub-card-eyebrow">Alluvial Explorer</div>
           <div class="sub-card-title"><em>Visualize</em> patterns</div>
           <div class="sub-card-desc">This is a tool for a deeper dive into the research. Use it to see how instances of awe flow across analytical categories.</div>
-          <span class="sub-card-tag">Open Explorer →</span>
         </a>
       </div>
     </div>
@@ -1159,7 +1161,6 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
       <div class="card-eyebrow">Tool 03</div>
       <div class="card-title">Share <em>Awe</em></div>
       <div class="card-desc">Add your own moments of awe to the atlas. Find and join upcoming awe walks. Attend or host an awe talk — a small gathering to share what moves you.</div>
-      <span class="card-tag">Open Tool →</span>
     </a>
 
   </div>
@@ -1169,7 +1170,6 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
       <div class="card-eyebrow" style="color: var(--card-accent)">Resource</div>
       <div class="resource-title"><em>Understanding</em> Awe</div>
       <div class="resource-desc">A field guide to the dimensions of awe — morphology, phenomenology, temporality, and the categories used throughout these tools.</div>
-      <span class="card-tag" style="background: var(--card-accent)">Open Guide →</span>
     </div>
   </a>
 
@@ -1252,7 +1252,7 @@ lazyMap('map-overview', function() {
     scrollWheelZoom:false, dragging:false,
     doubleClickZoom:false, boxZoom:false,
     keyboard:false, touchZoom:false
-  }).setView([42.372, -71.108], 13);
+  }).setView([42.373, -71.113], 13);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
     maxZoom:18, subdomains:'abcd', opacity:0.15
   }).addTo(m);
