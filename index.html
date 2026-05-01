@@ -12,19 +12,18 @@
   --charcoal:  #2c2118;
   --parchment: #f4f0e7;
   --linen:     #e3d4c5;
-  --stone:     #b7aea2;
+  --stone:     #7a7268;      /* darkened from #b7aea2 */
   --accent:    #8c4518;
-  --muted:     #6b6259;
+  --muted:     #4a4440;      /* darkened from #6b6259 */
   --nature:    #97ba74;
   --collective:#4a7a8a;
   --epiphany:  #6b5b8a;
   --wild:      #5a7d3d;
 
-  /* Archetype palette */
-  --a1: #4a7a8a;  /* Expansive Nature  — teal   */
-  --a2: #5a7d3d;  /* Wild Nature       — forest */
-  --a3: #8c4518;  /* Built Beauty      — amber  */
-  --a4: #6b5b8a;  /* Inclusive Interaction — plum */
+  --a1: #4a7a8a;
+  --a2: #5a7d3d;
+  --a3: #8c4518;
+  --a4: #6b5b8a;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -41,7 +40,7 @@ body {
   background: var(--parchment);
 }
 
-/* ── Paper grain (fixed overlay) ─────────────────────────────────────────── */
+/* ── Paper grain ─────────────────────────────────────────────────────────── */
 body::before {
   content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: .4;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
@@ -59,7 +58,7 @@ body::before {
   overflow: hidden;
 }
 
-/* ── Scroll indicator ────────────────────────────────────────────────────── */
+/* ── Scroll indicator + skip button ─────────────────────────────────────── */
 .scroll-cue {
   position: absolute;
   bottom: 28px;
@@ -68,7 +67,7 @@ body::before {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   opacity: 0;
   animation: cueFade 1s ease 2.5s forwards;
 }
@@ -81,10 +80,28 @@ body::before {
 }
 .scroll-cue-label {
   font-family: 'Space Mono', monospace;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: .25em;
   text-transform: uppercase;
-  opacity: .45;
+  opacity: .5;
+}
+.skip-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: rgba(244,240,231,.55);
+  text-decoration: none;
+  border: 1px solid rgba(244,240,231,.22);
+  padding: 5px 12px;
+  border-radius: 2px;
+  transition: color .2s, border-color .2s, background .2s;
+  white-space: nowrap;
+}
+.skip-btn:hover {
+  color: rgba(244,240,231,.9);
+  border-color: rgba(244,240,231,.45);
+  background: rgba(244,240,231,.06);
 }
 @keyframes cueFade { to { opacity: 1; } }
 @keyframes cueGrow {
@@ -92,7 +109,7 @@ body::before {
   50%      { transform: scaleY(.4); opacity: .15; }
 }
 
-/* ── Fade-in animation class ─────────────────────────────────────────────── */
+/* ── Fade-in animations ──────────────────────────────────────────────────── */
 .reveal {
   opacity: 0;
   transform: translateY(18px);
@@ -116,57 +133,40 @@ body::before {
 .p-definition .scroll-cue { color: var(--parchment); }
 
 .def-inner {
-  max-width: 740px;
+  max-width: 780px;
   padding: 0 48px;
   text-align: center;
 }
-.def-eyebrow {
-  font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .4em;
-  text-transform: uppercase;
-  color: var(--stone);
-  margin-bottom: 36px;
-}
-.def-word {
-  font-size: clamp(72px, 12vw, 120px);
+/* The whole sentence is the hero — no isolated "Awe" word */
+.def-sentence {
+  font-size: clamp(30px, 4.5vw, 54px);
   font-weight: 300;
   font-style: italic;
-  line-height: .9;
-  margin-bottom: 32px;
+  line-height: 1.45;
   color: var(--parchment);
+  margin-bottom: 52px;
 }
-.def-text {
-  font-size: clamp(18px, 2.4vw, 22px);
-  line-height: 1.75;
-  font-style: italic;
-  color: rgba(244,240,231,.75);
-  max-width: 580px;
-  margin: 0 auto 44px;
-}
-.def-text em { font-style: normal; color: var(--parchment); }
 .def-stats {
   display: flex;
-  gap: 48px;
+  gap: 56px;
   justify-content: center;
   flex-wrap: wrap;
 }
-.def-stat {
-  text-align: center;
-}
+.def-stat { text-align: center; }
 .def-stat-up {
   font-family: 'Space Mono', monospace;
-  font-size: 10px;
-  letter-spacing: .2em;
+  font-size: 13px;
+  letter-spacing: .18em;
   color: var(--stone);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
 }
 .def-stat-label {
-  font-size: 15px;
+  font-size: 18px;
   font-style: italic;
-  color: rgba(244,240,231,.6);
+  color: rgba(244,240,231,.7);
   line-height: 1.5;
-  max-width: 180px;
+  max-width: 210px;
 }
 
 
@@ -176,89 +176,73 @@ body::before {
 .p-landscape {
   background: var(--parchment);
   justify-content: flex-start;
-  padding: 56px 56px 40px;
+  padding: 52px 56px 36px;
 }
 .land-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: 36px;
   width: 100%;
-  max-width: 1040px;
+  max-width: 1060px;
 }
 .land-intro {
   grid-column: 1 / -1;
   margin-bottom: 4px;
 }
-.land-eyebrow {
-  font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .4em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 10px;
-}
 .land-headline {
-  font-size: clamp(28px, 3.5vw, 40px);
+  font-size: clamp(26px, 3.2vw, 38px);
   font-weight: 300;
-  line-height: 1.1;
-  margin-bottom: 10px;
+  line-height: 1.15;
+  margin-bottom: 12px;
 }
 .land-headline em { font-style: italic; color: var(--accent); }
 .land-sub {
-  font-size: 16px;
+  font-size: 19px;
   line-height: 1.7;
   color: var(--muted);
-  font-style: italic;
-  max-width: 700px;
+  max-width: 720px;
 }
-.land-sub strong { font-style: normal; color: var(--ink); font-weight: 400; }
+.land-sub em { font-style: italic; color: var(--ink); }
 
 /* Taxonomy grids */
 .tax-col-label {
-  font-family: 'Space Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .3em;
-  text-transform: uppercase;
-  color: var(--stone);
-  margin-bottom: 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid rgba(140,69,24,.12);
+  font-size: 16px;
+  font-style: italic;
+  color: var(--ink);
+  font-family: 'Cormorant Garamond', serif;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(140,69,24,.2);
 }
 .tax-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 6px;
 }
 .tax-box {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 5px 10px;
-  border: 1px solid rgba(140,69,24,.2);
+  gap: 6px;
+  padding: 7px 13px;
+  border: 1px solid rgba(140,69,24,.22);
   border-radius: 2px;
   font-family: 'Space Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .1em;
+  font-size: 11px;
+  letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--muted);
   white-space: nowrap;
 }
-.tax-box .tax-n {
-  font-size: 7px;
-  opacity: .55;
-}
+.tax-box .tax-n { font-size: 10px; opacity: .6; }
 .tax-box.hi {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--parchment);
-  font-size: 9px;
-  padding: 6px 12px;
+  font-size: 12px;
+  padding: 8px 15px;
 }
-.tax-box.hi .tax-n { opacity: .7; }
-.tax-box.md {
-  background: rgba(140,69,24,.07);
-  color: var(--ink);
-}
+.tax-box.hi .tax-n { opacity: .75; }
+.tax-box.md { background: rgba(140,69,24,.07); color: var(--ink); }
 .tax-box.lo { opacity: .5; }
 
 
@@ -267,41 +251,34 @@ body::before {
    ═══════════════════════════════════════════════════════════════════════════ */
 .p-archetypes {
   background: var(--linen);
-  padding: 0 56px;
+  padding: 0 52px;
 }
 .arch-inner {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1020px;
 }
 .arch-intro {
-  margin-bottom: 28px;
-}
-.arch-eyebrow {
-  font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .4em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 10px;
+  margin-bottom: 22px;
 }
 .arch-headline {
-  font-size: clamp(26px, 3.2vw, 36px);
+  font-size: clamp(22px, 2.8vw, 32px);
   font-weight: 300;
-  line-height: 1.1;
+  line-height: 1.2;
 }
 .arch-headline em { font-style: italic; color: var(--accent); }
 .arch-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 14px;
 }
 .arch-card {
-  background: rgba(255,255,255,.55);
+  background: rgba(255,255,255,.6);
   border: 1px solid rgba(140,69,24,.18);
   border-radius: 3px;
-  padding: 20px 22px;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .arch-card::before {
   content: '';
@@ -309,33 +286,42 @@ body::before {
   left: 0; top: 0; bottom: 0;
   width: 3px;
   background: var(--a-color);
+  z-index: 1;
+}
+.arch-card-photo {
+  width: 100%;
+  height: 155px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.arch-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.arch-card-body {
+  padding: 14px 18px 16px 22px;
 }
 .arch-card-num {
   font-family: 'Space Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .3em;
+  font-size: 13px;
+  letter-spacing: .2em;
   text-transform: uppercase;
   color: var(--a-color);
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 .arch-card-name {
-  font-size: clamp(20px, 2.2vw, 26px);
+  font-size: clamp(19px, 2vw, 24px);
   font-weight: 300;
   line-height: 1.1;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 .arch-card-name em { font-style: italic; color: var(--a-color); }
 .arch-card-n {
   font-family: 'Space Mono', monospace;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--stone);
-  margin-bottom: 10px;
-}
-.arch-card-desc {
-  font-size: 14px;
-  line-height: 1.65;
-  color: var(--muted);
-  font-style: italic;
 }
 
 
@@ -350,11 +336,11 @@ body::before {
   background: var(--parchment);
 }
 .map-left {
-  width: 340px;
+  width: 360px;
   flex-shrink: 0;
-  background: var(--map-bg, rgba(244,240,231,.9));
+  background: rgba(244,240,231,.92);
   border-right: 1px solid rgba(140,69,24,.12);
-  padding: 48px 36px;
+  padding: 44px 36px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -369,21 +355,21 @@ body::before {
 }
 .map-cluster-label {
   font-family: 'Space Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .3em;
+  font-size: 13px;
+  letter-spacing: .2em;
   text-transform: uppercase;
   color: var(--m-color);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 .map-cluster-intro {
-  font-size: 13px;
+  font-size: 16px;
   line-height: 1.65;
   color: var(--muted);
   font-style: italic;
   margin-bottom: 20px;
 }
 .map-cluster-name {
-  font-size: clamp(26px, 3vw, 34px);
+  font-size: clamp(28px, 3vw, 36px);
   font-weight: 300;
   line-height: 1.1;
   margin-bottom: 6px;
@@ -391,21 +377,21 @@ body::before {
 .map-cluster-name em { font-style: italic; color: var(--m-color); }
 .map-cluster-n {
   font-family: 'Space Mono', monospace;
-  font-size: 10px;
+  font-size: 14px;
   color: var(--stone);
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 }
 .map-cluster-desc {
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.65;
   color: var(--muted);
   font-style: italic;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 .map-cluster-components {
   font-family: 'Space Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .1em;
+  font-size: 12px;
+  letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--stone);
   margin-bottom: 10px;
@@ -416,12 +402,12 @@ body::before {
   gap: 5px;
 }
 .map-tag {
-  padding: 4px 9px;
+  padding: 5px 10px;
   border: 1px solid var(--m-color);
   border-radius: 1px;
   font-family: 'Space Mono', monospace;
-  font-size: 7px;
-  letter-spacing: .1em;
+  font-size: 10px;
+  letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--m-color);
 }
@@ -431,7 +417,6 @@ body::before {
   align-items: center;
   justify-content: center;
   padding: 24px 36px;
-  background: rgba(255,255,255,.18);
 }
 .map-right img {
   max-width: 100%;
@@ -453,23 +438,15 @@ body::before {
 }
 .p-question .scroll-cue { color: var(--parchment); }
 .q-inner {
-  max-width: 640px;
+  max-width: 660px;
   padding: 0 48px;
 }
-.q-eyebrow {
-  font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .4em;
-  text-transform: uppercase;
-  color: var(--stone);
-  margin-bottom: 44px;
-}
 .q-line {
-  font-size: clamp(20px, 2.8vw, 28px);
+  font-size: clamp(22px, 3vw, 32px);
   font-weight: 300;
   line-height: 1.5;
-  color: rgba(244,240,231,.9);
-  margin-bottom: 22px;
+  color: rgba(244,240,231,.92);
+  margin-bottom: 26px;
 }
 .q-line em { font-style: italic; color: var(--parchment); }
 .q-line:last-of-type { margin-bottom: 0; }
@@ -483,19 +460,9 @@ body::before {
   text-align: center;
   padding: 0 56px;
 }
-.nav-inner {
-  max-width: 700px;
-}
-.nav-eyebrow {
-  font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .4em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 20px;
-}
+.nav-inner { max-width: 720px; }
 .nav-headline {
-  font-size: clamp(22px, 2.8vw, 30px);
+  font-size: clamp(24px, 3vw, 32px);
   font-weight: 300;
   line-height: 1.3;
   margin-bottom: 32px;
@@ -511,10 +478,10 @@ body::before {
   display: flex;
   gap: 16px;
   align-items: flex-start;
-  padding: 14px 18px;
-  border: 1px solid rgba(140,69,24,.18);
+  padding: 16px 20px;
+  border: 1px solid rgba(140,69,24,.22);
   border-radius: 3px;
-  background: rgba(255,255,255,.3);
+  background: rgba(255,255,255,.35);
   text-decoration: none;
   color: inherit;
   transition: background .2s, border-color .2s, transform .2s;
@@ -529,37 +496,38 @@ body::before {
   background: var(--t-color, var(--accent));
 }
 .nav-tool:hover {
-  background: rgba(255,255,255,.55);
+  background: rgba(255,255,255,.6);
   border-color: var(--t-color, var(--accent));
   transform: translateX(2px);
 }
 .nav-tool-name {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 300;
   line-height: 1.15;
   min-width: 180px;
+  color: var(--ink);
 }
 .nav-tool-name em { font-style: italic; color: var(--t-color, var(--accent)); }
 .nav-tool-desc {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.6;
   color: var(--muted);
-  font-style: italic;
   flex: 1;
 }
 .nav-tool-arrow {
   font-family: 'Space Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .15em;
+  font-size: 13px;
+  letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--t-color, var(--accent));
   flex-shrink: 0;
   align-self: center;
+  font-weight: 600;
 }
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   PANEL 10 — TOOL GRID (existing index content)
+   PANEL 10 — TOOL GRID
    ═══════════════════════════════════════════════════════════════════════════ */
 .p-tools {
   height: auto;
@@ -580,8 +548,8 @@ header {
 }
 .wordmark {
   font-family: 'Space Mono', monospace;
-  font-size: 10px;
-  letter-spacing: .4em;
+  font-size: 11px;
+  letter-spacing: .35em;
   text-transform: uppercase;
   color: var(--muted);
   margin-bottom: 10px;
@@ -642,24 +610,24 @@ h1 em { font-style: italic; color: var(--accent); }
 .sub-card + .sub-card { border-top: 1px solid rgba(140,69,24,.1); }
 .sub-card:hover { background: rgba(255,255,255,.35); }
 .sub-card-eyebrow {
-  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .25em;
+  font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .25em;
   text-transform: uppercase; color: var(--sub-accent, var(--collective));
   margin-bottom: 5px;
 }
-.sub-card-title { font-size: 19px; font-weight: 300; line-height: 1.2; margin-bottom: 5px; }
+.sub-card-title { font-size: 20px; font-weight: 300; line-height: 1.2; margin-bottom: 5px; }
 .sub-card-title em { font-style: italic; color: var(--sub-accent, var(--collective)); }
-.sub-card-desc { font-size: 13px; line-height: 1.6; color: var(--muted); font-style: italic; flex: 1; }
+.sub-card-desc { font-size: 15px; line-height: 1.6; color: var(--muted); flex: 1; }
 .sub-card-tag {
   margin-top: 10px; display: inline-block; font-family: 'Space Mono', monospace;
-  font-size: 8px; letter-spacing: .2em; text-transform: uppercase;
+  font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
   color: var(--parchment); background: var(--sub-accent, var(--collective));
-  padding: 3px 7px; border-radius: 1px;
+  padding: 4px 9px; border-radius: 1px;
 }
-.card-eyebrow { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .35em; text-transform: uppercase; color: var(--card-accent, var(--accent)); margin-bottom: 10px; }
+.card-eyebrow { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--card-accent, var(--accent)); margin-bottom: 10px; }
 .card-title { font-size: 26px; font-weight: 300; line-height: 1.15; margin-bottom: 8px; }
 .card-title em { font-style: italic; color: var(--card-accent, var(--accent)); }
-.card-desc { font-size: 15px; line-height: 1.7; color: var(--muted); font-style: italic; flex: 1; }
-.card-tag { margin-top: 16px; display: inline-block; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--parchment); background: var(--card-accent, var(--accent)); padding: 4px 9px; border-radius: 1px; }
+.card-desc { font-size: 16px; line-height: 1.7; color: var(--muted); flex: 1; }
+.card-tag { margin-top: 16px; display: inline-block; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--parchment); background: var(--card-accent, var(--accent)); padding: 5px 11px; border-radius: 1px; }
 .resource-card {
   display: block; text-decoration: none; color: inherit;
   margin-top: 16px;
@@ -676,15 +644,15 @@ h1 em { font-style: italic; color: var(--accent); }
 .resource-card:hover { border-color: var(--card-accent, var(--stone)); background: rgba(255,255,255,.5); transform: translateY(-1px); }
 .resource-inner {
   display: flex; align-items: center; gap: 24px;
-  padding: 10px 30px;
+  padding: 12px 30px;
   flex-wrap: wrap;
 }
-.resource-title { font-size: 20px; font-weight: 300; line-height: 1.15; white-space: nowrap; }
+.resource-title { font-size: 21px; font-weight: 300; line-height: 1.15; white-space: nowrap; }
 .resource-title em { font-style: italic; color: var(--card-accent, var(--stone)); }
-.resource-desc { font-size: 13px; line-height: 1.65; color: var(--muted); font-style: italic; flex: 1; min-width: 200px; }
+.resource-desc { font-size: 15px; line-height: 1.65; color: var(--muted); flex: 1; min-width: 200px; }
 .resource-inner .card-eyebrow { margin-bottom: 0; white-space: nowrap; }
 .resource-inner .card-tag { margin-top: 0; white-space: nowrap; flex-shrink: 0; }
-footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,24,.12); font-family: 'Space Mono', monospace; font-size: 10px; color: var(--stone); letter-spacing: .1em; }
+footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,24,.12); font-family: 'Space Mono', monospace; font-size: 11px; color: var(--stone); letter-spacing: .1em; }
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
@@ -695,10 +663,10 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
   .map-right { padding: 20px 24px; }
   .nav-tools { gap: 10px; }
   .nav-tool { flex-direction: column; gap: 8px; }
-  .def-stats { gap: 28px; }
+  .def-stats { gap: 32px; }
 }
 @media (max-width: 480px) {
-  .p-landscape { padding: 40px 24px 28px; }
+  .p-landscape { padding: 36px 24px 24px; }
   .p-archetypes { padding: 0 24px; }
   .p-nav { padding: 0 24px; }
   .def-inner { padding: 0 28px; }
@@ -713,18 +681,19 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
      ═══════════════════════════════════════════════════════════════════════ -->
 <section class="panel p-definition">
   <div class="def-inner">
-    <div class="def-eyebrow reveal">Cities of Awe · Cambridge, MA · 2024–2025</div>
-    <div class="def-word reveal reveal-delay-1">Awe</div>
-    <p class="def-text reveal reveal-delay-2">
-      is the feeling of being in the presence of something <em>vast</em> that
-      <em>transcends your current understanding</em> of the world.
+    <p class="def-sentence reveal">
+      Awe is a feeling,<br>
+      of being in the presence<br>
+      of something vast<br>
+      that transcends your current understanding<br>
+      of the world.
     </p>
     <div class="def-stats">
-      <div class="def-stat reveal reveal-delay-3">
+      <div class="def-stat reveal reveal-delay-1">
         <div class="def-stat-up">↑ Prosocial behavior</div>
         <div class="def-stat-label">Increases cooperation and tendency toward collective action</div>
       </div>
-      <div class="def-stat reveal reveal-delay-4">
+      <div class="def-stat reveal reveal-delay-2">
         <div class="def-stat-up">↑ Time availability</div>
         <div class="def-stat-label">Expands one's felt sense of time and presence</div>
       </div>
@@ -733,6 +702,7 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
   <div class="scroll-cue">
     <div class="scroll-cue-line"></div>
     <div class="scroll-cue-label">Scroll</div>
+    <a href="#awe-atlas" class="skip-btn">Skip to the Awe Atlas →</a>
   </div>
 </section>
 
@@ -741,19 +711,22 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
      ═══════════════════════════════════════════════════════════════════════ -->
 <section class="panel p-landscape">
   <div class="land-layout">
-    <!-- Intro text -->
     <div class="land-intro">
-      <div class="land-eyebrow reveal">220 Instances · Cambridge, MA</div>
-      <h2 class="land-headline reveal reveal-delay-1">An analysis of awe reveals<br><em>patterns in the landscape.</em></h2>
-      <p class="land-sub reveal reveal-delay-2">
-        Moments of awe are most common on <strong>streets</strong> and in <strong>parks</strong>,
-        and most often take the form of <strong>plants</strong>, <strong>architecture</strong>,
-        and <strong>art &amp; objects</strong>.
+      <h2 class="land-headline reveal">
+        An analysis of awe in and around Cambridge, MA<br>
+        reveals that these moments of vastness<br>
+        are experienced in <em>specific locations</em><br>
+        and through <em>specific forms.</em>
+      </h2>
+      <p class="land-sub reveal reveal-delay-1">
+        Across 220 instances, moments of awe are most common on <em>streets</em> and in <em>parks</em>,
+        and most often take the form of <em>plants</em>, <em>architecture</em>,
+        and <em>art &amp; objects</em>.
       </p>
     </div>
 
     <!-- Locations grid -->
-    <div class="reveal reveal-delay-3">
+    <div class="reveal reveal-delay-2">
       <div class="tax-col-label">Where it happens — Locations</div>
       <div class="tax-grid">
         <span class="tax-box hi">Streets <span class="tax-n">91</span></span>
@@ -769,8 +742,8 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
     </div>
 
     <!-- Forms grid -->
-    <div class="reveal reveal-delay-4">
-      <div class="tax-col-label">What triggers it — Forms</div>
+    <div class="reveal reveal-delay-3">
+      <div class="tax-col-label">What elicits it — Forms</div>
       <div class="tax-grid">
         <span class="tax-box hi">Plants <span class="tax-n">38</span></span>
         <span class="tax-box hi">Architecture <span class="tax-n">36</span></span>
@@ -802,39 +775,55 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
 <section class="panel p-archetypes">
   <div class="arch-inner">
     <div class="arch-intro">
-      <div class="arch-eyebrow reveal">Four Archetypes · Cantabrigian Awe</div>
-      <h2 class="arch-headline reveal reveal-delay-1">
-        Four distinct archetypes characterize the nature<br>of <em>awe in Cambridge</em>.
+      <h2 class="arch-headline reveal">
+        These forms and locations provide the basis of four distinct archetypes
+        that characterize the nature of <em>awe in and around Cambridge.</em>
       </h2>
     </div>
     <div class="arch-grid">
 
-      <div class="arch-card reveal reveal-delay-2" style="--a-color: var(--a1)">
-        <div class="arch-card-num">Archetype 01</div>
-        <div class="arch-card-name"><em>Expansive</em> Nature</div>
-        <div class="arch-card-n">19 instances · 2 hotspots</div>
-        <p class="arch-card-desc">Vast encounters with water, sky, and landscape — moments where the body's smallness becomes vivid against the city's openings and edges.</p>
+      <div class="arch-card reveal reveal-delay-1" style="--a-color: var(--a1)">
+        <div class="arch-card-photo">
+          <img src="expansive_nature.jpg" alt="Expansive Nature">
+        </div>
+        <div class="arch-card-body">
+          <div class="arch-card-num">Archetype 01</div>
+          <div class="arch-card-name"><em>Expansive</em> Nature</div>
+          <div class="arch-card-n">19 instances · 2 hotspots</div>
+        </div>
       </div>
 
-      <div class="arch-card reveal reveal-delay-3" style="--a-color: var(--a2)">
-        <div class="arch-card-num">Archetype 02</div>
-        <div class="arch-card-name"><em>Wild</em> Nature</div>
-        <div class="arch-card-n">85 instances · 11 hotspots</div>
-        <p class="arch-card-desc">The most common archetype — encounters with living things that exceed human control, from seasonal blooms to animal presence, generating wonder and a sense of otherness.</p>
+      <div class="arch-card reveal reveal-delay-2" style="--a-color: var(--a2)">
+        <div class="arch-card-photo">
+          <img src="wild_nature.jpg" alt="Wild Nature">
+        </div>
+        <div class="arch-card-body">
+          <div class="arch-card-num">Archetype 02</div>
+          <div class="arch-card-name"><em>Wild</em> Nature</div>
+          <div class="arch-card-n">85 instances · 11 hotspots</div>
+        </div>
       </div>
 
-      <div class="arch-card reveal reveal-delay-3" style="--a-color: var(--a3)">
-        <div class="arch-card-num">Archetype 03</div>
-        <div class="arch-card-name"><em>Built</em> Beauty</div>
-        <div class="arch-card-n">74 instances · 10 hotspots</div>
-        <p class="arch-card-desc">Awe found in the ornate craft of the built environment — architecture, public art, and visual design that stops you in your tracks along the city's streets.</p>
+      <div class="arch-card reveal reveal-delay-2" style="--a-color: var(--a3)">
+        <div class="arch-card-photo">
+          <img src="built_beauty.jpg" alt="Built Beauty">
+        </div>
+        <div class="arch-card-body">
+          <div class="arch-card-num">Archetype 03</div>
+          <div class="arch-card-name"><em>Built</em> Beauty</div>
+          <div class="arch-card-n">74 instances · 10 hotspots</div>
+        </div>
       </div>
 
-      <div class="arch-card reveal reveal-delay-4" style="--a-color: var(--a4)">
-        <div class="arch-card-num">Archetype 04</div>
-        <div class="arch-card-name"><em>Inclusive</em> Interaction</div>
-        <div class="arch-card-n">45 instances · 8 hotspots</div>
-        <p class="arch-card-desc">Moments of collective effervescence — gatherings, events, and communities that dissolve the boundary between self and crowd, generating a felt sense of belonging.</p>
+      <div class="arch-card reveal reveal-delay-3" style="--a-color: var(--a4)">
+        <div class="arch-card-photo">
+          <img src="inclusive_interaction.jpg" alt="Inclusive Interaction">
+        </div>
+        <div class="arch-card-body">
+          <div class="arch-card-num">Archetype 04</div>
+          <div class="arch-card-name"><em>Inclusive</em> Interaction</div>
+          <div class="arch-card-n">45 instances · 8 hotspots</div>
+        </div>
       </div>
 
     </div>
@@ -973,15 +962,15 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
      ═══════════════════════════════════════════════════════════════════════ -->
 <section class="panel p-question">
   <div class="q-inner">
-    <div class="q-eyebrow reveal">A question for you</div>
-    <p class="q-line reveal reveal-delay-1">
-      When you wander through Cambridge, what type of awe are you
-      <em>most likely to notice?</em>
+    <p class="q-line reveal">
+      When you've wandered around Cambridge,<br>
+      what type of awe<br>
+      <em>have you experienced?</em>
     </p>
-    <p class="q-line reveal reveal-delay-2">
+    <p class="q-line reveal reveal-delay-1">
       What <em>catches your attention?</em>
     </p>
-    <p class="q-line reveal reveal-delay-3">
+    <p class="q-line reveal reveal-delay-2">
       What invites a sense of <em>mystery and wonder?</em>
     </p>
   </div>
@@ -996,22 +985,21 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
      ═══════════════════════════════════════════════════════════════════════ -->
 <section class="panel p-nav">
   <div class="nav-inner">
-    <div class="nav-eyebrow reveal">The Tools</div>
-    <h2 class="nav-headline reveal reveal-delay-1">
+    <h2 class="nav-headline reveal">
       The following tools offer a way to situate yourself<br>with the landscape of awe in Cambridge.
     </h2>
     <div class="nav-tools">
-      <a href="community.html" class="nav-tool reveal reveal-delay-2" style="--t-color: #8c4518">
+      <a href="community.html" class="nav-tool reveal reveal-delay-1" style="--t-color: #8c4518">
         <div class="nav-tool-name">Encounter <em>Awe</em></div>
         <div class="nav-tool-desc">To increase your odds of finding awe in Cambridge, navigate to the Everyday Awe tool — browse 220 instances near you and navigate by compass or AI directions.</div>
         <div class="nav-tool-arrow">Open →</div>
       </a>
-      <a href="atlas.html" class="nav-tool reveal reveal-delay-3" style="--t-color: #4a7a8a">
+      <a href="atlas.html" class="nav-tool reveal reveal-delay-2" style="--t-color: #4a7a8a">
         <div class="nav-tool-name">Interactive <em>Map</em></div>
         <div class="nav-tool-desc">To spatially orient yourself towards moments of awe, explore the Interactive Map — 220 georeferenced instances plotted across Cambridge.</div>
         <div class="nav-tool-arrow">Open →</div>
       </a>
-      <a href="alluvial.html" class="nav-tool reveal reveal-delay-4" style="--t-color: #6b5b8a">
+      <a href="alluvial.html" class="nav-tool reveal reveal-delay-3" style="--t-color: #6b5b8a">
         <div class="nav-tool-name">Alluvial <em>Explorer</em></div>
         <div class="nav-tool-desc">To further investigate the underlying data, the Alluvial Explorer visualizes how instances flow across analytical categories.</div>
         <div class="nav-tool-arrow">Open →</div>
@@ -1025,9 +1013,9 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
 </section>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     PANEL 10 — TOOL GRID (existing index content)
+     PANEL 10 — TOOL GRID
      ═══════════════════════════════════════════════════════════════════════ -->
-<section class="p-tools">
+<section class="p-tools" id="awe-atlas">
 <div class="site-wrap">
 
   <header>
@@ -1038,7 +1026,6 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
 
   <div class="tools-grid">
 
-    <!-- Tool 01 — Encounter Awe -->
     <a href="community.html" class="tool-card" style="--card-accent: #8c4518">
       <div class="card-eyebrow">Tool 01</div>
       <div class="card-title">Encounter <em>Awe</em></div>
@@ -1046,7 +1033,6 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
       <span class="card-tag">Open Tool →</span>
     </a>
 
-    <!-- Tool 02 — Explore Awe (two sub-cards) -->
     <div class="tool-card-pair">
       <div class="pair-header">
         <div class="card-eyebrow" style="color: var(--collective)">Tool 02</div>
@@ -1068,7 +1054,6 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
       </div>
     </div>
 
-    <!-- Tool 03 — Share Awe -->
     <a href="share.html" class="tool-card" style="--card-accent: #97ba74">
       <div class="card-eyebrow">Tool 03</div>
       <div class="card-title">Share <em>Awe</em></div>
@@ -1078,7 +1063,6 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
 
   </div>
 
-  <!-- Resource -->
   <a href="guide.html" class="resource-card" style="--card-accent: #7a6e5f">
     <div class="resource-inner">
       <div class="card-eyebrow" style="color: var(--card-accent)">Resource</div>
@@ -1088,24 +1072,18 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
     </div>
   </a>
 
-  <footer>Threshold · Cambridge, MA · 2024–2025</footer>
+  <footer>Awe in Cambridge · Cambridge, MA · 2024–2025</footer>
 
 </div>
 </section>
 
 <script>
-/* ── Intersection Observer — trigger .reveal animations ─────────────────── */
 var observer = new IntersectionObserver(function(entries) {
   entries.forEach(function(entry) {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('is-visible');
-    }
+    if (entry.isIntersecting) entry.target.classList.add('is-visible');
   });
-}, { threshold: 0.15 });
-
-document.querySelectorAll('.reveal').forEach(function(el) {
-  observer.observe(el);
-});
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
 </script>
 </body>
 </html>
