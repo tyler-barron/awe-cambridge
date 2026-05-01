@@ -6,6 +6,7 @@
 <title>Awe in Cambridge</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono&display=swap" rel="stylesheet">
 <style>
+/* ── Tokens ─────────────────────────────────────────────────────────────── */
 :root {
   --ink:       #1c1914;
   --charcoal:  #2c2118;
@@ -13,33 +14,603 @@
   --linen:     #e3d4c5;
   --stone:     #b7aea2;
   --accent:    #8c4518;
-  --ember:     #74120c;
-  --saffron:   #caa74d;
   --muted:     #6b6259;
   --nature:    #97ba74;
+  --collective:#4a7a8a;
   --epiphany:  #6b5b8a;
+  --wild:      #5a7d3d;
+
+  /* Archetype palette */
+  --a1: #4a7a8a;  /* Expansive Nature  — teal   */
+  --a2: #5a7d3d;  /* Wild Nature       — forest */
+  --a3: #8c4518;  /* Built Beauty      — amber  */
+  --a4: #6b5b8a;  /* Inclusive Interaction — plum */
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { min-height: 100%; background: var(--parchment); color: var(--ink); font-family: 'Cormorant Garamond', serif; }
+
+/* ── Scroll container ───────────────────────────────────────────────────── */
+html {
+  height: 100%;
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+}
+body {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--ink);
+  background: var(--parchment);
+}
+
+/* ── Paper grain (fixed overlay) ─────────────────────────────────────────── */
 body::before {
-  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 998; opacity: .5;
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: .4;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
 }
 
-.site-wrap { max-width: 900px; margin: 0 auto; padding: 60px 40px 80px; }
+/* ── Panel base ─────────────────────────────────────────────────────────── */
+.panel {
+  height: 100vh;
+  scroll-snap-align: start;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
 
-header { margin-bottom: 64px; border-bottom: 1px solid rgba(140,69,24,.18); padding-bottom: 32px; }
-.wordmark { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .4em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+/* ── Scroll indicator ────────────────────────────────────────────────────── */
+.scroll-cue {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  animation: cueFade 1s ease 2.5s forwards;
+}
+.scroll-cue-line {
+  width: 1px;
+  height: 28px;
+  background: currentColor;
+  opacity: .35;
+  animation: cueGrow 1.4s ease infinite;
+}
+.scroll-cue-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  opacity: .45;
+}
+@keyframes cueFade { to { opacity: 1; } }
+@keyframes cueGrow {
+  0%,100% { transform: scaleY(1); opacity: .35; }
+  50%      { transform: scaleY(.4); opacity: .15; }
+}
+
+/* ── Fade-in animation class ─────────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .9s ease, transform .9s ease;
+}
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: .15s; }
+.reveal-delay-2 { transition-delay: .3s; }
+.reveal-delay-3 { transition-delay: .45s; }
+.reveal-delay-4 { transition-delay: .6s; }
+.reveal-delay-5 { transition-delay: .75s; }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PANEL 1 — DEFINITION
+   ═══════════════════════════════════════════════════════════════════════════ */
+.p-definition {
+  background: var(--ink);
+  color: var(--parchment);
+}
+.p-definition .scroll-cue { color: var(--parchment); }
+
+.def-inner {
+  max-width: 740px;
+  padding: 0 48px;
+  text-align: center;
+}
+.def-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .4em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin-bottom: 36px;
+}
+.def-word {
+  font-size: clamp(72px, 12vw, 120px);
+  font-weight: 300;
+  font-style: italic;
+  line-height: .9;
+  margin-bottom: 32px;
+  color: var(--parchment);
+}
+.def-text {
+  font-size: clamp(18px, 2.4vw, 22px);
+  line-height: 1.75;
+  font-style: italic;
+  color: rgba(244,240,231,.75);
+  max-width: 580px;
+  margin: 0 auto 44px;
+}
+.def-text em { font-style: normal; color: var(--parchment); }
+.def-stats {
+  display: flex;
+  gap: 48px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.def-stat {
+  text-align: center;
+}
+.def-stat-up {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .2em;
+  color: var(--stone);
+  margin-bottom: 6px;
+}
+.def-stat-label {
+  font-size: 15px;
+  font-style: italic;
+  color: rgba(244,240,231,.6);
+  line-height: 1.5;
+  max-width: 180px;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PANEL 2 — THE LANDSCAPE
+   ═══════════════════════════════════════════════════════════════════════════ */
+.p-landscape {
+  background: var(--parchment);
+  justify-content: flex-start;
+  padding: 56px 56px 40px;
+}
+.land-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  width: 100%;
+  max-width: 1040px;
+}
+.land-intro {
+  grid-column: 1 / -1;
+  margin-bottom: 4px;
+}
+.land-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .4em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.land-headline {
+  font-size: clamp(28px, 3.5vw, 40px);
+  font-weight: 300;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+.land-headline em { font-style: italic; color: var(--accent); }
+.land-sub {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--muted);
+  font-style: italic;
+  max-width: 700px;
+}
+.land-sub strong { font-style: normal; color: var(--ink); font-weight: 400; }
+
+/* Taxonomy grids */
+.tax-col-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(140,69,24,.12);
+}
+.tax-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.tax-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border: 1px solid rgba(140,69,24,.2);
+  border-radius: 2px;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.tax-box .tax-n {
+  font-size: 7px;
+  opacity: .55;
+}
+.tax-box.hi {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--parchment);
+  font-size: 9px;
+  padding: 6px 12px;
+}
+.tax-box.hi .tax-n { opacity: .7; }
+.tax-box.md {
+  background: rgba(140,69,24,.07);
+  color: var(--ink);
+}
+.tax-box.lo { opacity: .5; }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PANEL 3 — ARCHETYPES OVERVIEW
+   ═══════════════════════════════════════════════════════════════════════════ */
+.p-archetypes {
+  background: var(--linen);
+  padding: 0 56px;
+}
+.arch-inner {
+  width: 100%;
+  max-width: 1000px;
+}
+.arch-intro {
+  margin-bottom: 28px;
+}
+.arch-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .4em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.arch-headline {
+  font-size: clamp(26px, 3.2vw, 36px);
+  font-weight: 300;
+  line-height: 1.1;
+}
+.arch-headline em { font-style: italic; color: var(--accent); }
+.arch-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.arch-card {
+  background: rgba(255,255,255,.55);
+  border: 1px solid rgba(140,69,24,.18);
+  border-radius: 3px;
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+}
+.arch-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--a-color);
+}
+.arch-card-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--a-color);
+  margin-bottom: 6px;
+}
+.arch-card-name {
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 300;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+.arch-card-name em { font-style: italic; color: var(--a-color); }
+.arch-card-n {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: var(--stone);
+  margin-bottom: 10px;
+}
+.arch-card-desc {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--muted);
+  font-style: italic;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PANELS 4–7 — MAPS
+   ═══════════════════════════════════════════════════════════════════════════ */
+.p-map {
+  flex-direction: row;
+  justify-content: stretch;
+  align-items: stretch;
+  padding: 0;
+  background: var(--parchment);
+}
+.map-left {
+  width: 340px;
+  flex-shrink: 0;
+  background: var(--map-bg, rgba(244,240,231,.9));
+  border-right: 1px solid rgba(140,69,24,.12);
+  padding: 48px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+.map-left::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--m-color);
+}
+.map-cluster-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--m-color);
+  margin-bottom: 16px;
+}
+.map-cluster-intro {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 20px;
+}
+.map-cluster-name {
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: 300;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+.map-cluster-name em { font-style: italic; color: var(--m-color); }
+.map-cluster-n {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--stone);
+  margin-bottom: 24px;
+}
+.map-cluster-desc {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 18px;
+}
+.map-cluster-components {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin-bottom: 10px;
+}
+.map-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.map-tag {
+  padding: 4px 9px;
+  border: 1px solid var(--m-color);
+  border-radius: 1px;
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--m-color);
+}
+.map-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 36px;
+  background: rgba(255,255,255,.18);
+}
+/* Clip the PNG title by hiding the top ~10% of each map image */
+.map-img-clip {
+  width: 100%;
+  max-height: calc(100vh - 72px);
+  overflow: hidden;
+  border-radius: 2px;
+}
+.map-img-clip img {
+  width: 100%;
+  display: block;
+  margin-top: -10%;  /* hides the "Cluster N: Name / n = X" title area */
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PANEL 8 — REFLECTIVE QUESTION
+   ═══════════════════════════════════════════════════════════════════════════ */
+.p-question {
+  background: var(--ink);
+  color: var(--parchment);
+  text-align: center;
+}
+.p-question .scroll-cue { color: var(--parchment); }
+.q-inner {
+  max-width: 640px;
+  padding: 0 48px;
+}
+.q-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .4em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin-bottom: 44px;
+}
+.q-line {
+  font-size: clamp(20px, 2.8vw, 28px);
+  font-weight: 300;
+  line-height: 1.5;
+  color: rgba(244,240,231,.9);
+  margin-bottom: 22px;
+}
+.q-line em { font-style: italic; color: var(--parchment); }
+.q-line:last-of-type { margin-bottom: 0; }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PANEL 9 — NAVIGATION / BRIDGE
+   ═══════════════════════════════════════════════════════════════════════════ */
+.p-nav {
+  background: var(--parchment);
+  text-align: center;
+  padding: 0 56px;
+}
+.nav-inner {
+  max-width: 700px;
+}
+.nav-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .4em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+.nav-headline {
+  font-size: clamp(22px, 2.8vw, 30px);
+  font-weight: 300;
+  line-height: 1.3;
+  margin-bottom: 32px;
+  font-style: italic;
+}
+.nav-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+.nav-tool {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 14px 18px;
+  border: 1px solid rgba(140,69,24,.18);
+  border-radius: 3px;
+  background: rgba(255,255,255,.3);
+  text-decoration: none;
+  color: inherit;
+  transition: background .2s, border-color .2s, transform .2s;
+  position: relative;
+  overflow: hidden;
+}
+.nav-tool::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--t-color, var(--accent));
+}
+.nav-tool:hover {
+  background: rgba(255,255,255,.55);
+  border-color: var(--t-color, var(--accent));
+  transform: translateX(2px);
+}
+.nav-tool-name {
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1.15;
+  min-width: 180px;
+}
+.nav-tool-name em { font-style: italic; color: var(--t-color, var(--accent)); }
+.nav-tool-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+  font-style: italic;
+  flex: 1;
+}
+.nav-tool-arrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--t-color, var(--accent));
+  flex-shrink: 0;
+  align-self: center;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PANEL 10 — TOOL GRID (existing index content)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.p-tools {
+  height: auto;
+  min-height: 100vh;
+  scroll-snap-align: start;
+  background: var(--parchment);
+  display: block;
+}
+.site-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 40px 80px;
+}
+header {
+  margin-bottom: 64px;
+  border-bottom: 1px solid rgba(140,69,24,.18);
+  padding-bottom: 32px;
+}
+.wordmark {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .4em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
 h1 { font-size: 52px; font-weight: 300; line-height: 1; }
 h1 em { font-style: italic; color: var(--accent); }
-.lede { font-size: 19px; line-height: 1.75; color: var(--muted); font-style: italic; margin-top: 12px; max-width: 560px; }
-
-.tools-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+.lede {
+  font-size: 19px;
+  line-height: 1.75;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 12px;
+  max-width: 560px;
+}
+.tools-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+}
 @media (max-width: 860px) { .tools-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 560px) { .tools-grid { grid-template-columns: 1fr; } }
-
 .tool-card {
-  display: block; text-decoration: none; color: inherit;
+  display: flex; flex-direction: column;
+  text-decoration: none; color: inherit;
   padding: 28px 30px;
   border: 1px solid rgba(140,69,24,.22);
   border-radius: 3px;
@@ -52,17 +623,47 @@ h1 em { font-style: italic; color: var(--accent); }
   background: var(--card-accent, var(--accent));
 }
 .tool-card:hover { border-color: var(--card-accent, var(--accent)); background: rgba(255,255,255,.5); transform: translateY(-2px); }
-.tool-card.unavailable { opacity: .55; cursor: default; pointer-events: none; }
-
+.tool-card-pair {
+  display: flex; flex-direction: column;
+  border: 1px solid rgba(140,69,24,.22);
+  border-radius: 3px;
+  background: rgba(255,255,255,.18);
+  position: relative; overflow: hidden;
+}
+.tool-card-pair::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--collective);
+}
+.pair-header { padding: 24px 30px 14px; border-bottom: 1px solid rgba(140,69,24,.1); }
+.pair-sub-cards { display: flex; flex-direction: column; flex: 1; }
+.sub-card {
+  flex: 1; display: flex; flex-direction: column;
+  text-decoration: none; color: inherit;
+  padding: 16px 30px 18px;
+  transition: background .2s;
+  position: relative;
+}
+.sub-card + .sub-card { border-top: 1px solid rgba(140,69,24,.1); }
+.sub-card:hover { background: rgba(255,255,255,.35); }
+.sub-card-eyebrow {
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .25em;
+  text-transform: uppercase; color: var(--sub-accent, var(--collective));
+  margin-bottom: 5px;
+}
+.sub-card-title { font-size: 19px; font-weight: 300; line-height: 1.2; margin-bottom: 5px; }
+.sub-card-title em { font-style: italic; color: var(--sub-accent, var(--collective)); }
+.sub-card-desc { font-size: 13px; line-height: 1.6; color: var(--muted); font-style: italic; flex: 1; }
+.sub-card-tag {
+  margin-top: 10px; display: inline-block; font-family: 'Space Mono', monospace;
+  font-size: 8px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--parchment); background: var(--sub-accent, var(--collective));
+  padding: 3px 7px; border-radius: 1px;
+}
 .card-eyebrow { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .35em; text-transform: uppercase; color: var(--card-accent, var(--accent)); margin-bottom: 10px; }
 .card-title { font-size: 26px; font-weight: 300; line-height: 1.15; margin-bottom: 8px; }
 .card-title em { font-style: italic; color: var(--card-accent, var(--accent)); }
-.card-desc { font-size: 15px; line-height: 1.7; color: var(--muted); font-style: italic; }
+.card-desc { font-size: 15px; line-height: 1.7; color: var(--muted); font-style: italic; flex: 1; }
 .card-tag { margin-top: 16px; display: inline-block; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--parchment); background: var(--card-accent, var(--accent)); padding: 4px 9px; border-radius: 1px; }
-.card-tag.coming-soon { background: var(--stone); }
-
-footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,24,.12); font-family: 'Space Mono', monospace; font-size: 10px; color: var(--stone); letter-spacing: .1em; }
-
 .resource-card {
   display: block; text-decoration: none; color: inherit;
   margin-top: 16px;
@@ -87,10 +688,360 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
 .resource-desc { font-size: 13px; line-height: 1.65; color: var(--muted); font-style: italic; flex: 1; min-width: 200px; }
 .resource-inner .card-eyebrow { margin-bottom: 0; white-space: nowrap; }
 .resource-inner .card-tag { margin-top: 0; white-space: nowrap; flex-shrink: 0; }
+footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,24,.12); font-family: 'Space Mono', monospace; font-size: 10px; color: var(--stone); letter-spacing: .1em; }
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .land-layout { grid-template-columns: 1fr; }
+  .arch-grid { grid-template-columns: 1fr; gap: 10px; }
+  .p-map { flex-direction: column; }
+  .map-left { width: 100%; height: auto; padding: 28px 24px; border-right: none; border-bottom: 1px solid rgba(140,69,24,.12); }
+  .map-right { padding: 20px 24px; }
+  .nav-tools { gap: 10px; }
+  .nav-tool { flex-direction: column; gap: 8px; }
+  .def-stats { gap: 28px; }
+}
+@media (max-width: 480px) {
+  .p-landscape { padding: 40px 24px 28px; }
+  .p-archetypes { padding: 0 24px; }
+  .p-nav { padding: 0 24px; }
+  .def-inner { padding: 0 28px; }
+  .q-inner { padding: 0 28px; }
+}
 </style>
 </head>
 <body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PANEL 1 — DEFINITION
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="panel p-definition">
+  <div class="def-inner">
+    <div class="def-eyebrow reveal">Cities of Awe · Cambridge, MA · 2024–2025</div>
+    <div class="def-word reveal reveal-delay-1">Awe</div>
+    <p class="def-text reveal reveal-delay-2">
+      is the feeling of being in the presence of something <em>vast</em> that
+      <em>transcends your current understanding</em> of the world.
+    </p>
+    <div class="def-stats">
+      <div class="def-stat reveal reveal-delay-3">
+        <div class="def-stat-up">↑ Prosocial behavior</div>
+        <div class="def-stat-label">Increases cooperation and tendency toward collective action</div>
+      </div>
+      <div class="def-stat reveal reveal-delay-4">
+        <div class="def-stat-up">↑ Time availability</div>
+        <div class="def-stat-label">Expands one's felt sense of time and presence</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <div class="scroll-cue-line"></div>
+    <div class="scroll-cue-label">Scroll</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PANEL 2 — THE LANDSCAPE
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="panel p-landscape">
+  <div class="land-layout">
+    <!-- Intro text -->
+    <div class="land-intro">
+      <div class="land-eyebrow reveal">220 Instances · Cambridge, MA</div>
+      <h2 class="land-headline reveal reveal-delay-1">An analysis of awe reveals<br><em>patterns in the landscape.</em></h2>
+      <p class="land-sub reveal reveal-delay-2">
+        Moments of awe are most common on <strong>streets</strong> and in <strong>parks</strong>,
+        and most often take the form of <strong>plants</strong>, <strong>architecture</strong>,
+        and <strong>art &amp; objects</strong>.
+      </p>
+    </div>
+
+    <!-- Locations grid -->
+    <div class="reveal reveal-delay-3">
+      <div class="tax-col-label">Where it happens — Locations</div>
+      <div class="tax-grid">
+        <span class="tax-box hi">Streets <span class="tax-n">91</span></span>
+        <span class="tax-box hi">Parks <span class="tax-n">58</span></span>
+        <span class="tax-box md">Civic &amp; Cultural <span class="tax-n">18</span></span>
+        <span class="tax-box md">Waterfronts <span class="tax-n">14</span></span>
+        <span class="tax-box">Educational <span class="tax-n">13</span></span>
+        <span class="tax-box">Industry &amp; Office <span class="tax-n">12</span></span>
+        <span class="tax-box lo">Residences <span class="tax-n">6</span></span>
+        <span class="tax-box lo">Plazas <span class="tax-n">4</span></span>
+        <span class="tax-box lo">Corridors <span class="tax-n">4</span></span>
+      </div>
+    </div>
+
+    <!-- Forms grid -->
+    <div class="reveal reveal-delay-4">
+      <div class="tax-col-label">What triggers it — Forms</div>
+      <div class="tax-grid">
+        <span class="tax-box hi">Plants <span class="tax-n">38</span></span>
+        <span class="tax-box hi">Architecture <span class="tax-n">36</span></span>
+        <span class="tax-box hi">Art &amp; Objects <span class="tax-n">32</span></span>
+        <span class="tax-box md">People <span class="tax-n">19</span></span>
+        <span class="tax-box md">Events <span class="tax-n">15</span></span>
+        <span class="tax-box md">Animals <span class="tax-n">14</span></span>
+        <span class="tax-box">Vistas <span class="tax-n">13</span></span>
+        <span class="tax-box">Communities <span class="tax-n">12</span></span>
+        <span class="tax-box">Green Space <span class="tax-n">12</span></span>
+        <span class="tax-box lo">Water <span class="tax-n">7</span></span>
+        <span class="tax-box lo">Weather <span class="tax-n">7</span></span>
+        <span class="tax-box lo">Light <span class="tax-n">6</span></span>
+        <span class="tax-box lo">Infrastructure <span class="tax-n">5</span></span>
+        <span class="tax-box lo">Sounds <span class="tax-n">2</span></span>
+        <span class="tax-box lo">Smells <span class="tax-n">2</span></span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <div class="scroll-cue-line"></div>
+    <div class="scroll-cue-label">Scroll</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PANEL 3 — ARCHETYPES OVERVIEW
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="panel p-archetypes">
+  <div class="arch-inner">
+    <div class="arch-intro">
+      <div class="arch-eyebrow reveal">Four Archetypes · Cantabrigian Awe</div>
+      <h2 class="arch-headline reveal reveal-delay-1">
+        Four distinct archetypes characterize the nature<br>of <em>awe in Cambridge</em>.
+      </h2>
+    </div>
+    <div class="arch-grid">
+
+      <div class="arch-card reveal reveal-delay-2" style="--a-color: var(--a1)">
+        <div class="arch-card-num">Archetype 01</div>
+        <div class="arch-card-name"><em>Expansive</em> Nature</div>
+        <div class="arch-card-n">19 instances · 2 hotspots</div>
+        <p class="arch-card-desc">Vast encounters with water, sky, and landscape — moments where the body's smallness becomes vivid against the city's openings and edges.</p>
+      </div>
+
+      <div class="arch-card reveal reveal-delay-3" style="--a-color: var(--a2)">
+        <div class="arch-card-num">Archetype 02</div>
+        <div class="arch-card-name"><em>Wild</em> Nature</div>
+        <div class="arch-card-n">85 instances · 11 hotspots</div>
+        <p class="arch-card-desc">The most common archetype — encounters with living things that exceed human control, from seasonal blooms to animal presence, generating wonder and a sense of otherness.</p>
+      </div>
+
+      <div class="arch-card reveal reveal-delay-3" style="--a-color: var(--a3)">
+        <div class="arch-card-num">Archetype 03</div>
+        <div class="arch-card-name"><em>Built</em> Beauty</div>
+        <div class="arch-card-n">74 instances · 10 hotspots</div>
+        <p class="arch-card-desc">Awe found in the ornate craft of the built environment — architecture, public art, and visual design that stops you in your tracks along the city's streets.</p>
+      </div>
+
+      <div class="arch-card reveal reveal-delay-4" style="--a-color: var(--a4)">
+        <div class="arch-card-num">Archetype 04</div>
+        <div class="arch-card-name"><em>Inclusive</em> Interaction</div>
+        <div class="arch-card-n">45 instances · 8 hotspots</div>
+        <p class="arch-card-desc">Moments of collective effervescence — gatherings, events, and communities that dissolve the boundary between self and crowd, generating a felt sense of belonging.</p>
+      </div>
+
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <div class="scroll-cue-line"></div>
+    <div class="scroll-cue-label">Scroll</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PANEL 4 — MAP: EXPANSIVE NATURE
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="panel p-map" style="--m-color: var(--a1)">
+  <div class="map-left">
+    <div class="map-cluster-label reveal">Archetype 01 · Spatial Distribution</div>
+    <p class="map-cluster-intro reveal reveal-delay-1">
+      Most archetypes are spatially clustered within the city, gravitating toward
+      hotspots shaped by where moments of awe were recorded.
+    </p>
+    <div class="map-cluster-name reveal reveal-delay-2"><em>Expansive</em> Nature</div>
+    <div class="map-cluster-n reveal reveal-delay-2">19 instances · 2 hotspots</div>
+    <p class="map-cluster-desc reveal reveal-delay-3">Vast encounters with water, sky, and landscape — moments where the body's smallness becomes vivid against the city's openings and edges.</p>
+    <div class="map-cluster-components reveal reveal-delay-3">Key components</div>
+    <div class="map-tags reveal reveal-delay-3">
+      <span class="map-tag">Vista</span>
+      <span class="map-tag">Expansive</span>
+      <span class="map-tag">Waterfront</span>
+      <span class="map-tag">Nature</span>
+      <span class="map-tag">Water</span>
+      <span class="map-tag">Vastness</span>
+      <span class="map-tag">Timeless</span>
+    </div>
+  </div>
+  <div class="map-right">
+    <div class="map-img-clip">
+      <img src="cluster_map_cluster_1_expansive_nature.png" alt="Spatial distribution of Expansive Nature awe in Cambridge">
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <div class="scroll-cue-line"></div>
+    <div class="scroll-cue-label">Scroll</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PANEL 5 — MAP: WILD NATURE
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="panel p-map" style="--m-color: var(--a2)">
+  <div class="map-left">
+    <div class="map-cluster-label reveal">Archetype 02 · Spatial Distribution</div>
+    <div class="map-cluster-name reveal reveal-delay-1"><em>Wild</em> Nature</div>
+    <div class="map-cluster-n reveal reveal-delay-1">85 instances · 11 hotspots</div>
+    <p class="map-cluster-desc reveal reveal-delay-2">The most common archetype — encounters with living things that exceed human control, from seasonal blooms to animal presence, generating wonder and a sense of otherness.</p>
+    <div class="map-cluster-components reveal reveal-delay-2">Key components</div>
+    <div class="map-tags reveal reveal-delay-2">
+      <span class="map-tag">Nature</span>
+      <span class="map-tag">Plant</span>
+      <span class="map-tag">Alterity</span>
+      <span class="map-tag">Wild</span>
+      <span class="map-tag">Wonder</span>
+      <span class="map-tag">Seasonal</span>
+      <span class="map-tag">Animal</span>
+      <span class="map-tag">Park</span>
+    </div>
+  </div>
+  <div class="map-right">
+    <div class="map-img-clip">
+      <img src="cluster_map_cluster_2_wild_nature.png" alt="Spatial distribution of Wild Nature awe in Cambridge">
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <div class="scroll-cue-line"></div>
+    <div class="scroll-cue-label">Scroll</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PANEL 6 — MAP: BUILT BEAUTY
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="panel p-map" style="--m-color: var(--a3)">
+  <div class="map-left">
+    <div class="map-cluster-label reveal">Archetype 03 · Spatial Distribution</div>
+    <div class="map-cluster-name reveal reveal-delay-1"><em>Built</em> Beauty</div>
+    <div class="map-cluster-n reveal reveal-delay-1">74 instances · 10 hotspots</div>
+    <p class="map-cluster-desc reveal reveal-delay-2">Awe found in the ornate craft of the built environment — architecture, public art, and visual design that stops you in your tracks along the city's streets.</p>
+    <div class="map-cluster-components reveal reveal-delay-2">Key components</div>
+    <div class="map-tags reveal reveal-delay-2">
+      <span class="map-tag">Visual Design</span>
+      <span class="map-tag">Architecture</span>
+      <span class="map-tag">Timeless</span>
+      <span class="map-tag">Ornate</span>
+      <span class="map-tag">Art &amp; Object</span>
+      <span class="map-tag">Epiphany</span>
+      <span class="map-tag">Street</span>
+      <span class="map-tag">Beauty</span>
+    </div>
+  </div>
+  <div class="map-right">
+    <div class="map-img-clip">
+      <img src="cluster_map_cluster_3_built_beauty.png" alt="Spatial distribution of Built Beauty awe in Cambridge">
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <div class="scroll-cue-line"></div>
+    <div class="scroll-cue-label">Scroll</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PANEL 7 — MAP: INCLUSIVE INTERACTION
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="panel p-map" style="--m-color: var(--a4)">
+  <div class="map-left">
+    <div class="map-cluster-label reveal">Archetype 04 · Spatial Distribution</div>
+    <div class="map-cluster-name reveal reveal-delay-1"><em>Inclusive</em> Interaction</div>
+    <div class="map-cluster-n reveal reveal-delay-1">45 instances · 8 hotspots</div>
+    <p class="map-cluster-desc reveal reveal-delay-2">Moments of collective effervescence — gatherings, events, and communities that dissolve the boundary between self and crowd, generating a felt sense of belonging.</p>
+    <div class="map-cluster-components reveal reveal-delay-2">Key components</div>
+    <div class="map-tags reveal reveal-delay-2">
+      <span class="map-tag">Collective Effervescence</span>
+      <span class="map-tag">Interconnection</span>
+      <span class="map-tag">People</span>
+      <span class="map-tag">Inclusive</span>
+      <span class="map-tag">Event</span>
+      <span class="map-tag">Moral Beauty</span>
+      <span class="map-tag">Recurring</span>
+      <span class="map-tag">Civic Venues</span>
+    </div>
+  </div>
+  <div class="map-right">
+    <div class="map-img-clip">
+      <img src="cluster_map_cluster_4_inclusive_interaction.png" alt="Spatial distribution of Inclusive Interaction awe in Cambridge">
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <div class="scroll-cue-line"></div>
+    <div class="scroll-cue-label">Scroll</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PANEL 8 — REFLECTIVE QUESTION
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="panel p-question">
+  <div class="q-inner">
+    <div class="q-eyebrow reveal">A question for you</div>
+    <p class="q-line reveal reveal-delay-1">
+      When you wander through Cambridge, what type of awe are you
+      <em>most likely to notice?</em>
+    </p>
+    <p class="q-line reveal reveal-delay-2">
+      What <em>catches your attention?</em>
+    </p>
+    <p class="q-line reveal reveal-delay-3">
+      What invites a sense of <em>mystery and wonder?</em>
+    </p>
+  </div>
+  <div class="scroll-cue">
+    <div class="scroll-cue-line"></div>
+    <div class="scroll-cue-label">Scroll</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PANEL 9 — NAVIGATION BRIDGE
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="panel p-nav">
+  <div class="nav-inner">
+    <div class="nav-eyebrow reveal">The Tools</div>
+    <h2 class="nav-headline reveal reveal-delay-1">
+      The following tools offer a way to situate yourself<br>with the landscape of awe in Cambridge.
+    </h2>
+    <div class="nav-tools">
+      <a href="community.html" class="nav-tool reveal reveal-delay-2" style="--t-color: #8c4518">
+        <div class="nav-tool-name">Encounter <em>Awe</em></div>
+        <div class="nav-tool-desc">To increase your odds of finding awe in Cambridge, navigate to the Everyday Awe tool — browse 220 instances near you and navigate by compass or AI directions.</div>
+        <div class="nav-tool-arrow">Open →</div>
+      </a>
+      <a href="atlas.html" class="nav-tool reveal reveal-delay-3" style="--t-color: #4a7a8a">
+        <div class="nav-tool-name">Interactive <em>Map</em></div>
+        <div class="nav-tool-desc">To spatially orient yourself towards moments of awe, explore the Interactive Map — 220 georeferenced instances plotted across Cambridge.</div>
+        <div class="nav-tool-arrow">Open →</div>
+      </a>
+      <a href="alluvial.html" class="nav-tool reveal reveal-delay-4" style="--t-color: #6b5b8a">
+        <div class="nav-tool-name">Alluvial <em>Explorer</em></div>
+        <div class="nav-tool-desc">To further investigate the underlying data, the Alluvial Explorer visualizes how instances flow across analytical categories.</div>
+        <div class="nav-tool-arrow">Open →</div>
+      </a>
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <div class="scroll-cue-line"></div>
+    <div class="scroll-cue-label">Scroll</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PANEL 10 — TOOL GRID (existing index content)
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="p-tools">
 <div class="site-wrap">
+
   <header>
     <div class="wordmark">Awe in Cambridge</div>
     <h1>The <em>Awe</em> Atlas</h1>
@@ -99,39 +1050,74 @@ footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid rgba(140,69,
 
   <div class="tools-grid">
 
+    <!-- Tool 01 — Encounter Awe -->
     <a href="community.html" class="tool-card" style="--card-accent: #8c4518">
       <div class="card-eyebrow">Tool 01</div>
-      <div class="card-title">Everyday <em>Awe</em></div>
-      <div class="card-desc">Find and create everyday awe. Browse instances near you, join or schedule awe walks, attend or host awe talks, and contribute your own moments of wonder to the atlas.</div>
+      <div class="card-title">Encounter <em>Awe</em></div>
+      <div class="card-desc">Browse 220 georeferenced instances of awe near you, navigate to a place by compass or AI directions, join or schedule awe walks, and attend or host awe talks.</div>
       <span class="card-tag">Open Tool →</span>
     </a>
 
-    <a href="atlas.html" class="tool-card" style="--card-accent: #4a7a8a">
-      <div class="card-eyebrow">Tool 02</div>
-      <div class="card-title"><em>Interactive</em> Map</div>
-      <div class="card-desc">Explore 220 georeferenced instances of awe plotted across Cambridge. Filter by all analytical dimensions — geography, morphology, phenomenology, and temporality.</div>
-      <span class="card-tag">Open Tool →</span>
-    </a>
+    <!-- Tool 02 — Explore Awe (two sub-cards) -->
+    <div class="tool-card-pair">
+      <div class="pair-header">
+        <div class="card-eyebrow" style="color: var(--collective)">Tool 02</div>
+        <div class="card-title" style="font-size:22px">Explore <em style="color:var(--collective)">Awe</em></div>
+      </div>
+      <div class="pair-sub-cards">
+        <a href="atlas.html" class="sub-card" style="--sub-accent: #4a7a8a">
+          <div class="sub-card-eyebrow">Interactive Map</div>
+          <div class="sub-card-title"><em>Locate</em> instances</div>
+          <div class="sub-card-desc">220 georeferenced instances plotted across Cambridge. Filter by morphology, phenomenology, temporality, and more.</div>
+          <span class="sub-card-tag">Open Map →</span>
+        </a>
+        <a href="alluvial.html" class="sub-card" style="--sub-accent: #6b5b8a">
+          <div class="sub-card-eyebrow">Alluvial Explorer</div>
+          <div class="sub-card-title"><em>Visualize</em> patterns</div>
+          <div class="sub-card-desc">See how instances flow across analytical categories. Toggle and reorder dimensions to surface patterns in the data.</div>
+          <span class="sub-card-tag">Open Explorer →</span>
+        </a>
+      </div>
+    </div>
 
-    <a href="alluvial.html" class="tool-card" style="--card-accent: #6b5b8a">
+    <!-- Tool 03 — Share Awe -->
+    <a href="share.html" class="tool-card" style="--card-accent: #97ba74">
       <div class="card-eyebrow">Tool 03</div>
-      <div class="card-title"><em>Alluvial</em> Explorer</div>
-      <div class="card-desc">Visualize how instances of awe flow across analytical categories — wonder type, physical form, characteristics, temporality, and more. Toggle and reorder dimensions to reveal patterns in the data.</div>
+      <div class="card-title">Share <em>Awe</em></div>
+      <div class="card-desc">Add your own moments of awe to the atlas. Find and join upcoming awe walks. Attend or host an awe talk — a small gathering to share what moves you.</div>
       <span class="card-tag">Open Tool →</span>
     </a>
 
   </div>
 
+  <!-- Resource -->
   <a href="guide.html" class="resource-card" style="--card-accent: #7a6e5f">
     <div class="resource-inner">
-      <div class="card-eyebrow" style="color: var(--card-accent)">Resource 01</div>
+      <div class="card-eyebrow" style="color: var(--card-accent)">Resource</div>
       <div class="resource-title"><em>Understanding</em> Awe</div>
-      <div class="resource-desc">A tool to situate yourself within the research of awe.</div>
+      <div class="resource-desc">A field guide to the dimensions of awe — morphology, phenomenology, temporality, and the categories used throughout these tools.</div>
       <span class="card-tag" style="background: var(--card-accent)">Open Guide →</span>
     </div>
   </a>
 
-  <footer>Thesis research · Cambridge, MA · 2024–2025</footer>
+  <footer>Threshold · Cambridge, MA · 2024–2025</footer>
+
 </div>
+</section>
+
+<script>
+/* ── Intersection Observer — trigger .reveal animations ─────────────────── */
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('is-visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal').forEach(function(el) {
+  observer.observe(el);
+});
+</script>
 </body>
 </html>

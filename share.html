@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Share Awe — Tool 03</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root {
+  --ink:       #1c1914;
+  --charcoal:  #2c2118;
+  --parchment: #f4f0e7;
+  --linen:     #e3d4c5;
+  --stone:     #b7aea2;
+  --accent:    #8c4518;
+  --ember:     #74120c;
+  --saffron:   #caa74d;
+  --muted:     #6b6259;
+  --nature:    #97ba74;
+  --collective:#4a7a8a;
+  --epiphany:  #6b5b8a;
+  --moral:     #c4a882;
+  --art:       #b05a3a;
+  --discord:   #5865F2;
+  --share:     #97ba74;  /* Tool 03 accent */
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; background: var(--parchment); color: var(--ink); font-family: 'Cormorant Garamond', serif; }
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 998; opacity: .5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+}
+
+/* ── Layout ── */
+.page-wrap { max-width: 720px; margin: 0 auto; padding: 0 32px 100px; }
+
+/* ── Header ── */
+.site-header {
+  padding: 28px 0 22px;
+  border-bottom: 1px solid rgba(140,69,24,.18);
+  margin-bottom: 52px;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+}
+.header-back {
+  font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; transition: color .2s; white-space: nowrap;
+}
+.header-back:hover { color: var(--share); }
+.header-main { flex: 1; }
+.header-eyebrow { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .35em; text-transform: uppercase; color: var(--share); margin-bottom: 6px; }
+.header-title { font-size: 46px; font-weight: 300; line-height: 1; }
+.header-title em { font-style: italic; color: var(--share); }
+.header-sub { font-size: 17px; line-height: 1.7; color: var(--muted); font-style: italic; margin-top: 8px; max-width: 480px; }
+
+/* ── Section headers ── */
+.section-wrap { margin-bottom: 60px; }
+.section-label {
+  font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: .35em; text-transform: uppercase;
+  color: var(--share); margin-bottom: 6px;
+}
+.section-title { font-size: 32px; font-weight: 300; line-height: 1.1; margin-bottom: 6px; }
+.section-title em { font-style: italic; color: var(--share); }
+.section-sub { font-size: 15px; font-style: italic; color: var(--muted); line-height: 1.65; margin-bottom: 28px; }
+.section-divider { height: 1px; background: linear-gradient(to right, rgba(151,186,116,.4), transparent); margin-bottom: 28px; }
+
+/* ── Form ── */
+.awe-form { display: flex; flex-direction: column; gap: 20px; }
+.form-row { display: flex; gap: 16px; }
+.form-row .form-field { flex: 1; }
+.form-field { display: flex; flex-direction: column; gap: 7px; }
+.form-label {
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .3em; text-transform: uppercase; color: var(--muted);
+}
+.form-label-opt { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; text-transform: none; letter-spacing: 0; color: var(--stone); }
+.form-input {
+  padding: 11px 14px; border: 1px solid rgba(140,69,24,.25); background: rgba(255,255,255,.4);
+  font-family: 'Cormorant Garamond', serif; font-size: 16px; color: var(--ink); border-radius: 2px;
+  outline: none; width: 100%; transition: border-color .2s;
+}
+.form-input:focus { border-color: var(--share); }
+textarea.form-input { resize: none; height: 90px; line-height: 1.6; }
+
+/* chips */
+.chip-group { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip {
+  padding: 6px 13px; border: 1px solid rgba(140,69,24,.25); border-radius: 2px;
+  font-size: 13px; font-family: 'Cormorant Garamond', serif; font-style: italic;
+  background: transparent; color: var(--ink); cursor: pointer; transition: all .2s;
+}
+.chip:hover { border-color: var(--share); }
+.chip.selected { background: var(--share); border-color: var(--share); color: var(--parchment); font-style: normal; font-weight: 600; }
+
+/* map picker */
+.map-picker-wrap { border: 1px solid rgba(140,69,24,.22); border-radius: 2px; overflow: hidden; }
+.map-picker-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 13px; background: rgba(140,69,24,.04); border-bottom: 1px solid rgba(140,69,24,.12);
+}
+.map-picker-label { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+.map-coords { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--share); }
+#share-map { height: 220px; }
+
+/* submit button */
+.btn-submit {
+  padding: 16px 28px; background: var(--ink); color: var(--parchment); border: none;
+  font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; font-weight: 300;
+  cursor: pointer; border-radius: 2px; transition: background .2s; width: 100%; position: relative; overflow: hidden;
+}
+.btn-submit::before { content: ''; position: absolute; inset: 0; background: var(--share); transform: translateX(-100%); transition: transform .4s ease; }
+.btn-submit:hover::before { transform: translateX(0); }
+.btn-submit span { position: relative; z-index: 1; }
+
+/* success state */
+.submit-success {
+  display: none; padding: 28px 24px; background: rgba(151,186,116,.07);
+  border: 1px solid rgba(151,186,116,.3); border-radius: 3px; text-align: center;
+}
+.submit-success.visible { display: block; }
+.success-icon { font-size: 32px; margin-bottom: 12px; }
+.success-headline { font-size: 26px; font-weight: 300; margin-bottom: 8px; }
+.success-sub { font-size: 14px; font-style: italic; color: var(--muted); line-height: 1.7; margin-bottom: 20px; }
+.success-detail { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--share); margin-bottom: 18px; }
+.btn-ghost {
+  background: none; border: none; font-family: 'Space Mono', monospace; font-size: 9px;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--muted); cursor: pointer;
+  transition: color .2s; padding: 8px;
+}
+.btn-ghost:hover { color: var(--ink); }
+
+/* ── Walk / Talk cards ── */
+.cards-list { display: flex; flex-direction: column; }
+.event-card {
+  padding: 18px 0; border-bottom: 1px solid rgba(140,69,24,.1);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.event-card:last-child { border-bottom: none; }
+.event-card-top { display: flex; align-items: flex-start; gap: 14px; }
+.event-date {
+  display: flex; flex-direction: column; align-items: center; min-width: 42px;
+  padding: 5px 7px; background: var(--linen); border-radius: 2px; border: 1px solid rgba(140,69,24,.13);
+  flex-shrink: 0;
+}
+.event-date-month { font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.event-date-day { font-size: 22px; font-weight: 300; line-height: 1.1; }
+.event-info { flex: 1; }
+.event-name { font-size: 19px; line-height: 1.2; margin-bottom: 3px; }
+.event-name em { font-style: italic; color: var(--share); }
+.event-meta { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--muted); line-height: 1.7; }
+.event-prompt { font-size: 13px; font-style: italic; color: var(--muted); line-height: 1.5; margin-top: 4px; }
+.event-badge {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--parchment); padding: 3px 8px; border-radius: 1px; flex-shrink: 0;
+  background: var(--share);
+}
+.event-badge.nature    { background: var(--nature); }
+.event-badge.collective{ background: var(--collective); }
+.event-badge.epiphany  { background: var(--epiphany); }
+.event-badge.moral     { background: rgba(140,69,24,.7); }
+.join-btn {
+  display: inline-block; padding: 9px 18px; background: transparent;
+  border: 1px solid rgba(151,186,116,.4); color: var(--share);
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase;
+  cursor: pointer; border-radius: 2px; transition: all .2s; text-align: center; width: 100%;
+}
+.join-btn:hover, .join-btn.joined { background: var(--share); color: var(--parchment); border-color: var(--share); }
+.talk-join-btn {
+  display: inline-block; padding: 9px 18px; background: transparent;
+  border: 1px solid rgba(107,91,138,.3); color: var(--epiphany);
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase;
+  cursor: pointer; border-radius: 2px; transition: all .2s; text-align: center; width: 100%;
+}
+.talk-join-btn:hover, .talk-join-btn.joined { background: var(--epiphany); color: var(--parchment); border-color: var(--epiphany); }
+.user-event-label {
+  font-family: 'Space Mono', monospace; font-size: 7px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--share); margin-bottom: 4px;
+}
+
+/* ── Section CTA buttons ── */
+.section-cta-row { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+.btn-cta {
+  padding: 12px 22px; background: var(--ink); color: var(--parchment); border: none;
+  font-family: 'Cormorant Garamond', serif; font-size: 17px; font-style: italic;
+  cursor: pointer; border-radius: 2px; transition: background .2s; white-space: nowrap;
+}
+.btn-cta:hover { background: var(--share); }
+.btn-cta.talk { background: var(--ink); }
+.btn-cta.talk:hover { background: var(--epiphany); }
+.btn-link {
+  padding: 12px 0; background: none; border: none; font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
+  cursor: pointer; transition: color .2s; text-decoration: underline; text-underline-offset: 3px;
+}
+.btn-link:hover { color: var(--ink); }
+
+/* ── Inline schedule/host forms ── */
+.inline-form-wrap {
+  display: none; margin-top: 24px; padding: 24px 28px; background: rgba(255,255,255,.3);
+  border: 1px solid rgba(140,69,24,.2); border-radius: 3px;
+}
+.inline-form-wrap.open { display: block; animation: fadeUp .3s ease forwards; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.inline-form-title { font-size: 22px; font-weight: 300; font-style: italic; margin-bottom: 18px; color: var(--ink); }
+.inline-form-grid { display: flex; flex-direction: column; gap: 16px; }
+.inline-row { display: flex; gap: 12px; }
+.inline-row .form-field { flex: 1; }
+.form-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.form-chip {
+  padding: 6px 12px; border: 1px solid rgba(140,69,24,.25); border-radius: 2px;
+  font-size: 13px; font-family: 'Cormorant Garamond', serif; font-style: italic;
+  background: transparent; color: var(--ink); cursor: pointer; transition: all .2s;
+}
+.form-chip:hover { border-color: var(--share); }
+.form-chip.selected { background: var(--share); border-color: var(--share); color: var(--parchment); font-style: normal; }
+.form-chip.talk-chip.selected { background: var(--epiphany); border-color: var(--epiphany); }
+.inline-form-footer { display: flex; gap: 10px; align-items: center; margin-top: 20px; flex-wrap: wrap; }
+.btn-post {
+  padding: 13px 24px; background: var(--ink); color: var(--parchment); border: none;
+  font-family: 'Cormorant Garamond', serif; font-size: 17px; font-style: italic;
+  cursor: pointer; border-radius: 2px; transition: background .2s;
+}
+.btn-post:hover { background: var(--share); }
+.btn-post.talk:hover { background: var(--epiphany); }
+
+/* ── Awe Talk explainer ── */
+.talk-explainer {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: rgba(107,91,138,.05); border: 1px solid rgba(107,91,138,.15);
+  border-radius: 2px; padding: 15px 16px; margin-bottom: 20px;
+}
+.talk-explainer-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.talk-explainer-eyebrow {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--epiphany); margin-bottom: 5px;
+}
+.talk-explainer-body { font-size: 14px; font-weight: 300; line-height: 1.65; color: var(--ink); }
+
+/* ── Empty state ── */
+.empty-state { padding: 20px 0 8px; font-size: 14px; font-style: italic; color: var(--stone); }
+
+/* ── Footer ── */
+.site-footer {
+  margin-top: 80px; padding-top: 22px; border-top: 1px solid rgba(140,69,24,.12);
+  font-family: 'Space Mono', monospace; font-size: 10px; color: var(--stone); letter-spacing: .1em;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+}
+.footer-links { display: flex; gap: 18px; }
+.footer-links a { color: var(--stone); text-decoration: none; transition: color .2s; }
+.footer-links a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- ── Header ── -->
+  <header class="site-header">
+    <a href="index.html" class="header-back">← Homepage</a>
+    <div class="header-main">
+      <div class="header-eyebrow">Tool 03</div>
+      <h1 class="header-title">Share <em>Awe</em></h1>
+      <p class="header-sub">Add your own moments of wonder to the atlas. Find and join awe walks. Attend or host an awe talk.</p>
+    </div>
+  </header>
+
+  <!-- ════════════════════════════════════════════════
+       SECTION 1 — Share a moment of awe
+  ════════════════════════════════════════════════ -->
+  <section class="section-wrap" id="section-submit">
+    <div class="section-label">01 — Add your awe</div>
+    <h2 class="section-title">Share a moment of <em>awe</em></h2>
+    <p class="section-sub">Describe a place or moment in Cambridge that moved you. The research team reviews submissions and adds them to the atlas.</p>
+    <div class="section-divider"></div>
+
+    <!-- Submission form -->
+    <form class="awe-form" id="share-form" autocomplete="off">
+      <div class="form-field">
+        <label class="form-label">Place or location name</label>
+        <input class="form-input" type="text" placeholder="e.g. The Hidden Staircase Garden" id="sf-name">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Address or neighbourhood <span class="form-label-opt">(optional)</span></label>
+        <input class="form-input" type="text" placeholder="e.g. Off Brattle Street, Cambridge" id="sf-address">
+      </div>
+      <div class="form-field">
+        <label class="form-label">What kind of awe?</label>
+        <div class="chip-group" id="sf-type-chips">
+          <button type="button" class="chip" data-type="nature">Nature</button>
+          <button type="button" class="chip" data-type="collective">Collective Effervescence</button>
+          <button type="button" class="chip" data-type="epiphany">Epiphany / Knowledge</button>
+          <button type="button" class="chip" data-type="moral">Moral Beauty</button>
+          <button type="button" class="chip" data-type="music">Music</button>
+          <button type="button" class="chip" data-type="life">Life &amp; Death</button>
+          <button type="button" class="chip" data-type="visual">Visual Design</button>
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Describe what you experienced</label>
+        <textarea class="form-input" id="sf-desc" placeholder="What happened? What did you notice? How did it feel?"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">When is it accessible?</label>
+          <div class="chip-group" id="sf-freq-chips">
+            <button type="button" class="chip" data-freq="timeless">Always</button>
+            <button type="button" class="chip" data-freq="daily">Daily</button>
+            <button type="button" class="chip" data-freq="recurring">Recurring</button>
+            <button type="button" class="chip" data-freq="seasonal">Seasonal</button>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Your name <span class="form-label-opt">(optional)</span></label>
+          <input class="form-input" type="text" placeholder="Or leave anonymous" id="sf-author">
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Pin on map <span class="form-label-opt">(optional — tap to place)</span></label>
+        <div class="map-picker-wrap">
+          <div class="map-picker-bar">
+            <span class="map-picker-label">Click the map to drop a pin</span>
+            <span class="map-coords" id="sf-coords">no pin yet</span>
+          </div>
+          <div id="share-map"></div>
+        </div>
+      </div>
+      <button type="button" class="btn-submit" id="sf-submit"><span>Add this place to the atlas →</span></button>
+    </form>
+
+    <!-- Success state (hidden until submitted) -->
+    <div class="submit-success" id="submit-success">
+      <div class="success-icon">✦</div>
+      <div class="success-headline">Thank you.</div>
+      <p class="success-sub">Your moment of awe has been recorded. The research team reviews submissions regularly and adds them to the atlas.</p>
+      <div class="success-detail" id="success-place-name"></div>
+      <button type="button" class="btn-ghost" id="submit-another-btn">+ Submit another place</button>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════
+       SECTION 2 — Awe Walks
+  ════════════════════════════════════════════════ -->
+  <section class="section-wrap" id="section-walks">
+    <div class="section-label">02 — Community</div>
+    <h2 class="section-title">Awe <em>Walks</em></h2>
+    <p class="section-sub">Walk together toward places that move you. Walks are open to anyone — join an existing one or schedule your own.</p>
+    <div class="section-divider"></div>
+
+    <div class="cards-list" id="walks-list">
+      <!-- Seed walk cards — dates set dynamically by JS -->
+      <div class="event-card">
+        <div class="event-card-top">
+          <div class="event-date" id="sw-date-0"><div class="event-date-month">May</div><div class="event-date-day">3</div></div>
+          <div class="event-info">
+            <div class="event-name">Dawn walk to <em>the Nave at Noon</em></div>
+            <div class="event-meta">Sat 7:00am · Elm &amp; 3rd · Hosted by Mira S. · up to 6 people</div>
+          </div>
+          <span class="event-badge nature">Nature</span>
+        </div>
+        <button class="join-btn" id="sw-join-0">Join this walk</button>
+      </div>
+      <div class="event-card">
+        <div class="event-card-top">
+          <div class="event-date" id="sw-date-1"><div class="event-date-month">May</div><div class="event-date-day">7</div></div>
+          <div class="event-info">
+            <div class="event-name"><em>Spring emergence</em> garden wander</div>
+            <div class="event-meta">Wed 6:30pm · Davis Sq · Hosted by Theo R. · up to 8 people</div>
+          </div>
+          <span class="event-badge nature">Nature</span>
+        </div>
+        <button class="join-btn" id="sw-join-1">Join this walk</button>
+      </div>
+      <div class="event-card">
+        <div class="event-card-top">
+          <div class="event-date" id="sw-date-2"><div class="event-date-month">May</div><div class="event-date-day">10</div></div>
+          <div class="event-info">
+            <div class="event-name">Saturday dawn swimmers + <em>collective awe</em></div>
+            <div class="event-meta">Sat 6:30am · Reservoir path · Hosted by Anonymous · open group</div>
+          </div>
+          <span class="event-badge collective">Collective</span>
+        </div>
+        <button class="join-btn" id="sw-join-2">Join this walk</button>
+      </div>
+      <!-- User-scheduled walks injected here by JS -->
+      <div id="user-walks-list"></div>
+    </div>
+
+    <div class="section-cta-row">
+      <button class="btn-cta" id="open-schedule-form">+ Schedule a walk</button>
+      <a href="community.html" class="btn-link">Browse walks in Encounter Awe →</a>
+    </div>
+
+    <!-- Inline schedule form -->
+    <div class="inline-form-wrap" id="schedule-form-wrap">
+      <div class="inline-form-title">Schedule a walk</div>
+      <div class="inline-form-grid">
+        <div class="form-field">
+          <label class="form-label">Destination</label>
+          <input class="form-input" type="text" placeholder="e.g. The Hidden Staircase Garden" id="wf-place">
+        </div>
+        <div class="inline-row">
+          <div class="form-field">
+            <label class="form-label">Date</label>
+            <input class="form-input" type="date" id="wf-date">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Time</label>
+            <input class="form-input" type="time" id="wf-time">
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Meeting point</label>
+          <input class="form-input" type="text" placeholder="Corner of... / near the..." id="wf-meet">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Awe type</label>
+          <div class="form-chips" id="wf-type-chips">
+            <button type="button" class="form-chip" data-single="wf-type">Nature</button>
+            <button type="button" class="form-chip" data-single="wf-type">Collective Effervescence</button>
+            <button type="button" class="form-chip" data-single="wf-type">Epiphany / Knowledge</button>
+            <button type="button" class="form-chip" data-single="wf-type">Moral Beauty</button>
+            <button type="button" class="form-chip" data-single="wf-type">Music</button>
+            <button type="button" class="form-chip" data-single="wf-type">Visual Design</button>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Max group size</label>
+          <div class="form-chips" id="wf-size-chips">
+            <button type="button" class="form-chip selected" data-single="wf-size">Up to 4</button>
+            <button type="button" class="form-chip" data-single="wf-size">Up to 6</button>
+            <button type="button" class="form-chip" data-single="wf-size">Up to 8</button>
+            <button type="button" class="form-chip" data-single="wf-size">Open</button>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">A note for people joining <span class="form-label-opt">(optional)</span></label>
+          <textarea class="form-input" style="height:60px" placeholder="What should they know?" id="wf-note"></textarea>
+        </div>
+      </div>
+      <div class="inline-form-footer">
+        <button type="button" class="btn-post" id="wf-submit">Post this walk →</button>
+        <button type="button" class="btn-ghost" id="wf-cancel">Cancel</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════
+       SECTION 3 — Awe Talks
+  ════════════════════════════════════════════════ -->
+  <section class="section-wrap" id="section-talks">
+    <div class="section-label">03 — Gather</div>
+    <h2 class="section-title">Awe <em>Talks</em></h2>
+    <p class="section-sub">Small gatherings to share what moves you — no agenda, no slides. Someone shares a moment of awe; others listen.</p>
+    <div class="section-divider"></div>
+
+    <div class="talk-explainer">
+      <div class="talk-explainer-icon">🕯</div>
+      <div>
+        <div class="talk-explainer-eyebrow">What is an Awe Talk?</div>
+        <div class="talk-explainer-body">Usually 4–12 people in a café, home, or park. Someone opens with a prompt — a moment that stopped them. Others share in turn. Inspired by Dacher Keltner's research on how awe expands our sense of shared humanity.</div>
+      </div>
+    </div>
+
+    <div class="cards-list" id="talks-list">
+      <!-- Seed talk cards — dates set dynamically -->
+      <div class="event-card">
+        <div class="event-card-top">
+          <div class="event-date" id="st-date-0"><div class="event-date-month">May</div><div class="event-date-day">13</div></div>
+          <div class="event-info">
+            <div class="event-name"><em>What has nature done to you?</em></div>
+            <div class="event-meta">Tue 7:00pm · Bloc Café, Somerville · Hosted by Priya K. · up to 10</div>
+            <div class="event-prompt">Opening prompt: <em>"Tell us about a time the natural world stopped you completely."</em></div>
+          </div>
+          <span class="event-badge nature">Nature</span>
+        </div>
+        <button class="talk-join-btn" id="st-join-0">Join this talk</button>
+      </div>
+      <div class="event-card">
+        <div class="event-card-top">
+          <div class="event-date" id="st-date-1"><div class="event-date-month">May</div><div class="event-date-day">17</div></div>
+          <div class="event-info">
+            <div class="event-name"><em>The moment before I understood</em></div>
+            <div class="event-meta">Sat 4:00pm · Bloc Café, Somerville · Hosted by Anonymous · up to 8</div>
+            <div class="event-prompt">Opening prompt: <em>"Describe the moment just before something vast became clear to you."</em></div>
+          </div>
+          <span class="event-badge epiphany">Epiphany</span>
+        </div>
+        <button class="talk-join-btn" id="st-join-1">Join this talk</button>
+      </div>
+      <div class="event-card">
+        <div class="event-card-top">
+          <div class="event-date" id="st-date-2"><div class="event-date-month">May</div><div class="event-date-day">24</div></div>
+          <div class="event-info">
+            <div class="event-name"><em>Awe &amp; grief</em> — holding both</div>
+            <div class="event-meta">Thu 6:30pm · Lyndell's Bakery · Hosted by Mira S. · up to 6 · intimate</div>
+            <div class="event-prompt">Opening prompt: <em>"Has something beautiful ever arrived at the same moment as something painful?"</em></div>
+          </div>
+          <span class="event-badge moral">Moral Beauty</span>
+        </div>
+        <button class="talk-join-btn" id="st-join-2">Join this talk</button>
+      </div>
+      <!-- User-hosted talks injected here by JS -->
+      <div id="user-talks-list"></div>
+    </div>
+
+    <div class="section-cta-row">
+      <button class="btn-cta talk" id="open-host-form">+ Host a talk</button>
+      <a href="community.html" class="btn-link">Browse talks in Encounter Awe →</a>
+    </div>
+
+    <!-- Inline host-a-talk form -->
+    <div class="inline-form-wrap" id="host-form-wrap">
+      <div class="inline-form-title">Host an Awe Talk</div>
+      <div class="inline-form-grid">
+        <div class="form-field">
+          <label class="form-label">Talk title or opening question</label>
+          <input class="form-input" type="text" placeholder="e.g. What has nature done to you?" id="tf-title">
+        </div>
+        <div class="inline-row">
+          <div class="form-field">
+            <label class="form-label">Date</label>
+            <input class="form-input" type="date" id="tf-date">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Time</label>
+            <input class="form-input" type="time" id="tf-time">
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Location</label>
+          <input class="form-input" type="text" placeholder="Café, home, park bench..." id="tf-location">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Opening prompt <span class="form-label-opt">(optional)</span></label>
+          <textarea class="form-input" style="height:60px" placeholder="The first question you'll ask the room..." id="tf-prompt"></textarea>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Awe theme</label>
+          <div class="form-chips" id="tf-type-chips">
+            <button type="button" class="form-chip talk-chip" data-single="tf-type">Nature</button>
+            <button type="button" class="form-chip talk-chip" data-single="tf-type">Collective Effervescence</button>
+            <button type="button" class="form-chip talk-chip" data-single="tf-type">Moral Beauty</button>
+            <button type="button" class="form-chip talk-chip" data-single="tf-type">Epiphany / Knowledge</button>
+            <button type="button" class="form-chip talk-chip" data-single="tf-type">Music</button>
+            <button type="button" class="form-chip talk-chip" data-single="tf-type">Life &amp; Death</button>
+            <button type="button" class="form-chip talk-chip" data-single="tf-type">Visual Design</button>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Max group size</label>
+          <div class="form-chips" id="tf-size-chips">
+            <button type="button" class="form-chip talk-chip selected" data-single="tf-size">Up to 6</button>
+            <button type="button" class="form-chip talk-chip" data-single="tf-size">Up to 10</button>
+            <button type="button" class="form-chip talk-chip" data-single="tf-size">Up to 15</button>
+            <button type="button" class="form-chip talk-chip" data-single="tf-size">Open</button>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Your name <span class="form-label-opt">(optional)</span></label>
+          <input class="form-input" type="text" placeholder="Or leave anonymous" id="tf-host">
+        </div>
+      </div>
+      <div class="inline-form-footer">
+        <button type="button" class="btn-post talk" id="tf-submit">Post this talk →</button>
+        <button type="button" class="btn-ghost" id="tf-cancel">Cancel</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <span>Threshold · Cambridge, MA · 2024–2025</span>
+    <div class="footer-links">
+      <a href="community.html">Encounter Awe</a>
+      <a href="atlas.html">Locate Awe</a>
+      <a href="guide.html">Understanding Awe</a>
+    </div>
+  </footer>
+
+</div><!-- /page-wrap -->
+
+<script>
+// ── Shared localStorage keys (same as community.html + atlas.html) ──────────
+var AWE_SUBMISSIONS_KEY = 'awe_submissions_v1';
+var AWE_WALKS_KEY       = 'awe_walks_v1';
+var AWE_TALKS_KEY       = 'awe_talks_v1';
+var AWE_JOINED_KEY      = 'awe_joined_v1';
+
+function getStore(key) { try { return JSON.parse(localStorage.getItem(key) || (key.includes('joined') ? '{}' : '[]')); } catch(e) { return key.includes('joined') ? {} : []; } }
+function setStore(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {} }
+
+// ── Seed card dates — always upcoming ────────────────────────────────────────
+(function() {
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function futureDate(days) { var d = new Date(); d.setDate(d.getDate() + days); return d; }
+  function setDate(id, days) {
+    var el = document.getElementById(id); if (!el) return;
+    var d = futureDate(days);
+    el.querySelector('.event-date-month').textContent = MONTHS[d.getMonth()];
+    el.querySelector('.event-date-day').textContent   = d.getDate();
+  }
+  var dow = new Date().getDay();
+  var toNextSat = (6 - dow + 7) % 7 || 7;
+  setDate('sw-date-0', toNextSat);
+  setDate('sw-date-1', toNextSat + 4);
+  setDate('sw-date-2', toNextSat + 7);
+  setDate('st-date-0', 12);
+  setDate('st-date-1', 17);
+  setDate('st-date-2', 24);
+})();
+
+// ── Join buttons (seed) ──────────────────────────────────────────────────────
+function restoreJoined() {
+  var joined = getStore(AWE_JOINED_KEY);
+  ['sw-join-0','sw-join-1','sw-join-2'].forEach(function(id) {
+    var btn = document.getElementById(id);
+    if (btn && joined['share-' + id]) { btn.textContent = "You're going \u2713"; btn.classList.add('joined'); }
+  });
+  ['st-join-0','st-join-1','st-join-2'].forEach(function(id) {
+    var btn = document.getElementById(id);
+    if (btn && joined['share-' + id]) { btn.textContent = "You're going \u2713"; btn.classList.add('joined'); }
+  });
+}
+restoreJoined();
+
+document.querySelectorAll('.join-btn[id^="sw-join-"]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var joined = getStore(AWE_JOINED_KEY);
+    var key = 'share-' + btn.id;
+    if (joined[key]) return;
+    joined[key] = true; setStore(AWE_JOINED_KEY, joined);
+    btn.textContent = "You're going \u2713"; btn.classList.add('joined');
+  });
+});
+document.querySelectorAll('.talk-join-btn[id^="st-join-"]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var joined = getStore(AWE_JOINED_KEY);
+    var key = 'share-' + btn.id;
+    if (joined[key]) return;
+    joined[key] = true; setStore(AWE_JOINED_KEY, joined);
+    btn.textContent = "You're going \u2713"; btn.classList.add('joined');
+  });
+});
+
+// ── Render user-scheduled walks ──────────────────────────────────────────────
+function renderUserWalks() {
+  var walks = getStore(AWE_WALKS_KEY);
+  var container = document.getElementById('user-walks-list');
+  if (!container) return;
+  container.innerHTML = '';
+  if (!walks.length) return;
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  walks.forEach(function(w) {
+    var d = w.date ? new Date(w.date + 'T12:00:00') : null;
+    var mo = d ? MONTHS[d.getMonth()] : '\u2014';
+    var dy = d ? d.getDate() : '\u2014';
+    var card = document.createElement('div');
+    card.className = 'event-card';
+    card.style.borderLeft = '3px solid var(--nature)';
+    card.style.paddingLeft = '12px';
+    card.innerHTML =
+      '<div class="user-event-label">Scheduled walk</div>' +
+      '<div class="event-card-top">' +
+        '<div class="event-date"><div class="event-date-month">' + mo + '</div><div class="event-date-day">' + dy + '</div></div>' +
+        '<div class="event-info">' +
+          '<div class="event-name">' + (w.place || 'Unnamed walk') + '</div>' +
+          '<div class="event-meta">' +
+            (w.time || '') + (w.meet ? ' \u00b7 ' + w.meet : '') +
+            (w.type ? ' \u00b7 ' + w.type : '') +
+            (w.size ? ' \u00b7 ' + w.size : '') +
+          '</div>' +
+          (w.note ? '<div class="event-prompt">' + w.note + '</div>' : '') +
+        '</div>' +
+        '<span class="event-badge nature">' + (w.type || 'Walk') + '</span>' +
+      '</div>' +
+      '<button class="join-btn joined" disabled>Posted \u2713</button>';
+    container.appendChild(card);
+  });
+}
+renderUserWalks();
+
+// ── Render user-hosted talks ─────────────────────────────────────────────────
+function renderUserTalks() {
+  var talks = getStore(AWE_TALKS_KEY);
+  var container = document.getElementById('user-talks-list');
+  if (!container) return;
+  container.innerHTML = '';
+  if (!talks.length) return;
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  talks.forEach(function(t) {
+    var d = t.date ? new Date(t.date + 'T12:00:00') : null;
+    var mo = d ? MONTHS[d.getMonth()] : '\u2014';
+    var dy = d ? d.getDate() : '\u2014';
+    var card = document.createElement('div');
+    card.className = 'event-card';
+    card.style.borderLeft = '3px solid var(--epiphany)';
+    card.style.paddingLeft = '12px';
+    card.innerHTML =
+      '<div class="user-event-label" style="color:var(--epiphany)">Hosted talk</div>' +
+      '<div class="event-card-top">' +
+        '<div class="event-date"><div class="event-date-month">' + mo + '</div><div class="event-date-day">' + dy + '</div></div>' +
+        '<div class="event-info">' +
+          '<div class="event-name"><em>' + (t.title || 'Untitled talk') + '</em></div>' +
+          '<div class="event-meta">' +
+            (t.time || '') + (t.location ? ' \u00b7 ' + t.location : '') +
+            ' \u00b7 Hosted by ' + (t.host || 'Anonymous') +
+            (t.size ? ' \u00b7 ' + t.size : '') +
+          '</div>' +
+          (t.prompt ? '<div class="event-prompt">Opening prompt: <em>"' + t.prompt + '"</em></div>' : '') +
+        '</div>' +
+        '<span class="event-badge epiphany">' + (t.type || 'Talk') + '</span>' +
+      '</div>' +
+      '<button class="talk-join-btn joined" disabled style="border-color:rgba(107,91,138,.3);color:var(--epiphany)">Posted \u2713</button>';
+    container.appendChild(card);
+  });
+}
+renderUserTalks();
+
+// ── Chip selectors (awe type + frequency) ───────────────────────────────────
+document.querySelectorAll('#sf-type-chips .chip').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    btn.classList.toggle('selected');
+  });
+});
+document.querySelectorAll('#sf-freq-chips .chip').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('#sf-freq-chips .chip').forEach(function(b){ b.classList.remove('selected'); });
+    btn.classList.add('selected');
+  });
+});
+
+// ── Map picker ───────────────────────────────────────────────────────────────
+var shareMap = null, sharePin = null;
+function initShareMap() {
+  if (shareMap) return;
+  var el = document.getElementById('share-map');
+  if (!el) return;
+  shareMap = L.map('share-map', { center: [42.3736, -71.1190], zoom: 14 });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '\u00a9 OpenStreetMap contributors \u00a9 CARTO', maxZoom: 19
+  }).addTo(shareMap);
+  shareMap.on('click', function(e) {
+    var lat = e.latlng.lat.toFixed(6), lng = e.latlng.lng.toFixed(6);
+    document.getElementById('sf-coords').textContent = lat + ', ' + lng;
+    if (sharePin) {
+      sharePin.setLatLng(e.latlng);
+    } else {
+      sharePin = L.marker(e.latlng, { draggable: true }).addTo(shareMap);
+      sharePin.on('dragend', function() {
+        var p = sharePin.getLatLng();
+        document.getElementById('sf-coords').textContent = p.lat.toFixed(6) + ', ' + p.lng.toFixed(6);
+      });
+    }
+  });
+}
+// Init map on first scroll near it
+var mapObserver = new IntersectionObserver(function(entries) {
+  if (entries[0].isIntersecting) { initShareMap(); mapObserver.disconnect(); }
+}, { rootMargin: '200px' });
+mapObserver.observe(document.getElementById('share-map'));
+
+// ── Submission form ──────────────────────────────────────────────────────────
+document.getElementById('sf-submit').addEventListener('click', function() {
+  var name = document.getElementById('sf-name').value.trim();
+  if (!name) { document.getElementById('sf-name').focus(); document.getElementById('sf-name').style.borderColor = 'var(--accent)'; return; }
+
+  var coords = document.getElementById('sf-coords').textContent;
+  var lat = '', lng = '';
+  if (coords && coords !== 'no pin yet') {
+    var parts = coords.split(',');
+    if (parts.length === 2) { lat = parts[0].trim(); lng = parts[1].trim(); }
+  }
+
+  var types = [];
+  document.querySelectorAll('#sf-type-chips .chip.selected').forEach(function(c){ types.push(c.textContent.trim()); });
+  var freqEl = document.querySelector('#sf-freq-chips .chip.selected');
+  var freq = freqEl ? freqEl.dataset.freq : '';
+
+  var sub = {
+    source:      'share_page',
+    name:        name,
+    address:     document.getElementById('sf-address').value.trim(),
+    lat:         lat,
+    lng:         lng,
+    awe_types:   types.join('; '),
+    morphology1: types[0] || '',
+    description: document.getElementById('sf-desc').value.trim(),
+    frequency:   freq,
+    affiliation: document.getElementById('sf-author').value.trim(),
+  };
+
+  var all = getStore(AWE_SUBMISSIONS_KEY);
+  sub.id = Date.now();
+  sub.submitted_at = new Date().toISOString();
+  all.push(sub);
+  setStore(AWE_SUBMISSIONS_KEY, all);
+
+  // Show success
+  document.getElementById('share-form').style.display = 'none';
+  var success = document.getElementById('submit-success');
+  success.classList.add('visible');
+  document.getElementById('success-place-name').textContent = '\u2713 ' + name + ' recorded';
+});
+
+document.getElementById('submit-another-btn').addEventListener('click', function() {
+  // Reset form
+  ['sf-name','sf-address','sf-desc','sf-author'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.querySelectorAll('#sf-type-chips .chip, #sf-freq-chips .chip').forEach(function(c){ c.classList.remove('selected'); });
+  document.getElementById('sf-coords').textContent = 'no pin yet';
+  if (sharePin) { shareMap.removeLayer(sharePin); sharePin = null; }
+  document.getElementById('sf-name').style.borderColor = '';
+  document.getElementById('submit-success').classList.remove('visible');
+  document.getElementById('share-form').style.display = '';
+});
+
+// ── Inline form chip selectors ───────────────────────────────────────────────
+function wireFormChips(containerSelector) {
+  document.querySelectorAll(containerSelector + ' [data-single]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var group = btn.dataset.single;
+      document.querySelectorAll('[data-single="' + group + '"]').forEach(function(b){ b.classList.remove('selected'); });
+      btn.classList.add('selected');
+    });
+  });
+}
+wireFormChips('#schedule-form-wrap');
+wireFormChips('#host-form-wrap');
+
+// ── Schedule walk form ───────────────────────────────────────────────────────
+document.getElementById('open-schedule-form').addEventListener('click', function() {
+  var wrap = document.getElementById('schedule-form-wrap');
+  wrap.classList.toggle('open');
+  if (wrap.classList.contains('open')) {
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    document.getElementById('wf-place').focus();
+  }
+});
+document.getElementById('wf-cancel').addEventListener('click', function() {
+  document.getElementById('schedule-form-wrap').classList.remove('open');
+});
+
+document.getElementById('wf-submit').addEventListener('click', function() {
+  var place = document.getElementById('wf-place').value.trim();
+  if (!place) { document.getElementById('wf-place').focus(); return; }
+
+  function getChip(group) {
+    var el = document.querySelector('[data-single="' + group + '"].selected');
+    return el ? el.textContent.trim() : '';
+  }
+  var walk = {
+    place: place,
+    date:  document.getElementById('wf-date').value,
+    time:  document.getElementById('wf-time').value,
+    meet:  document.getElementById('wf-meet').value.trim(),
+    type:  getChip('wf-type'),
+    size:  getChip('wf-size'),
+    note:  document.getElementById('wf-note').value.trim(),
+  };
+  var all = getStore(AWE_WALKS_KEY);
+  walk.id = Date.now();
+  all.unshift(walk);
+  setStore(AWE_WALKS_KEY, all);
+
+  // Reset + close form
+  ['wf-place','wf-date','wf-time','wf-meet','wf-note'].forEach(function(id){ var el = document.getElementById(id); if(el) el.value=''; });
+  document.querySelectorAll('#schedule-form-wrap [data-single]').forEach(function(c){ c.classList.remove('selected'); });
+  document.querySelector('[data-single="wf-size"]').classList.add('selected'); // reset default
+  document.getElementById('schedule-form-wrap').classList.remove('open');
+
+  renderUserWalks();
+  document.getElementById('user-walks-list').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+// ── Host talk form ───────────────────────────────────────────────────────────
+document.getElementById('open-host-form').addEventListener('click', function() {
+  var wrap = document.getElementById('host-form-wrap');
+  wrap.classList.toggle('open');
+  if (wrap.classList.contains('open')) {
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    document.getElementById('tf-title').focus();
+  }
+});
+document.getElementById('tf-cancel').addEventListener('click', function() {
+  document.getElementById('host-form-wrap').classList.remove('open');
+});
+
+document.getElementById('tf-submit').addEventListener('click', function() {
+  var title = document.getElementById('tf-title').value.trim();
+  if (!title) { document.getElementById('tf-title').focus(); return; }
+
+  function getChip(group) {
+    var el = document.querySelector('[data-single="' + group + '"].selected');
+    return el ? el.textContent.trim() : '';
+  }
+  var talk = {
+    title:    title,
+    date:     document.getElementById('tf-date').value,
+    time:     document.getElementById('tf-time').value,
+    location: document.getElementById('tf-location').value.trim(),
+    prompt:   document.getElementById('tf-prompt').value.trim(),
+    type:     getChip('tf-type'),
+    size:     getChip('tf-size'),
+    host:     document.getElementById('tf-host').value.trim(),
+  };
+  var all = getStore(AWE_TALKS_KEY);
+  talk.id = Date.now();
+  all.unshift(talk);
+  setStore(AWE_TALKS_KEY, all);
+
+  // Reset + close
+  ['tf-title','tf-date','tf-time','tf-location','tf-prompt','tf-host'].forEach(function(id){ var el = document.getElementById(id); if(el) el.value=''; });
+  document.querySelectorAll('#host-form-wrap [data-single]').forEach(function(c){ c.classList.remove('selected'); });
+  document.querySelector('[data-single="tf-size"]').classList.add('selected');
+  document.getElementById('host-form-wrap').classList.remove('open');
+
+  renderUserTalks();
+  document.getElementById('user-talks-list').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+</script>
+</body>
+</html>
