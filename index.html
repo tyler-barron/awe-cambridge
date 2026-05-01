@@ -723,15 +723,12 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
   position:absolute; inset:0;
 }
 .map-overview-caption {
-  position:absolute; bottom:80px; left:50%; transform:translateX(-50%);
-  width:min(680px, 80%);
-  font-size:clamp(20px,2.4vw,30px); font-style:italic; font-weight:300;
+  position:absolute; top:48px; left:50%; transform:translateX(-50%);
+  width:min(640px, 80%);
+  font-size:clamp(18px,2.1vw,26px); font-style:normal; font-weight:300;
   line-height:1.5; color:var(--ink);
   text-align:center;
-  background:rgba(232,232,230,0.82);
-  padding:20px 32px; border-radius:4px;
-  backdrop-filter:blur(4px);
-  -webkit-backdrop-filter:blur(4px);
+  z-index:10;
 }
 
 /* ── Map panel grey background ── */
@@ -1245,7 +1242,18 @@ function lazyMap(containerId, initFn) {
 
 /* ── Overview map (all points) ── */
 lazyMap('map-overview', function() {
-  var m = buildCambMap('map-overview', '#e8e8e6');
+  var m = L.map('map-overview', {
+    zoomControl:false, attributionControl:false,
+    scrollWheelZoom:false, dragging:false,
+    doubleClickZoom:false, boxZoom:false,
+    keyboard:false, touchZoom:false
+  }).setView([42.362, -71.115], 13);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+    maxZoom:18, subdomains:'abcd', opacity:0.18
+  }).addTo(m);
+  L.geoJSON(CAMB_BOUNDARY, {
+    style:{color:'#6b6259',weight:1.5,fillOpacity:0}
+  }).addTo(m);
   addAllColoredPoints(m, AWE_ALL_PTS);
 });
 
