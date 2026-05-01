@@ -8,13 +8,13 @@
 <style>
 /* ── Tokens ─────────────────────────────────────────────────────────────── */
 :root {
-  --ink:       #1c1914;
-  --charcoal:  #2c2118;
-  --parchment: #fafaf8;
-  --linen:     #e0ddd8;
-  --stone:     #7a7268;      /* darkened from #b7aea2 */
+  --ink:       #1a1a1a;
+  --charcoal:  #2c2c2c;
+  --parchment: #f6f6f6;
+  --linen:     #e6e6e4;
+  --stone:     #7a7878;
   --accent:    #8c4518;
-  --muted:     #4a4440;      /* darkened from #6b6259 */
+  --muted:     #4a4a4a;
   --nature:    #97ba74;
   --collective:#4a7a8a;
   --epiphany:  #6b5b8a;
@@ -42,7 +42,7 @@ body {
 
 /* ── Paper grain ─────────────────────────────────────────────────────────── */
 body::before {
-  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: .4;
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: .18;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
 }
 
@@ -346,8 +346,8 @@ body::before {
 .map-left {
   width: 360px;
   flex-shrink: 0;
-  background: rgba(244,240,231,.92);
-  border-right: 1px solid rgba(140,69,24,.12);
+  background: rgba(236,236,236,.97);
+  border-right: 1px solid rgba(0,0,0,.07);
   padding: 44px 36px;
   display: flex;
   flex-direction: column;
@@ -672,18 +672,35 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
   .arch-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
   .p-archetypes { height: auto; min-height: 100vh; }
 
-  /* Map panels: stack vertically */
+  /* Map panels: stack vertically — text on top, map fills remaining space */
   .p-map { flex-direction: column; }
-  .map-left { width: 100%; height: auto; padding: 28px 24px; border-right: none; border-bottom: 1px solid rgba(140,69,24,.12); }
-  .map-right { padding: 20px 24px; }
+  .map-left {
+    width: 100%; flex-shrink: 0;
+    padding: 22px 24px 16px;
+    border-right: none; border-bottom: none;
+    background: rgba(232,232,230,0.96);
+  }
+  .map-right { flex: 1; min-height: 0; padding: 0; }
 
   .def-stats { gap: 32px; }
 }
 @media (max-width: 560px) {
-  /* Tool grid: hide "Open →" tags on mobile to save vertical space */
+  /* Tool grid: hide "Open →" tags and descriptions to fit on screen */
   .card-tag, .sub-card-tag { display: none; }
+  .card-desc, .sub-card-desc { display: none; }
+  .resource-desc { display: none; }
   /* Panel 2: show only top items on smallest screens */
   .tax-box:not(.hi) { display: none; }
+  /* Compress tool grid */
+  .tool-card { padding: 10px 14px; }
+  .sub-card { padding: 8px 12px; }
+  .tools-grid { gap: 8px; }
+  .site-wrap { padding: 14px 16px 20px; }
+  header { margin-bottom: 10px; padding-bottom: 10px; }
+  h1 { font-size: 28px; }
+  .resource-inner { padding: 8px 16px; gap: 10px; }
+  .card-title { font-size: 18px; }
+  .pair-header { padding: 4px 0 8px; }
 }
 @media (max-width: 480px) {
   .p-landscape { padding: 36px 24px 24px; }
@@ -714,29 +731,18 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
 }
 
 /* ── Overview map panel ── */
-.p-map-overview {
-  background:#e8e8e6;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  padding:0;
-}
-.map-right-overview {
-  position:absolute; inset:0;
-}
+.p-map-overview { background:#e8e8e8; }
 .map-overview-caption {
-  position:absolute; top:48px; left:50%; transform:translateX(-50%);
-  width:min(640px, 80%);
-  font-size:clamp(18px,2.1vw,26px); font-style:normal; font-weight:300;
-  line-height:1.5; color:var(--ink);
-  text-align:center;
-  z-index:10;
+  font-size:clamp(16px,1.8vw,21px); font-style:normal; font-weight:300;
+  line-height:1.65; color:var(--ink);
 }
 
 /* ── Map panel grey background ── */
-.p-map { background:#e8e8e6; }
+.p-map { background:#e8e8e8; }
 
 /* ── Atlas bridge panel ── */
 .p-atlas-bridge {
-  background:#e8e8e6;
+  background:#e8e8e8;
   color:var(--ink);
 }
 .bridge-inner { max-width:680px; padding:0 48px; text-align:center; }
@@ -746,12 +752,10 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
 }
 .bridge-text em { font-style:italic; color:var(--accent); }
 
-/* ── Story panels more white ── */
-.p-definition, .p-landscape, .p-archetypes, .p-question, .p-tools {
-  background:#fafaf8;
-}
-.p-definition { background:#1c1914; } /* keep dark */
-.p-question   { background:#1c1914; } /* keep dark */
+/* ── Story panels ── */
+.p-definition { background:#1a1a1a; }
+.p-question   { background:#1a1a1a; }
+.p-overview-map { background:#e8e8e8; }
 
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -828,7 +832,7 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
 
     <!-- Locations grid -->
     <div class="reveal reveal-delay-2">
-      <div class="tax-col-label">Where it happens — Locations</div>
+      <div class="tax-col-label">Where does awe happen?</div>
       <div class="tax-grid">
         <span class="tax-box hi">Streets <span class="tax-n">91</span></span>
         <span class="tax-box hi">Parks <span class="tax-n">58</span></span>
@@ -844,7 +848,7 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
 
     <!-- Forms grid -->
     <div class="reveal reveal-delay-3">
-      <div class="tax-col-label">What elicits it — Forms</div>
+      <div class="tax-col-label">What forms elicit awe?</div>
       <div class="tax-grid">
         <span class="tax-box hi">Plants <span class="tax-n">38</span></span>
         <span class="tax-box hi">Architecture <span class="tax-n">36</span></span>
@@ -939,11 +943,13 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
      PANEL 4 — OVERVIEW MAP
      ═══════════════════════════════════════════════════════════════════════ -->
 <section class="panel p-map p-map-overview" style="--m-color: var(--ink)">
-  <div class="map-right map-right-overview">
-    <div class="story-map" id="map-overview"></div>
+  <div class="map-left">
+    <p class="map-overview-caption reveal">
+      Most archetypes are spatially clustered within the city, gravitating toward hotspots shaped by where moments of awe were recorded.
+    </p>
   </div>
-  <div class="map-overview-caption reveal">
-    Most archetypes are spatially clustered within the city, gravitating toward hotspots shaped by where moments of awe were recorded.
+  <div class="map-right">
+    <div class="story-map" id="map-overview"></div>
   </div>
   <div class="scroll-cue">
     <div class="scroll-cue-line"></div>
@@ -1117,7 +1123,6 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
 
   <header>
     <h1>The <em>Awe</em> Atlas</h1>
-    <p class="lede">To answer these questions, the Awe Atlas offers a set of tools to situate yourself within the landscape of awe in Cambridge.</p>
   </header>
 
   <div class="tools-grid">
@@ -1247,40 +1252,46 @@ lazyMap('map-overview', function() {
     scrollWheelZoom:false, dragging:false,
     doubleClickZoom:false, boxZoom:false,
     keyboard:false, touchZoom:false
-  }).setView([42.362, -71.115], 13);
+  }).setView([42.372, -71.108], 13);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-    maxZoom:18, subdomains:'abcd', opacity:0.18
+    maxZoom:18, subdomains:'abcd', opacity:0.15
   }).addTo(m);
   L.geoJSON(CAMB_BOUNDARY, {
-    style:{color:'#6b6259',weight:1.5,fillOpacity:0}
+    style:{color:'#9a9490',weight:1,fillOpacity:0}
   }).addTo(m);
-  addAllColoredPoints(m, AWE_ALL_PTS);
+  AWE_ALL_PTS.forEach(function(p) {
+    var col = CLUSTER_COLORS[String(p[2])];
+    L.circleMarker([p[0],p[1]], {
+      radius:3.5, color:col, fillColor:col,
+      fillOpacity:0.45, weight:0.5, opacity:0.6
+    }).addTo(m);
+  });
 });
 
 /* ── Archetype map 1: Expansive Nature ── */
 lazyMap('map-arch1', function() {
-  var m = buildCambMap('map-arch1', '#e8e8e6');
+  var m = buildCambMap('map-arch1', '#e8e8e8');
   addAwePoints(m, AWE_CLUSTER_PTS['1'], CLUSTER_COLORS['1']);
   addHotspots(m, HOT_CLUSTER['1'], CLUSTER_COLORS['1']);
 });
 
 /* ── Archetype map 2: Wild Nature ── */
 lazyMap('map-arch2', function() {
-  var m = buildCambMap('map-arch2', '#e8e8e6');
+  var m = buildCambMap('map-arch2', '#e8e8e8');
   addAwePoints(m, AWE_CLUSTER_PTS['2'], CLUSTER_COLORS['2']);
   addHotspots(m, HOT_CLUSTER['2'], CLUSTER_COLORS['2']);
 });
 
 /* ── Archetype map 3: Built Beauty ── */
 lazyMap('map-arch3', function() {
-  var m = buildCambMap('map-arch3', '#e8e8e6');
+  var m = buildCambMap('map-arch3', '#e8e8e8');
   addAwePoints(m, AWE_CLUSTER_PTS['3'], CLUSTER_COLORS['3']);
   addHotspots(m, HOT_CLUSTER['3'], CLUSTER_COLORS['3']);
 });
 
 /* ── Archetype map 4: Inclusive Interaction ── */
 lazyMap('map-arch4', function() {
-  var m = buildCambMap('map-arch4', '#e8e8e6');
+  var m = buildCambMap('map-arch4', '#e8e8e8');
   addAwePoints(m, AWE_CLUSTER_PTS['4'], CLUSTER_COLORS['4']);
   addHotspots(m, HOT_CLUSTER['4'], CLUSTER_COLORS['4']);
 });
