@@ -686,22 +686,29 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
   .def-stats { gap: 32px; }
 }
 @media (max-width: 560px) {
-  /* Tool grid: hide "Open →" tags and descriptions to fit on screen */
-  .card-tag, .sub-card-tag { display: none; }
-  .card-desc, .sub-card-desc { display: none; }
-  .resource-desc { display: none; }
-  /* Panel 2: show only top items on smallest screens */
+  /* Panel 2: show only top items */
   .tax-box:not(.hi) { display: none; }
-  /* Compress tool grid */
-  .tool-card { padding: 10px 14px; }
-  .sub-card { padding: 8px 12px; }
+
+  /* Tool grid layout */
   .tools-grid { gap: 8px; }
   .site-wrap { padding: 14px 16px 20px; }
   header { margin-bottom: 10px; padding-bottom: 10px; }
-  h1 { font-size: 28px; }
-  .resource-inner { padding: 8px 16px; gap: 10px; }
-  .card-title { font-size: 18px; }
-  .pair-header { padding: 4px 0 8px; }
+  h1 { font-size: 26px; }
+
+  /* Normalize all card text to consistent sizes */
+  .card-eyebrow, .sub-card-eyebrow { font-size: 9px; margin-bottom: 5px; }
+  .card-title, .pair-header .card-title { font-size: 18px !important; margin-bottom: 5px; }
+  .sub-card-title { font-size: 16px; margin-bottom: 3px; }
+  .card-desc { font-size: 12px; line-height: 1.5; }
+  .sub-card-desc { font-size: 12px; line-height: 1.5; }
+  .resource-title { font-size: 17px; }
+  .resource-desc { font-size: 12px; line-height: 1.5; }
+
+  /* Compact padding */
+  .tool-card { padding: 10px 14px; }
+  .sub-card { padding: 7px 14px; }
+  .pair-header { padding: 10px 14px 8px; border-bottom: 1px solid rgba(140,69,24,.1); }
+  .resource-inner { padding: 10px 14px; gap: 8px; flex-direction: column; align-items: flex-start; }
 }
 @media (max-width: 480px) {
   .p-landscape { padding: 36px 24px 24px; }
@@ -742,7 +749,15 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
   text-align:left;
 }
 @media (max-width:768px) {
-  .map-overview-caption { top:32px; left:28px; font-size:clamp(20px,5vw,26px); }
+  .p-map-overview { flex-direction:column; justify-content:flex-start; align-items:stretch; }
+  .map-full { position:relative; inset:auto; flex:1; min-height:0; }
+  .map-overview-caption {
+    position:relative; top:auto; left:auto; z-index:auto;
+    max-width:100%; padding:22px 24px 16px;
+    background:rgba(232,232,232,0.97);
+    font-size:clamp(19px,4.5vw,24px);
+    flex-shrink:0;
+  }
 }
 
 /* ── Map panel grey background ── */
@@ -1181,12 +1196,13 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
 <script>
 /* ── Shared map helpers ── */
 function buildCambMap(id, bg) {
+  var isMob = window.innerWidth <= 768;
   var m = L.map(id, {
     zoomControl: false, attributionControl: false,
     scrollWheelZoom: false, dragging: false,
     doubleClickZoom: false, boxZoom: false,
     keyboard: false, touchZoom: false
-  }).setView([42.375, -71.115], 13);
+  }).setView([42.375, -71.115], isMob ? 12 : 13);
   // Pale grey base
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
     maxZoom:18, subdomains:'abcd', opacity:0.35
@@ -1252,7 +1268,8 @@ lazyMap('map-overview', function() {
     scrollWheelZoom:false, dragging:false,
     doubleClickZoom:false, boxZoom:false,
     keyboard:false, touchZoom:false
-  }).setView([42.373, -71.155], 13);
+  var isMobOv = window.innerWidth <= 768;
+  m.setView(isMobOv ? [42.373, -71.113] : [42.373, -71.155], isMobOv ? 12 : 13);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
     maxZoom:18, subdomains:'abcd', opacity:0.15
   }).addTo(m);
