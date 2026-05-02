@@ -750,13 +750,13 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
 }
 @media (max-width:768px) {
   .p-map-overview { flex-direction:column; justify-content:flex-start; align-items:stretch; }
-  .map-full { position:relative; inset:auto; flex:1; min-height:0; }
+  .map-full { position:relative; inset:auto; flex:1; min-height:0; order:1; }
   .map-overview-caption {
     position:relative; top:auto; left:auto; z-index:auto;
     max-width:100%; padding:22px 24px 16px;
     background:rgba(232,232,232,0.97);
     font-size:clamp(19px,4.5vw,24px);
-    flex-shrink:0;
+    flex-shrink:0; order:0;
   }
 }
 
