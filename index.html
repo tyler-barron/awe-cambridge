@@ -6,6 +6,37 @@
 <title>Awe in Cambridge</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono&display=swap" rel="stylesheet">
 <style>
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   🎨 COLOR THEME — edit these values to try different palettes
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PANEL BACKGROUNDS:
+     story panels (landscape, bridge)  →  --parchment
+     archetypes panel                  →  --linen
+     map panels (all 5 maps)           →  --map-bg    (also used in JS)
+     dark panels (definition, question)→  --panel-dark
+     tool grid                         →  --tools-bg
+   TEXT:
+     body / headings                   →  --ink
+     muted / secondary text            →  --muted
+   ACCENT:
+     links, highlights, borders        →  --accent
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+:root {
+  /* ── Backgrounds ── */
+  --parchment:  #f6f6f6;   /* story panels                */
+  --linen:      #e6e6e4;   /* archetypes panel            */
+  --map-bg:     #e8e8e8;   /* all map panels              */
+  --panel-dark: #1a1a1a;   /* definition + question       */
+  --tools-bg:   #f6f6f6;   /* tool grid page              */
+
+  /* ── Text ── */
+  --ink:        #1a1a1a;
+  --muted:      #4a4a4a;
+
+  /* ── Accent ── */
+  --accent:     #8c4518;
+}
+
 /* ── Tokens ─────────────────────────────────────────────────────────────── */
 :root {
   --ink:       #1a1a1a;
@@ -739,7 +770,7 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
 }
 
 /* ── Overview map panel ── */
-.p-map-overview { background:#e8e8e8; }
+.p-map-overview { background:var(--map-bg); }
 .map-full { position:absolute; inset:0; }
 .map-overview-caption {
   position:absolute; top:52px; left:56px;
@@ -761,11 +792,11 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
 }
 
 /* ── Map panel grey background ── */
-.p-map { background:#e8e8e8; }
+.p-map { background:var(--map-bg); }
 
 /* ── Atlas bridge panel ── */
 .p-atlas-bridge {
-  background:#e8e8e8;
+  background:var(--parchment);
   color:var(--ink);
 }
 .bridge-inner { max-width:680px; padding:0 48px; text-align:center; }
@@ -776,9 +807,9 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
 .bridge-text em { font-style:italic; color:var(--accent); }
 
 /* ── Story panels ── */
-.p-definition { background:#1a1a1a; }
-.p-question   { background:#1a1a1a; }
-.p-overview-map { background:#e8e8e8; }
+.p-definition { background:var(--panel-dark); }
+.p-question   { background:var(--panel-dark); }
+.p-tools      { background:var(--tools-bg); }
 
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
