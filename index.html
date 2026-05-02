@@ -749,14 +749,9 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
   text-align:left;
 }
 @media (max-width:768px) {
-  .p-map-overview { flex-direction:column; justify-content:flex-start; align-items:stretch; }
-  .map-full { position:relative; inset:auto; flex:1; min-height:0; order:1; }
   .map-overview-caption {
-    position:relative; top:auto; left:auto; z-index:auto;
-    max-width:100%; padding:22px 24px 16px;
-    background:rgba(232,232,232,0.97);
-    font-size:clamp(19px,4.5vw,24px);
-    flex-shrink:0; order:0;
+    top:28px; left:24px;
+    font-size:clamp(18px,4.5vw,22px);
   }
 }
 
@@ -968,7 +963,7 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
 <section class="panel p-map-overview">
   <div class="map-full" id="map-overview"></div>
   <div class="map-overview-caption reveal">
-    Most archetypes are spatially clustered within the city, gravitating toward hotspots shaped by where moments of awe were recorded.
+    Most archetypes are spatially clustered within the city, gravitating toward hotspots shaped by where moments of awe were experienced.
   </div>
   <div class="scroll-cue">
     <div class="scroll-cue-line"></div>
