@@ -1263,13 +1263,13 @@ function lazyMap(containerId, initFn) {
 
 /* ── Overview map (all points) ── */
 lazyMap('map-overview', function() {
+  var isMobOv = window.innerWidth <= 768;
   var m = L.map('map-overview', {
     zoomControl:false, attributionControl:false,
     scrollWheelZoom:false, dragging:false,
     doubleClickZoom:false, boxZoom:false,
     keyboard:false, touchZoom:false
-  var isMobOv = window.innerWidth <= 768;
-  m.setView(isMobOv ? [42.373, -71.113] : [42.373, -71.155], isMobOv ? 12 : 13);
+  }).setView(isMobOv ? [42.373, -71.113] : [42.373, -71.155], isMobOv ? 12 : 13);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
     maxZoom:18, subdomains:'abcd', opacity:0.15
   }).addTo(m);
