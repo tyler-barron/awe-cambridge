@@ -10,8 +10,8 @@
 :root {
   --ink:       #1a1a1a;
   --charcoal:  #2c2c2c;
-  --parchment: #f6f6f6;
-  --linen:     #e6e6e4;
+  --parchment: #F9DBBD;
+  --linen:     #f0c9a5;
   --stone:     #7a7878;
   --accent:    #8c4518;
   --muted:     #4a4a4a;
@@ -739,7 +739,7 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
 }
 
 /* ── Overview map panel ── */
-.p-map-overview { background:#e8e8e8; }
+.p-map-overview { background:#f0c9a5; }
 .map-full { position:absolute; inset:0; }
 .map-overview-caption {
   position:absolute; top:52px; left:56px;
@@ -761,11 +761,11 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
 }
 
 /* ── Map panel grey background ── */
-.p-map { background:#e8e8e8; }
+.p-map { background:#f0c9a5; }
 
 /* ── Atlas bridge panel ── */
 .p-atlas-bridge {
-  background:#e8e8e8;
+  background:#f0c9a5;
   color:var(--ink);
 }
 .bridge-inner { max-width:680px; padding:0 48px; text-align:center; }
@@ -778,7 +778,7 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
 /* ── Story panels ── */
 .p-definition { background:#1a1a1a; }
 .p-question   { background:#1a1a1a; }
-.p-overview-map { background:#e8e8e8; }
+.p-overview-map { background:#f0c9a5; }
 
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -1287,28 +1287,28 @@ lazyMap('map-overview', function() {
 
 /* ── Archetype map 1: Expansive Nature ── */
 lazyMap('map-arch1', function() {
-  var m = buildCambMap('map-arch1', '#e8e8e8');
+  var m = buildCambMap('map-arch1', '#f0c9a5');
   addAwePoints(m, AWE_CLUSTER_PTS['1'], CLUSTER_COLORS['1']);
   addHotspots(m, HOT_CLUSTER['1'], CLUSTER_COLORS['1']);
 });
 
 /* ── Archetype map 2: Wild Nature ── */
 lazyMap('map-arch2', function() {
-  var m = buildCambMap('map-arch2', '#e8e8e8');
+  var m = buildCambMap('map-arch2', '#f0c9a5');
   addAwePoints(m, AWE_CLUSTER_PTS['2'], CLUSTER_COLORS['2']);
   addHotspots(m, HOT_CLUSTER['2'], CLUSTER_COLORS['2']);
 });
 
 /* ── Archetype map 3: Built Beauty ── */
 lazyMap('map-arch3', function() {
-  var m = buildCambMap('map-arch3', '#e8e8e8');
+  var m = buildCambMap('map-arch3', '#f0c9a5');
   addAwePoints(m, AWE_CLUSTER_PTS['3'], CLUSTER_COLORS['3']);
   addHotspots(m, HOT_CLUSTER['3'], CLUSTER_COLORS['3']);
 });
 
 /* ── Archetype map 4: Inclusive Interaction ── */
 lazyMap('map-arch4', function() {
-  var m = buildCambMap('map-arch4', '#e8e8e8');
+  var m = buildCambMap('map-arch4', '#f0c9a5');
   addAwePoints(m, AWE_CLUSTER_PTS['4'], CLUSTER_COLORS['4']);
   addHotspots(m, HOT_CLUSTER['4'], CLUSTER_COLORS['4']);
 });
