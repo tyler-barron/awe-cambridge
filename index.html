@@ -664,7 +664,10 @@ h1 em { font-style: italic; color: var(--accent); }
 footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,24,.12); font-family: 'Space Mono', monospace; font-size: 11px; color: var(--stone); letter-spacing: .1em; }
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
+.mob-only { display: none; }
 @media (max-width: 768px) {
+  .desk-only { display: none; }
+  .mob-only { display: inline; }
   /* Panel 2: single column layout, hide low-frequency tags */
   .land-layout { grid-template-columns: 1fr; }
   .tax-box:not(.hi):not(.md) { display: none; }
@@ -690,6 +693,7 @@ footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(140,69,
   .tax-box:not(.hi) { display: none; }
 
   /* Tool grid layout */
+  .sub-card-title { display: none; }
   .tools-grid { gap: 8px; }
   .site-wrap { padding: 14px 16px 20px; }
   header { margin-bottom: 10px; padding-bottom: 10px; }
@@ -806,9 +810,13 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
 <section class="panel p-definition">
   <div class="def-inner">
     <p class="def-sentence reveal">
-      Awe is the feeling of being in the presence<br>
+      <span class="desk-only">Awe is the feeling of being in the presence<br>
       of something vast<br>
-      that transcends your understanding of the world.
+      that transcends your understanding of the world.</span>
+      <span class="mob-only">Awe is the feeling of being in the<br>
+      presence of something vast<br>
+      that transcends your understanding<br>
+      of the world.</span>
     </p>
     <div class="def-benefits-label reveal reveal-delay-1">Benefits of Awe:</div>
     <div class="def-stats">
@@ -1145,7 +1153,7 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
     <a href="community.html" class="tool-card" style="--card-accent: #8c4518">
       <div class="card-eyebrow">Tool 01</div>
       <div class="card-title">Encounter <em>Awe</em></div>
-      <div class="card-desc">Browse 220 georeferenced instances of awe near you, navigate to a place by compass or AI directions, join or schedule awe walks, and attend or host awe talks.</div>
+      <div class="card-desc">A speculative tool to browse 220 georeferenced instances of awe near you and navigate to a place by compass or AI directions.</div>
     </a>
 
     <div class="tool-card-pair">
@@ -1170,7 +1178,7 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
     <a href="share.html" class="tool-card" style="--card-accent: #97ba74">
       <div class="card-eyebrow">Tool 03</div>
       <div class="card-title">Share <em>Awe</em></div>
-      <div class="card-desc">Add your own moments of awe to the atlas. Find and join upcoming awe walks. Attend or host an awe talk — a small gathering to share what moves you.</div>
+      <div class="card-desc">Add your own moments of awe to the atlas. The awe walk and awe talk are speculative features — envisioned as ways to find and share awe together in Cambridge.</div>
     </a>
 
   </div>
