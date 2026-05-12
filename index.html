@@ -419,7 +419,41 @@ body::before {
   letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--m-color);
+  position: relative;
+  cursor: default;
 }
+.map-tag[data-tip]:hover { background: var(--m-color); color: #f6f6f6; }
+.map-tag[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%; transform: translateX(-50%);
+  width: min(230px, 70vw);
+  background: var(--ink);
+  color: #f0f0ee;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px; font-style: italic; font-weight: 300;
+  line-height: 1.55;
+  padding: 10px 14px;
+  border-radius: 3px;
+  white-space: normal;
+  text-transform: none; letter-spacing: 0;
+  z-index: 200;
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,.18);
+  opacity: 0; transition: opacity .15s;
+}
+.map-tag[data-tip]::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--ink);
+  z-index: 200; pointer-events: none;
+  opacity: 0; transition: opacity .15s;
+}
+.map-tag[data-tip]:hover::after,
+.map-tag[data-tip]:hover::before { opacity: 1; }
 .map-right {
   flex: 1;
   display: flex;
@@ -990,13 +1024,13 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
     <p class="map-cluster-desc reveal reveal-delay-3">Vast encounters with water, sky, and landscape — moments where the body's smallness becomes vivid against the city's openings and edges.</p>
     <div class="map-cluster-components reveal reveal-delay-3">Key components</div>
     <div class="map-tags reveal reveal-delay-3">
-      <span class="map-tag">Vista</span>
-      <span class="map-tag">Expansive</span>
-      <span class="map-tag">Waterfront</span>
-      <span class="map-tag">Nature</span>
-      <span class="map-tag">Water</span>
-      <span class="map-tag">Vastness</span>
-      <span class="map-tag">Timeless</span>
+      <span class="map-tag" data-tip="Expansive views of the sky, cityscapes, and water — awe at spatial openness and distance.">Vista</span>
+      <span class="map-tag" data-tip="Spaces that highlight the body's relationship toward something vast and outward — highlighting one's smallness.">Expansive</span>
+      <span class="map-tag" data-tip="Rivers, canals, and ponds — the presence of a non-human system moving through the city.">Waterfront</span>
+      <span class="map-tag" data-tip="Awe in the face of the living, non-human world — plants, animals, weather, and ecological systems.">Nature</span>
+      <span class="map-tag" data-tip="Rivers, canals, and ponds — the presence of a non-human system moving through the city.">Water</span>
+      <span class="map-tag" data-tip="The perception of something physically or spatially large that transcends your current frame of reference.">Vastness</span>
+      <span class="map-tag" data-tip="Continuously available — connected to physical elements in the built environment, always there regardless of season or weather.">Timeless</span>
     </div>
   </div>
   <div class="map-right">
@@ -1019,14 +1053,14 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
     <p class="map-cluster-desc reveal reveal-delay-2">The most common archetype — encounters with living things that exceed human control, from seasonal blooms to animal presence, generating wonder and a sense of otherness.</p>
     <div class="map-cluster-components reveal reveal-delay-2">Key components</div>
     <div class="map-tags reveal reveal-delay-2">
-      <span class="map-tag">Nature</span>
-      <span class="map-tag">Plant</span>
-      <span class="map-tag">Alterity</span>
-      <span class="map-tag">Wild</span>
-      <span class="map-tag">Wonder</span>
-      <span class="map-tag">Seasonal</span>
-      <span class="map-tag">Animal</span>
-      <span class="map-tag">Park</span>
+      <span class="map-tag" data-tip="Awe in the face of the living, non-human world — plants, animals, weather, and ecological systems.">Nature</span>
+      <span class="map-tag" data-tip="Trees, flowers, shrubs, and gardens — the non-human life embedded in the city's fabric.">Plant</span>
+      <span class="map-tag" data-tip="An encounter with irreducible otherness — a recognition of presence beyond the self.">Alterity</span>
+      <span class="map-tag" data-tip="Living things that exceed human management, asserting their own autonomy and ecological agency.">Wild</span>
+      <span class="map-tag" data-tip="The state of curiosity, openness, and receptivity — approaching what you see as if for the first time.">Wonder</span>
+      <span class="map-tag" data-tip="Returns with natural cycles — migration, flowering, weather. Available at certain times of year.">Seasonal</span>
+      <span class="map-tag" data-tip="Birds and mammals encountered in the city — creatures whose wildness interrupts the built environment.">Animal</span>
+      <span class="map-tag" data-tip="Designed outdoor spaces — parks, gardens, and urban nature in various states of cultivation.">Park</span>
     </div>
   </div>
   <div class="map-right">
@@ -1049,14 +1083,14 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
     <p class="map-cluster-desc reveal reveal-delay-2">Awe found in the ornate craft of the built environment — architecture, public art, and visual design that stops you in your tracks along the city's streets.</p>
     <div class="map-cluster-components reveal reveal-delay-2">Key components</div>
     <div class="map-tags reveal reveal-delay-2">
-      <span class="map-tag">Visual Design</span>
-      <span class="map-tag">Architecture</span>
-      <span class="map-tag">Timeless</span>
-      <span class="map-tag">Ornate</span>
-      <span class="map-tag">Art &amp; Object</span>
-      <span class="map-tag">Epiphany</span>
-      <span class="map-tag">Street</span>
-      <span class="map-tag">Beauty</span>
+      <span class="map-tag" data-tip="Awe in the presence of beauty made by human hands — architecture, art, and the crafted environment.">Visual Design</span>
+      <span class="map-tag" data-tip="Building forms, color, materiality, and ornament — the felt presence of human craft at scale.">Architecture</span>
+      <span class="map-tag" data-tip="Continuously available — connected to physical elements in the built environment, always there regardless of season or weather.">Timeless</span>
+      <span class="map-tag" data-tip="Built forms that exceed their function through decoration, craft, and aesthetic excess — beauty beyond necessity.">Ornate</span>
+      <span class="map-tag" data-tip="Murals, sculptures, installations, and found items — things made for looking at.">Art &amp; Object</span>
+      <span class="map-tag" data-tip="A flash of understanding — the sudden expansion of one's frame of reference.">Epiphany</span>
+      <span class="map-tag" data-tip="The urban streetscape as a stage for unexpected encounters with beauty, craft, and the made world.">Street</span>
+      <span class="map-tag" data-tip="The perception of aesthetic harmony or sensory pleasure in the natural or built environment.">Beauty</span>
     </div>
   </div>
   <div class="map-right">
@@ -1079,14 +1113,14 @@ const CLUSTER_COLORS = {'1':'#4a7a8a','2':'#5a7d3d','3':'#8c4518','4':'#6b5b8a'}
     <p class="map-cluster-desc reveal reveal-delay-2">Moments of collective effervescence — gatherings, events, and communities that dissolve the boundary between self and crowd, generating a felt sense of belonging.</p>
     <div class="map-cluster-components reveal reveal-delay-2">Key components</div>
     <div class="map-tags reveal reveal-delay-2">
-      <span class="map-tag">Collective Effervescence</span>
-      <span class="map-tag">Interconnection</span>
-      <span class="map-tag">People</span>
-      <span class="map-tag">Inclusive</span>
-      <span class="map-tag">Event</span>
-      <span class="map-tag">Moral Beauty</span>
-      <span class="map-tag">Recurring</span>
-      <span class="map-tag">Civic Venues</span>
+      <span class="map-tag" data-tip="Awe in the shared energy of a crowd — the feeling of being swept up in something larger than yourself.">Collective Effervescence</span>
+      <span class="map-tag" data-tip="The sense of being part of a larger whole — seeing yourself as embedded in a system or network.">Interconnection</span>
+      <span class="map-tag" data-tip="Strangers, individuals, and the presence of others — awe at human presence and proximity itself.">People</span>
+      <span class="map-tag" data-tip="Spaces and communities experienced as open and inviting — awe through belonging and access.">Inclusive</span>
+      <span class="map-tag" data-tip="Gatherings, performances, and festivals — awe that only exists in the moment of shared presence.">Event</span>
+      <span class="map-tag" data-tip="Awe at extraordinary goodness, virtue, or kindness — the recognition of human excellence.">Moral Beauty</span>
+      <span class="map-tag" data-tip="Available based on a calendar or human schedule — weekly, monthly, or yearly rhythms of social life.">Recurring</span>
+      <span class="map-tag" data-tip="Shared institutions and public spaces — places designed to hold communities together.">Civic Venues</span>
     </div>
   </div>
   <div class="map-right">
