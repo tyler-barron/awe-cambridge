@@ -438,26 +438,29 @@ body::before {
 /* Tooltip styles — rendered in <body> by JS to avoid panel overflow:hidden clipping */
 #awe-tip {
   position: fixed; z-index: 9999;
-  max-width: 240px;
+  width: 240px;
   background: var(--ink);
   color: #f0f0ee;
   font-family: 'Cormorant Garamond', serif;
   font-size: 13px; font-style: italic; font-weight: 300;
   line-height: 1.55;
-  padding: 10px 14px 8px;
+  padding: 10px 14px 10px;
   border-radius: 3px;
   pointer-events: none;
   box-shadow: 0 4px 16px rgba(0,0,0,.2);
   opacity: 0; transition: opacity .12s;
 }
-#awe-tip.visible { opacity: 1; }
-#awe-tip .tip-link {
-  display: block; margin-top: 8px;
+#awe-tip.visible { opacity: 1; pointer-events: auto; }
+#awe-tip .tip-footer {
+  margin-top: 9px; padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,.12);
   font-family: 'Space Mono', monospace;
   font-size: 9px; font-style: normal;
-  letter-spacing: .15em; text-transform: uppercase;
-  color: #c8b89a; text-decoration: none;
-  pointer-events: auto;
+  letter-spacing: .08em; color: #a89880;
+}
+#awe-tip .tip-link {
+  color: #d4b896; text-decoration: underline;
+  text-underline-offset: 2px;
 }
 #awe-tip .tip-link:hover { color: #fff; }
 .map-right {
@@ -1369,29 +1372,39 @@ document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el)
 (function() {
   var tip = document.createElement('div');
   tip.id = 'awe-tip';
-  tip.innerHTML = '<span class="tip-text"></span><a href="guide.html" class="tip-link">Understanding Awe ↗</a>';
+  tip.innerHTML = '<span class="tip-text"></span>'
+    + '<p class="tip-footer">To learn more about each component, <a href="guide.html" class="tip-link">click here</a></p>';
   document.body.appendChild(tip);
 
-  function place(e) {
-    var tw = tip.offsetWidth, th = tip.offsetHeight;
-    var x = e.clientX + 14, y = e.clientY - th - 14;
-    if (x + tw > window.innerWidth - 8) x = e.clientX - tw - 14;
-    if (y < 8) y = e.clientY + 20;
+  var hideTimer = null;
+
+  function show(tag) {
+    clearTimeout(hideTimer);
+    tip.querySelector('.tip-text').textContent = tag.dataset.tip;
+    tip.classList.add('visible');
+    // Position above the tag, clamped to viewport
+    var r = tag.getBoundingClientRect();
+    var tw = 240, th = tip.offsetHeight;
+    var x = r.left + r.width / 2 - tw / 2;
+    var y = r.top - th - 10;
+    x = Math.max(8, Math.min(x, window.innerWidth - tw - 8));
+    if (y < 8) y = r.bottom + 10; // flip below if not enough room above
     tip.style.left = x + 'px';
     tip.style.top  = y + 'px';
   }
 
+  function hide() {
+    hideTimer = setTimeout(function() { tip.classList.remove('visible'); }, 180);
+  }
+
   document.querySelectorAll('.map-tag[data-tip]').forEach(function(tag) {
-    tag.addEventListener('mouseenter', function(e) {
-      tip.querySelector('.tip-text').textContent = tag.dataset.tip;
-      tip.classList.add('visible');
-      place(e);
-    });
-    tag.addEventListener('mousemove', place);
-    tag.addEventListener('mouseleave', function() {
-      tip.classList.remove('visible');
-    });
+    tag.addEventListener('mouseenter', function() { show(tag); });
+    tag.addEventListener('mouseleave', hide);
   });
+
+  // Keep tooltip open when mouse moves onto it
+  tip.addEventListener('mouseenter', function() { clearTimeout(hideTimer); });
+  tip.addEventListener('mouseleave', hide);
 })();
 </script>
 </body>
