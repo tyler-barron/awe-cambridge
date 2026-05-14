@@ -72,12 +72,22 @@ body::before {
   animation: cueFade 1s ease 2.5s forwards;
 }
 .scroll-cue-line {
-  width: 10px; height: 10px;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(45deg);
-  opacity: .5;
+  width: 1px;
+  height: 28px;
+  background: currentColor;
+  opacity: .4;
   animation: cueGrow 1.4s ease infinite;
+  position: relative;
+}
+.scroll-cue-line::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top: 5px solid currentColor;
 }
 .scroll-cue-label {
   display: none;
