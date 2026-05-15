@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rhythm Analysis & Activation — Awe in Cambridge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+/* ── Tokens ─────────────────────────────────────────────────────────────── */
+:root {
+  --ink:       #1a1a1a;
+  --charcoal:  #2c2c2c;
+  --parchment: #f6f6f6;
+  --linen:     #e6e6e4;
+  --stone:     #7a7878;
+  --accent:    #8c4518;
+  --muted:     #4a4a4a;
+
+  --geo:   #4a7a8a;
+  --morph: #8c4518;
+  --phen:  #6b5b8a;
+  --tempo: #a07c2a;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100%;
+  background: var(--parchment);
+  color: var(--ink);
+  font-family: 'Cormorant Garamond', serif;
+  line-height: 1.6;
+}
+
+/* ── Grain overlay ───────────────────────────────────────────────────────── */
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 998; opacity: .18;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+}
+
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+.page-wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 40px 120px;
+}
+@media (max-width: 600px) { .page-wrap { padding: 0 20px 80px; } }
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.site-header {
+  padding: 36px 0 28px;
+  border-bottom: 1px solid rgba(140,69,24,.18);
+  margin-bottom: 40px;
+}
+
+.back-link {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 16px;
+  transition: color .2s;
+}
+.back-link:hover { color: var(--accent); }
+
+.eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  letter-spacing: -.01em;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1.05rem;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+
+/* ── Location inputs ─────────────────────────────────────────────────────── */
+.location-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.input-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.text-input, .date-input {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--ink);
+  background: rgba(255,255,255,.6);
+  border: 1px solid rgba(26,26,26,.18);
+  border-radius: 3px;
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color .2s;
+}
+.text-input:focus, .date-input:focus {
+  border-color: var(--accent);
+}
+
+.divider {
+  height: 1px;
+  background: rgba(26,26,26,.1);
+  margin: 40px 0;
+}
+
+/* ── Analysis grid ───────────────────────────────────────────────────────── */
+.analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .analysis-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .analysis-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Analysis column ─────────────────────────────────────────────────────── */
+.analysis-col {
+  background: rgba(255,255,255,.4);
+  border: 1px solid rgba(26,26,26,.1);
+  border-radius: 3px;
+  border-top-width: 3px;
+  padding: 22px 18px 24px;
+  position: relative;
+}
+
+.analysis-col.col-geo   { border-top-color: var(--geo); }
+.analysis-col.col-morph { border-top-color: var(--morph); }
+.analysis-col.col-phen  { border-top-color: var(--phen); }
+.analysis-col.col-tempo { border-top-color: var(--tempo); }
+
+.col-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.col-geo   .col-num { color: var(--geo); }
+.col-morph .col-num { color: var(--morph); }
+.col-phen  .col-num { color: var(--phen); }
+.col-tempo .col-num { color: var(--tempo); }
+
+.col-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.col-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: 1.45rem;
+  letter-spacing: -.01em;
+  margin-bottom: 18px;
+  line-height: 1.2;
+}
+
+/* ── Stability spectrum ───────────────────────────────────────────────────── */
+.stability-block {
+  background: rgba(26,26,26,.03);
+  border: 1px solid rgba(26,26,26,.07);
+  border-radius: 3px;
+  padding: 12px 14px 14px;
+  margin-bottom: 22px;
+}
+
+.stability-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.stability-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.stability-value {
+  font-family: 'Space Mono', monospace;
+  font-size: 8.5px;
+  color: var(--ink);
+}
+
+.stability-info {
+  font-family: 'Space Mono', monospace;
+  font-size: 7.5px;
+  color: var(--stone);
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.stability-poles {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.stability-pole {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  color: var(--muted);
+  letter-spacing: .05em;
+}
+
+/* ── Range sliders (stability + tension) ─────────────────────────────────── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 3px;
+  background: var(--linen);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"].geo-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  background: var(--geo);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform .15s;
+}
+input[type="range"].geo-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+input[type="range"].geo-slider::-moz-range-thumb {
+  width: 14px; height: 14px; background: var(--geo); border: none; border-radius: 50%; cursor: pointer;
+}
+
+input[type="range"].morph-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  background: var(--morph);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform .15s;
+}
+input[type="range"].morph-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+input[type="range"].morph-slider::-moz-range-thumb {
+  width: 14px; height: 14px; background: var(--morph); border: none; border-radius: 50%; cursor: pointer;
+}
+
+input[type="range"].phen-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  background: var(--phen);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform .15s;
+}
+input[type="range"].phen-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+input[type="range"].phen-slider::-moz-range-thumb {
+  width: 14px; height: 14px; background: var(--phen); border: none; border-radius: 50%; cursor: pointer;
+}
+
+input[type="range"].tempo-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  background: var(--tempo);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform .15s;
+}
+input[type="range"].tempo-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+input[type="range"].tempo-slider::-moz-range-thumb {
+  width: 14px; height: 14px; background: var(--tempo); border: none; border-radius: 50%; cursor: pointer;
+}
+
+/* ── Toggle tags ─────────────────────────────────────────────────────────── */
+.section-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.tag-note {
+  font-family: 'Space Mono', monospace;
+  font-size: 7.5px;
+  color: var(--stone);
+  margin-bottom: 10px;
+  font-style: normal;
+}
+
+.tags-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.tag-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 8.5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid currentColor;
+  background: transparent;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  letter-spacing: .04em;
+  line-height: 1.4;
+}
+
+.col-geo .tag-btn   { color: var(--geo); }
+.col-morph .tag-btn { color: var(--morph); }
+.col-phen .tag-btn  { color: var(--phen); }
+
+.col-geo .tag-btn.selected   { background: var(--geo);   color: #fff; }
+.col-morph .tag-btn.selected { background: var(--morph); color: #fff; }
+.col-phen .tag-btn.selected  { background: var(--phen);  color: #fff; }
+
+/* ── Sub-section separator ───────────────────────────────────────────────── */
+.sub-divider {
+  height: 1px;
+  background: rgba(26,26,26,.08);
+  margin: 18px 0 16px;
+}
+
+/* ── Tension sliders ─────────────────────────────────────────────────────── */
+.tension-row {
+  margin-bottom: 14px;
+}
+.tension-poles {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.tension-pole {
+  font-family: 'Space Mono', monospace;
+  font-size: 7.5px;
+  color: var(--muted);
+  letter-spacing: .04em;
+}
+
+/* ── Binary toggles ──────────────────────────────────────────────────────── */
+.binaries-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.binary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.binary-label-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.binary-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.binary-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+/* CSS toggle switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: var(--linen);
+  border-radius: 20px;
+  transition: background .2s;
+  border: 1px solid rgba(26,26,26,.15);
+}
+.toggle-track::after {
+  content: '';
+  position: absolute;
+  left: 3px; top: 3px;
+  width: 12px; height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform .2s, background .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.toggle-switch input:checked + .toggle-track {
+  background: var(--phen);
+  border-color: var(--phen);
+}
+.toggle-switch input:checked + .toggle-track::after {
+  transform: translateX(16px);
+}
+
+/* ── Temporality spectrum ─────────────────────────────────────────────────── */
+.tempo-spectrum {
+  display: flex;
+  gap: 10px;
+  position: relative;
+}
+
+.tempo-gradient-bar {
+  width: 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  background: linear-gradient(to bottom,
+    rgba(160, 124, 42, 0.08) 0%,
+    rgba(160, 124, 42, 0.2) 20%,
+    rgba(160, 124, 42, 0.4) 40%,
+    rgba(160, 124, 42, 0.65) 65%,
+    rgba(160, 124, 42, 0.85) 82%,
+    rgba(160, 124, 42, 1.0) 100%
+  );
+}
+
+.tempo-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.tempo-card {
+  border: 1px solid rgba(160,124,42,.2);
+  border-radius: 3px;
+  padding: 9px 12px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+  background: transparent;
+  text-align: left;
+  width: 100%;
+}
+.tempo-card:hover {
+  background: rgba(160,124,42,.06);
+  border-color: rgba(160,124,42,.4);
+}
+.tempo-card.selected {
+  background: rgba(160,124,42,.12);
+  border-color: var(--tempo);
+}
+
+.tempo-card-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--tempo);
+  margin-bottom: 2px;
+}
+.tempo-card-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: .82rem;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+/* ── Morphology SVG network ───────────────────────────────────────────────── */
+.morph-network-wrap {
+  margin-top: 18px;
+  border-top: 1px solid rgba(26,26,26,.08);
+  padding-top: 14px;
+}
+
+.network-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+  display: block;
+}
+
+#morph-svg {
+  width: 100%;
+  height: 340px;
+  display: block;
+}
+
+/* ── Generate button ─────────────────────────────────────────────────────── */
+.generate-section {
+  margin: 48px 0 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.generate-btn {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  letter-spacing: .04em;
+  color: var(--accent);
+  background: transparent;
+  border: 1.5px solid var(--accent);
+  border-radius: 3px;
+  padding: 14px 48px;
+  cursor: pointer;
+  transition: background .2s, color .2s, opacity .2s;
+  width: 100%;
+  max-width: 480px;
+}
+.generate-btn:hover:not(:disabled) {
+  background: var(--accent);
+  color: #fff;
+}
+.generate-btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.generate-note {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .15em;
+  color: var(--stone);
+  text-transform: uppercase;
+}
+
+/* ── Output section ──────────────────────────────────────────────────────── */
+#output-section {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .5s ease, transform .5s ease;
+  pointer-events: none;
+}
+#output-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.output-header {
+  margin-bottom: 32px;
+}
+
+.output-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  letter-spacing: -.01em;
+  margin-bottom: 6px;
+}
+
+.output-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 600px;
+}
+
+.output-meta {
+  font-family: 'Space Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: .2em;
+  color: var(--stone);
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+.output-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .output-cards { grid-template-columns: 1fr; }
+}
+
+.output-card {
+  background: rgba(255,255,255,.5);
+  border: 1px solid rgba(26,26,26,.1);
+  border-top-width: 3px;
+  border-radius: 3px;
+  padding: 22px 20px 24px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .4s ease, transform .4s ease;
+}
+.output-card.card-reactivate { border-top-color: var(--morph); }
+.output-card.card-reawaken   { border-top-color: var(--phen); }
+.output-card.card-rebalance  { border-top-color: var(--tempo); }
+
+.output-card.anim { opacity: 1; transform: translateY(0); }
+
+.card-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.card-reactivate .card-eyebrow { color: var(--morph); }
+.card-reawaken   .card-eyebrow { color: var(--phen); }
+.card-rebalance  .card-eyebrow { color: var(--tempo); }
+
+.card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: 1.55rem;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.card-frame {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: .9rem;
+  color: var(--muted);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.suggestion-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.suggestion-list li {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: .95rem;
+  line-height: 1.55;
+  color: var(--ink);
+  padding-left: 14px;
+  position: relative;
+}
+
+.suggestion-list li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--stone);
+  font-size: .8rem;
+}
+
+.stability-note {
+  font-family: 'Space Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: .08em;
+  color: var(--stone);
+  border-top: 1px solid rgba(26,26,26,.08);
+  padding-top: 12px;
+  line-height: 1.6;
+}
+
+.cross-note {
+  margin-top: 28px;
+  background: rgba(140,69,24,.06);
+  border: 1px solid rgba(140,69,24,.15);
+  border-radius: 3px;
+  padding: 16px 20px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: .95rem;
+  color: var(--accent);
+  line-height: 1.6;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.site-footer {
+  border-top: 1px solid rgba(26,26,26,.1);
+  padding: 32px 0;
+  margin-top: 80px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: var(--stone);
+  text-align: center;
+}
+
+/* ── Responsive tweaks ───────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .location-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- ── HEADER ─────────────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <a class="back-link" href="index.html#awe-atlas">← Awe Atlas</a>
+    <div class="eyebrow">Planning Tool</div>
+    <h1 class="page-title">Rhythm Analysis</h1>
+    <p class="page-subtitle">A tool to analyze and activate places through awe</p>
+
+    <div class="location-row">
+      <div class="input-group">
+        <label class="input-label" for="location-name">Location name</label>
+        <input class="text-input" id="location-name" type="text" placeholder="e.g. Charles River Esplanade">
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="analysis-date">Date</label>
+        <input class="date-input" id="analysis-date" type="date">
+      </div>
+    </div>
+  </header>
+
+  <div class="divider"></div>
+
+  <!-- ── ANALYSIS GRID ──────────────────────────────────────────────────── -->
+  <div class="analysis-grid">
+
+    <!-- ── Column 1: Geography ──────────────────────────────────────────── -->
+    <div class="analysis-col col-geo">
+      <div class="col-num">01</div>
+      <div class="col-name">Geography</div>
+      <h2 class="col-title">Place</h2>
+
+      <div class="stability-block">
+        <div class="stability-header">
+          <span class="stability-label">Current State</span>
+          <span class="stability-value" id="geo-stab-val">50 — Neutral</span>
+        </div>
+        <div class="stability-info">Stable = fixed &amp; permanent · Dynamic = changing &amp; programmable</div>
+        <div class="stability-poles">
+          <span class="stability-pole">Stable</span>
+          <span class="stability-pole">Dynamic</span>
+        </div>
+        <input type="range" class="geo-slider" id="geo-stability" min="0" max="100" value="50">
+      </div>
+
+      <span class="section-label">Geographic Type</span>
+      <p class="tag-note">Select all that apply to this location</p>
+      <div class="tags-wrap" id="geo-tags">
+        <button class="tag-btn" data-tag="Waterfront">Waterfront</button>
+        <button class="tag-btn" data-tag="Park & Green Space">Park &amp; Green Space</button>
+        <button class="tag-btn" data-tag="Street & Sidewalk">Street &amp; Sidewalk</button>
+        <button class="tag-btn" data-tag="Institutional Campus">Institutional Campus</button>
+        <button class="tag-btn" data-tag="Commercial District">Commercial District</button>
+        <button class="tag-btn" data-tag="Residential">Residential</button>
+        <button class="tag-btn" data-tag="Transit Hub">Transit Hub</button>
+        <button class="tag-btn" data-tag="Cultural Venue">Cultural Venue</button>
+        <button class="tag-btn" data-tag="Industrial Edge">Industrial Edge</button>
+      </div>
+    </div>
+
+    <!-- ── Column 2: Morphology ─────────────────────────────────────────── -->
+    <div class="analysis-col col-morph">
+      <div class="col-num">02</div>
+      <div class="col-name">Morphology</div>
+      <h2 class="col-title">Form</h2>
+
+      <div class="stability-block">
+        <div class="stability-header">
+          <span class="stability-label">Current State</span>
+          <span class="stability-value" id="morph-stab-val">50 — Neutral</span>
+        </div>
+        <div class="stability-info">Stable = fixed &amp; permanent · Dynamic = changing &amp; programmable</div>
+        <div class="stability-poles">
+          <span class="stability-pole">Stable</span>
+          <span class="stability-pole">Dynamic</span>
+        </div>
+        <input type="range" class="morph-slider" id="morph-stability" min="0" max="100" value="50">
+      </div>
+
+      <span class="section-label">Morphological Elements</span>
+      <div class="tags-wrap" id="morph-tags">
+        <button class="tag-btn" data-tag="Animals">Animals</button>
+        <button class="tag-btn" data-tag="Architecture">Architecture</button>
+        <button class="tag-btn" data-tag="Art & Objects">Art &amp; Objects</button>
+        <button class="tag-btn" data-tag="Communities">Communities</button>
+        <button class="tag-btn" data-tag="Events">Events</button>
+        <button class="tag-btn" data-tag="Green Space">Green Space</button>
+        <button class="tag-btn" data-tag="Infrastructure">Infrastructure</button>
+        <button class="tag-btn" data-tag="Light">Light</button>
+        <button class="tag-btn" data-tag="People">People</button>
+        <button class="tag-btn" data-tag="Plants">Plants</button>
+        <button class="tag-btn" data-tag="Smells">Smells</button>
+        <button class="tag-btn" data-tag="Sounds">Sounds</button>
+        <button class="tag-btn" data-tag="Vistas">Vistas</button>
+        <button class="tag-btn" data-tag="Water">Water</button>
+        <button class="tag-btn" data-tag="Weather">Weather</button>
+      </div>
+
+      <div class="morph-network-wrap">
+        <span class="network-label">Morphological Network</span>
+        <svg id="morph-svg" viewBox="0 0 320 340" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="rgba(140,69,24,0.6)"/>
+            </marker>
+          </defs>
+          <text id="morph-svg-empty" x="160" y="175" text-anchor="middle"
+            font-family="Space Mono, monospace" font-size="9" fill="rgba(74,74,74,0.4)"
+            letter-spacing="2">Select morphologies to see network</text>
+          <g id="morph-arrows"></g>
+          <g id="morph-nodes"></g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ── Column 3: Phenomenology ──────────────────────────────────────── -->
+    <div class="analysis-col col-phen">
+      <div class="col-num">03</div>
+      <div class="col-name">Phenomenology</div>
+      <h2 class="col-title">Experience</h2>
+
+      <div class="stability-block">
+        <div class="stability-header">
+          <span class="stability-label">Current State</span>
+          <span class="stability-value" id="phen-stab-val">50 — Neutral</span>
+        </div>
+        <div class="stability-info">Stable = fixed &amp; permanent · Dynamic = changing &amp; programmable</div>
+        <div class="stability-poles">
+          <span class="stability-pole">Stable</span>
+          <span class="stability-pole">Dynamic</span>
+        </div>
+        <input type="range" class="phen-slider" id="phen-stability" min="0" max="100" value="50">
+      </div>
+
+      <!-- A: Characteristics -->
+      <span class="section-label">A — Characteristics</span>
+      <div class="tags-wrap" id="phen-tags">
+        <button class="tag-btn" data-tag="Beauty">Beauty</button>
+        <button class="tag-btn" data-tag="Mystery">Mystery</button>
+        <button class="tag-btn" data-tag="Wonder">Wonder</button>
+        <button class="tag-btn" data-tag="Vastness">Vastness</button>
+        <button class="tag-btn" data-tag="Interconnection">Interconnection</button>
+      </div>
+
+      <div class="sub-divider"></div>
+
+      <!-- B: Tensions -->
+      <span class="section-label">B — Tensions</span>
+
+      <div class="tension-row">
+        <div class="tension-poles">
+          <span class="tension-pole">Ornate</span>
+          <span class="tension-pole">Utilitarian</span>
+        </div>
+        <input type="range" class="phen-slider" id="t-ornate" min="0" max="100" value="50">
+      </div>
+
+      <div class="tension-row">
+        <div class="tension-poles">
+          <span class="tension-pole">Inclusive</span>
+          <span class="tension-pole">Exclusive</span>
+        </div>
+        <input type="range" class="phen-slider" id="t-inclusive" min="0" max="100" value="50">
+      </div>
+
+      <div class="tension-row">
+        <div class="tension-poles">
+          <span class="tension-pole">Wild</span>
+          <span class="tension-pole">Curated</span>
+        </div>
+        <input type="range" class="phen-slider" id="t-wild" min="0" max="100" value="50">
+      </div>
+
+      <div class="tension-row">
+        <div class="tension-poles">
+          <span class="tension-pole">Impressive</span>
+          <span class="tension-pole">Ordinary</span>
+        </div>
+        <input type="range" class="phen-slider" id="t-impressive" min="0" max="100" value="50">
+      </div>
+
+      <div class="tension-row">
+        <div class="tension-poles">
+          <span class="tension-pole">Novel</span>
+          <span class="tension-pole">Familiar</span>
+        </div>
+        <input type="range" class="phen-slider" id="t-novel" min="0" max="100" value="50">
+      </div>
+
+      <div class="tension-row">
+        <div class="tension-poles">
+          <span class="tension-pole">Expansive</span>
+          <span class="tension-pole">Intimate</span>
+        </div>
+        <input type="range" class="phen-slider" id="t-expansive" min="0" max="100" value="50">
+      </div>
+
+      <div class="sub-divider"></div>
+
+      <!-- C: Binaries -->
+      <span class="section-label">C — Binaries</span>
+      <div class="binaries-wrap">
+
+        <div class="binary-row">
+          <div class="binary-label-wrap">
+            <span class="binary-name">Surprise</span>
+            <span class="binary-desc">Encounter with the unexpected; things that depart from prior expectations</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="b-surprise">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+
+        <div class="binary-row">
+          <div class="binary-label-wrap">
+            <span class="binary-name">Alterity</span>
+            <span class="binary-desc">Presence of the radically other — non-human life, forces beyond control</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="b-alterity">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+
+        <div class="binary-row">
+          <div class="binary-label-wrap">
+            <span class="binary-name">Threshold</span>
+            <span class="binary-desc">Marked entry or transition that signals a shift in experiential register</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="b-threshold">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+
+        <div class="binary-row">
+          <div class="binary-label-wrap">
+            <span class="binary-name">Sanctuary</span>
+            <span class="binary-desc">Feeling of protected enclosure; a place apart from the ordinary flow</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="b-sanctuary">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Column 4: Temporality ─────────────────────────────────────────── -->
+    <div class="analysis-col col-tempo">
+      <div class="col-num">04</div>
+      <div class="col-name">Temporality</div>
+      <h2 class="col-title">Time</h2>
+
+      <div class="stability-block">
+        <div class="stability-header">
+          <span class="stability-label">Current State</span>
+          <span class="stability-value" id="tempo-stab-val">50 — Neutral</span>
+        </div>
+        <div class="stability-info">Stable = fixed &amp; permanent · Dynamic = changing &amp; programmable</div>
+        <div class="stability-poles">
+          <span class="stability-pole">Stable</span>
+          <span class="stability-pole">Dynamic</span>
+        </div>
+        <input type="range" class="tempo-slider" id="tempo-stability" min="0" max="100" value="50">
+      </div>
+
+      <span class="section-label">Temporal Frequency</span>
+      <div class="tempo-spectrum">
+        <div class="tempo-gradient-bar"></div>
+        <div class="tempo-options" id="tempo-options">
+          <button class="tempo-card" data-tempo="Ephemeral">
+            <div class="tempo-card-name">Ephemeral</div>
+            <div class="tempo-card-desc">Once — unlikely to occur again</div>
+          </button>
+          <button class="tempo-card" data-tempo="Periodic">
+            <div class="tempo-card-name">Periodic</div>
+            <div class="tempo-card-desc">Unpredictable or inconsistent cycle</div>
+          </button>
+          <button class="tempo-card" data-tempo="Seasonal">
+            <div class="tempo-card-name">Seasonal</div>
+            <div class="tempo-card-desc">Returns with natural cycles</div>
+          </button>
+          <button class="tempo-card" data-tempo="Recurring">
+            <div class="tempo-card-name">Recurring</div>
+            <div class="tempo-card-desc">Scheduled by human activity</div>
+          </button>
+          <button class="tempo-card" data-tempo="Daily">
+            <div class="tempo-card-name">Daily</div>
+            <div class="tempo-card-desc">Available within an ordinary day</div>
+          </button>
+          <button class="tempo-card" data-tempo="Always">
+            <div class="tempo-card-name">Always</div>
+            <div class="tempo-card-desc">Continuously available — always there</div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /analysis-grid -->
+
+  <!-- ── GENERATE BUTTON ─────────────────────────────────────────────────── -->
+  <div class="generate-section">
+    <button class="generate-btn" id="generate-btn" disabled>
+      Generate Rhythm Activation →
+    </button>
+    <span class="generate-note" id="generate-note">Select at least one option across dimensions to activate</span>
+  </div>
+
+  <!-- ── OUTPUT ─────────────────────────────────────────────────────────── -->
+  <section id="output-section" aria-live="polite">
+    <div class="output-header">
+      <div class="eyebrow">Generated Analysis</div>
+      <h2 class="output-title">Rhythm Activation</h2>
+      <p class="output-subtitle">Evidence-based suggestions to reactivate, reawaken, and rebalance this space through awe</p>
+      <p class="output-meta" id="output-meta"></p>
+    </div>
+
+    <div class="output-cards">
+      <div class="output-card card-reactivate" id="card-reactivate">
+        <div class="card-eyebrow">Morphological</div>
+        <h3 class="card-title">Reactivate</h3>
+        <p class="card-frame">Physical and sensory interventions to enrich the material conditions for awe</p>
+        <ul class="suggestion-list" id="reactivate-list"></ul>
+        <div class="stability-note" id="reactivate-note"></div>
+      </div>
+      <div class="output-card card-reawaken" id="card-reawaken">
+        <div class="card-eyebrow">Phenomenological</div>
+        <h3 class="card-title">Reawaken</h3>
+        <p class="card-frame">Experiential interventions to cultivate depth of feeling and perceptual encounter</p>
+        <ul class="suggestion-list" id="reawaken-list"></ul>
+        <div class="stability-note" id="reawaken-note"></div>
+      </div>
+      <div class="output-card card-rebalance" id="card-rebalance">
+        <div class="card-eyebrow">Temporal</div>
+        <h3 class="card-title">Rebalance</h3>
+        <p class="card-frame">Temporal interventions to expand the rhythmic range and accessibility of awe</p>
+        <ul class="suggestion-list" id="rebalance-list"></ul>
+        <div class="stability-note" id="rebalance-note"></div>
+      </div>
+    </div>
+
+    <div class="cross-note" id="cross-note" style="display:none;"></div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    Awe in Cambridge &nbsp;·&nbsp; Cambridge, MA &nbsp;·&nbsp; 2026
+  </footer>
+
+</div><!-- /page-wrap -->
+
+<script>
+/* ── State ─────────────────────────────────────────────────────────────── */
+const state = {
+  geoTags:    new Set(),
+  morphTags:  new Set(),
+  phenTags:   new Set(),
+  geoStab:    50,
+  morphStab:  50,
+  phenStab:   50,
+  tempoStab:  50,
+  tensions: {
+    ornate:    50,
+    inclusive: 50,
+    wild:      50,
+    impressive:50,
+    novel:     50,
+    expansive: 50,
+  },
+  binaries: {
+    surprise:  false,
+    alterity:  false,
+    threshold: false,
+    sanctuary: false,
+  },
+  tempo: null,
+};
+
+/* ── Stability label helper ─────────────────────────────────────────────── */
+function stabLabel(v) {
+  if (v < 20)  return v + ' — Stable';
+  if (v < 40)  return v + ' — Mostly Stable';
+  if (v < 60)  return v + ' — Neutral';
+  if (v < 80)  return v + ' — Mostly Dynamic';
+  return v + ' — Dynamic';
+}
+
+/* ── Stability sliders ──────────────────────────────────────────────────── */
+function wireStab(inputId, valId, stateKey) {
+  const el = document.getElementById(inputId);
+  const lbl = document.getElementById(valId);
+  el.addEventListener('input', () => {
+    state[stateKey] = +el.value;
+    lbl.textContent = stabLabel(+el.value);
+    checkEnableGenerate();
+  });
+}
+wireStab('geo-stability',   'geo-stab-val',   'geoStab');
+wireStab('morph-stability', 'morph-stab-val', 'morphStab');
+wireStab('phen-stability',  'phen-stab-val',  'phenStab');
+wireStab('tempo-stability', 'tempo-stab-val', 'tempoStab');
+
+/* ── Tag toggle helper ──────────────────────────────────────────────────── */
+function wireTags(containerId, stateSet) {
+  const container = document.getElementById(containerId);
+  container.querySelectorAll('.tag-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const t = btn.dataset.tag;
+      if (stateSet.has(t)) {
+        stateSet.delete(t);
+        btn.classList.remove('selected');
+      } else {
+        stateSet.add(t);
+        btn.classList.add('selected');
+      }
+      if (stateSet === state.morphTags) updateMorphNetwork();
+      checkEnableGenerate();
+    });
+  });
+}
+wireTags('geo-tags',   state.geoTags);
+wireTags('morph-tags', state.morphTags);
+wireTags('phen-tags',  state.phenTags);
+
+/* ── Tension sliders ────────────────────────────────────────────────────── */
+const tensionMap = {
+  't-ornate':    'ornate',
+  't-inclusive': 'inclusive',
+  't-wild':      'wild',
+  't-impressive':'impressive',
+  't-novel':     'novel',
+  't-expansive': 'expansive',
+};
+Object.entries(tensionMap).forEach(([id, key]) => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    state.tensions[key] = +el.value;
+    checkEnableGenerate();
+  });
+});
+
+/* ── Binary toggles ─────────────────────────────────────────────────────── */
+const binaryMap = {
+  'b-surprise':  'surprise',
+  'b-alterity':  'alterity',
+  'b-threshold': 'threshold',
+  'b-sanctuary': 'sanctuary',
+};
+Object.entries(binaryMap).forEach(([id, key]) => {
+  const el = document.getElementById(id);
+  el.addEventListener('change', () => {
+    state.binaries[key] = el.checked;
+    checkEnableGenerate();
+  });
+});
+
+/* ── Temporality cards ──────────────────────────────────────────────────── */
+document.getElementById('tempo-options').querySelectorAll('.tempo-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.tempo-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    state.tempo = card.dataset.tempo;
+    checkEnableGenerate();
+  });
+});
+
+/* ── Enable / disable generate button ──────────────────────────────────── */
+function hasAnySelection() {
+  return state.geoTags.size > 0
+      || state.morphTags.size > 0
+      || state.phenTags.size > 0
+      || state.tempo !== null
+      || Object.values(state.binaries).some(Boolean);
+}
+
+function checkEnableGenerate() {
+  const btn  = document.getElementById('generate-btn');
+  const note = document.getElementById('generate-note');
+  if (hasAnySelection()) {
+    btn.disabled = false;
+    note.textContent = 'Ready — click to generate activation suggestions';
+  } else {
+    btn.disabled = true;
+    note.textContent = 'Select at least one option across dimensions to activate';
+  }
+}
+
+/* ── Morphology SVG Network ─────────────────────────────────────────────── */
+function updateMorphNetwork() {
+  const selected = [...state.morphTags];
+  const arrowsG  = document.getElementById('morph-arrows');
+  const nodesG   = document.getElementById('morph-nodes');
+  const emptyTxt = document.getElementById('morph-svg-empty');
+
+  arrowsG.innerHTML = '';
+  nodesG.innerHTML  = '';
+
+  if (selected.length < 2) {
+    emptyTxt.style.display = '';
+    emptyTxt.textContent = selected.length === 0
+      ? 'Select morphologies to see network'
+      : 'Select 2 or more morphologies to see network';
+    return;
+  }
+  emptyTxt.style.display = 'none';
+
+  const cx = 160, cy = 162, r = 118;
+  const n = selected.length;
+
+  // Compute positions
+  const positions = selected.map((_, i) => {
+    const angle = (2 * Math.PI * i / n) - Math.PI / 2;
+    return {
+      x: cx + r * Math.cos(angle),
+      y: cy + r * Math.sin(angle),
+    };
+  });
+
+  // Draw curved arrows between consecutive nodes (circular)
+  for (let i = 0; i < n; i++) {
+    const from = positions[i];
+    const to   = positions[(i + 1) % n];
+    const mx   = (from.x + to.x) / 2;
+    const my   = (from.y + to.y) / 2;
+    // Control point: curve toward center
+    const cpx  = mx + (cx - mx) * 0.35;
+    const cpy  = my + (cy - my) * 0.35;
+
+    // Shorten path so arrowhead doesn't overlap node
+    const nodeR = 18;
+    const dx    = to.x - cpx;
+    const dy    = to.y - cpy;
+    const dist  = Math.sqrt(dx * dx + dy * dy);
+    const tx    = to.x - (dx / dist) * nodeR;
+    const ty    = to.y - (dy / dist) * nodeR;
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M ${from.x} ${from.y} Q ${cpx} ${cpy} ${tx} ${ty}`);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', 'rgba(140,69,24,0.4)');
+    path.setAttribute('stroke-width', '1.5');
+    path.setAttribute('marker-end', 'url(#arrowhead)');
+    arrowsG.appendChild(path);
+  }
+
+  // Draw nodes
+  selected.forEach((label, i) => {
+    const { x, y } = positions[i];
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', x);
+    circle.setAttribute('cy', y);
+    circle.setAttribute('r', 18);
+    circle.setAttribute('fill', '#2c2c2c');
+    circle.setAttribute('stroke', 'rgba(140,69,24,0.5)');
+    circle.setAttribute('stroke-width', '1.5');
+    g.appendChild(circle);
+
+    // Wrap label text — short labels only
+    const words  = label.split(/\s+/);
+    const line1  = words[0];
+    const line2  = words.slice(1).join(' ');
+    const text1  = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text1.setAttribute('x', x);
+    text1.setAttribute('y', line2 ? y - 3 : y + 3);
+    text1.setAttribute('text-anchor', 'middle');
+    text1.setAttribute('dominant-baseline', 'middle');
+    text1.setAttribute('font-family', 'Space Mono, monospace');
+    text1.setAttribute('font-size', '7');
+    text1.setAttribute('fill', '#ffffff');
+    text1.setAttribute('letter-spacing', '0.5');
+    text1.textContent = line1;
+    g.appendChild(text1);
+
+    if (line2) {
+      const text2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text2.setAttribute('x', x);
+      text2.setAttribute('y', y + 9);
+      text2.setAttribute('text-anchor', 'middle');
+      text2.setAttribute('dominant-baseline', 'middle');
+      text2.setAttribute('font-family', 'Space Mono, monospace');
+      text2.setAttribute('font-size', '7');
+      text2.setAttribute('fill', '#ffffff');
+      text2.setAttribute('letter-spacing', '0.5');
+      text2.textContent = line2;
+      g.appendChild(text2);
+    }
+
+    nodesG.appendChild(g);
+  });
+}
+
+/* ── Generate logic ─────────────────────────────────────────────────────── */
+document.getElementById('generate-btn').addEventListener('click', generateActivation);
+
+function generateActivation() {
+  const reactivate = [];
+  const reawaken   = [];
+  const rebalance  = [];
+  let reactivateNote = '';
+  let reawakenNote   = '';
+  let rebalanceNote  = '';
+
+  const morph = state.morphTags;
+  const geo   = state.geoTags;
+  const phen  = state.phenTags;
+  const t     = state.tensions;
+  const b     = state.binaries;
+  const tempo = state.tempo;
+
+  /* ── REACTIVATE ── */
+  if (morph.size < 3) {
+    reactivate.push('Increase morphological diversity — richer sensory layering creates more conditions for awe');
+  }
+  if (!morph.has('Plants') && !morph.has('Green Space')) {
+    reactivate.push('Introduce vegetation, seasonal plantings, or living walls to add ecological presence and alterity');
+  }
+  if (!morph.has('Water')) {
+    reactivate.push('Consider water features, reflecting pools, or canalized water to introduce a non-human rhythm');
+  }
+  if (!morph.has('Light')) {
+    reactivate.push('Introduce lighting interventions — seasonal, reactive, or kinetic light to extend temporal availability');
+  }
+  if (!morph.has('Art & Objects')) {
+    reactivate.push('Commission public art, murals, or site-specific installations to create focal points of visual awe');
+  }
+  if (!morph.has('Events') && !morph.has('Communities')) {
+    reactivate.push('Program recurring events — markets, performances, or community gatherings — to activate social morphologies');
+  }
+  if (!morph.has('Vistas')) {
+    reactivate.push('Consider view corridors, elevated platforms, or cleared sightlines to introduce spatial vastness');
+  }
+  if (geo.has('Waterfront') && !morph.has('Water')) {
+    reactivate.push('The waterfront setting offers unrealized potential — foreground the water as a morphological feature');
+  }
+  if (state.morphStab > 60) {
+    reactivate.push('The high dynamism of this location calls for anchor elements — permanent installations or plantings to ground the space');
+  }
+
+  if (state.morphStab > 60) {
+    reactivateNote = 'Stability note: High morphological dynamism detected. Consider establishing fixed, permanent elements before layering additional programming.';
+  } else if (state.morphStab < 40) {
+    reactivateNote = 'Stability note: The stable morphological state is a foundation — layer temporary and seasonal elements to introduce change.';
+  }
+
+  /* ── REAWAKEN ── */
+  if (!phen.has('Wonder')) {
+    reawaken.push('Introduce elements of discovery — hidden features, sequential reveals, or sensory surprise');
+  }
+  if (!phen.has('Vastness')) {
+    reawaken.push('Open visual or spatial connections to larger systems — sky, water, or distant horizons');
+  }
+  if (!phen.has('Interconnection')) {
+    reawaken.push('Create legible connections between people and place — signage, programming, or community displays');
+  }
+  if (t.ornate < 30) {
+    reawaken.push('Introduce ornamental excess — decoration, craft, or aesthetic detail that exceeds functional necessity');
+  }
+  if (t.ornate > 70) {
+    reawaken.push('Balance ornate elements with functional clarity — ensure the space remains navigable and purposeful');
+  }
+  if (t.inclusive > 60) {
+    reawaken.push('Reduce perceived barriers — improve wayfinding, signage, and create explicit welcoming gestures');
+  }
+  if (t.wild < 30) {
+    reawaken.push('Introduce curated elements to create legibility and guide attention without taming the wildness');
+  }
+  if (t.wild > 70) {
+    reawaken.push('Allow some ecological autonomy — unmown patches, volunteer plants, or animal habitats');
+  }
+  if (!b.alterity) {
+    reawaken.push('Introduce living, non-human presences — plants, birds, water — to create encounters with irreducible otherness');
+  }
+  if (!b.surprise) {
+    reawaken.push('Design for the unexpected — seasonal changes, pop-up installations, or elements that shift with time of day');
+  }
+  if (!b.sanctuary && t.expansive > 60) {
+    reawaken.push('Create moments of enclosure — seating alcoves, planted edges, or overhead canopy — within the expansive setting');
+  }
+  if (state.phenStab > 60) {
+    reawaken.push('The dynamic phenomenological state suggests programming interventions rather than fixed physical changes');
+  }
+
+  if (state.phenStab > 60) {
+    reawakenNote = 'Stability note: Dynamic phenomenological conditions present. Prioritize responsive, time-based programming over permanent physical change.';
+  } else if (state.phenStab < 40) {
+    reawakenNote = 'Stability note: The stable experiential character of this space is an asset — use it as a ground for introducing carefully calibrated moments of disruption.';
+  }
+
+  /* ── REBALANCE ── */
+  if (tempo === 'Ephemeral' || tempo === 'Periodic') {
+    rebalance.push('Anchor the space with always-available awe elements — permanent plantings, architecture, or water features — to provide reliable access to awe');
+  }
+  if (tempo === 'Always') {
+    rebalance.push('Introduce ephemeral or periodic events to layer temporal excitement onto the stable base — festivals, seasonal installations, performances');
+  }
+  if (tempo === 'Seasonal') {
+    rebalance.push('Maximize seasonal legibility — ensure the transitions between seasons are perceptible and celebrated in the space');
+  }
+  if (tempo === 'Recurring') {
+    rebalance.push('Align recurring programming with natural rhythms — weekly markets at peak light, monthly events at seasonal transitions');
+  }
+  if (state.tempoStab < 40) {
+    rebalance.push('The temporal stability of this space is an asset — use it as a foundation for layering more dynamic programming');
+  }
+  if (state.tempoStab > 60) {
+    rebalance.push('The high temporal dynamism suggests adding permanently available awe — something that is always there regardless of programming');
+  }
+  if (!tempo) {
+    rebalance.push('Define the temporal identity of this space — is it a place of always-available awe, or a stage for periodic gatherings?');
+  }
+  if (geo.has('Cultural Venue') && tempo !== 'Recurring' && tempo !== 'Daily' && tempo !== 'Always') {
+    rebalance.push('Cultural venues benefit from reliable rhythms — consider establishing recurring programming cycles');
+  }
+
+  if (state.tempoStab > 60) {
+    rebalanceNote = 'Stability note: High temporal dynamism. Establish stable anchors before introducing further programmable layers.';
+  } else if (state.tempoStab < 40) {
+    rebalanceNote = 'Stability note: Stable temporal character. Leverage this consistency while introducing carefully timed moments of change.';
+  }
+
+  /* ── CROSS-DIMENSIONAL ── */
+  let crossNote = '';
+  if (geo.size < 2 && morph.size < 3 && phen.size < 2) {
+    crossNote = 'This location has significant untapped potential across all dimensions. Consider a comprehensive activation strategy.';
+  }
+  const avgStab = (state.geoStab + state.morphStab + state.phenStab + state.tempoStab) / 4;
+  if (avgStab > 60) {
+    const dynamicNote = 'This highly dynamic location may benefit from a period of stability — establish anchor points before layering additional programming.';
+    crossNote = crossNote ? crossNote + ' ' + dynamicNote : dynamicNote;
+  }
+
+  /* ── Fallbacks ── */
+  if (reactivate.length === 0) {
+    reactivate.push('Strong morphological foundation — consider fine-tuning existing elements rather than introducing new ones');
+  }
+  if (reawaken.length === 0) {
+    reawaken.push('Strong phenomenological profile — maintain existing conditions and monitor for shifts over time');
+  }
+  if (rebalance.length === 0) {
+    rebalance.push('Temporal profile is well-balanced — consider documentation and interpretation to make temporal richness legible');
+  }
+
+  /* ── Render ── */
+  renderList('reactivate-list', reactivate);
+  renderList('reawaken-list',   reawaken);
+  renderList('rebalance-list',  rebalance);
+
+  document.getElementById('reactivate-note').textContent = reactivateNote;
+  document.getElementById('reawaken-note').textContent   = reawakenNote;
+  document.getElementById('rebalance-note').textContent  = rebalanceNote;
+
+  const crossEl = document.getElementById('cross-note');
+  if (crossNote) {
+    crossEl.textContent = crossNote;
+    crossEl.style.display = '';
+  } else {
+    crossEl.style.display = 'none';
+  }
+
+  // Output meta
+  const locName = document.getElementById('location-name').value.trim();
+  const date    = document.getElementById('analysis-date').value;
+  let meta = '';
+  if (locName) meta += locName;
+  if (date) meta += (meta ? ' · ' : '') + formatDate(date);
+  meta += (meta ? ' · ' : '') + 'Generated ' + formatDate(new Date().toISOString().slice(0,10));
+  document.getElementById('output-meta').textContent = meta;
+
+  // Show output + animate
+  const section = document.getElementById('output-section');
+  section.classList.add('visible');
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Stagger cards
+  const cards = document.querySelectorAll('.output-card');
+  cards.forEach(c => c.classList.remove('anim'));
+  cards.forEach((c, i) => {
+    setTimeout(() => c.classList.add('anim'), 150 + i * 120);
+  });
+}
+
+function renderList(id, items) {
+  const ul = document.getElementById(id);
+  ul.innerHTML = '';
+  items.forEach(text => {
+    const li = document.createElement('li');
+    li.textContent = text;
+    ul.appendChild(li);
+  });
+}
+
+function formatDate(str) {
+  if (!str) return '';
+  const d = new Date(str + 'T12:00:00');
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+</script>
+</body>
+</html>
