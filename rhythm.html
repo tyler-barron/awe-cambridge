@@ -295,27 +295,34 @@ body.edit-active .item-row:hover { background: rgba(26,26,26,.05); }
 
 /* ── Tension rows ───────────────────────────────────────────────────────── */
 .tension-row {
-  padding: 7px 16px; position: relative; transition: background .1s;
+  padding: 8px 16px; position: relative; transition: background .12s;
+  border-left: 3px solid transparent;
 }
 body.edit-active .tension-row { cursor: pointer; }
-body.edit-active .tension-row:hover { background: rgba(26,26,26,.05); }
-.tension-row.r-active { background: rgba(26,26,26,.06); }
+body.edit-active .tension-row:hover { background: rgba(107,91,138,.07); }
+.tension-row.r-active {
+  background: rgba(107,91,138,.1);
+  border-left-color: var(--phen);
+}
+.tension-row.r-active .tension-type { color: var(--phen); }
 .tension-row.r-fade { opacity: 0.32; }
 
-.tension-top { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.tension-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .tension-type {
-  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--stone);
+  font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted); transition: color .12s; min-width: 72px;
 }
-.tension-poles-wrap { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+.tension-poles-wrap { display: flex; align-items: center; gap: 5px; }
 .pole-chip {
-  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .04em;
-  padding: 2px 7px; border-radius: 2px; border: 1px solid rgba(26,26,26,.16);
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .04em;
+  padding: 3px 9px; border-radius: 2px; border: 1px solid rgba(26,26,26,.18);
   background: transparent; color: var(--muted); cursor: pointer; transition: all .12s; line-height: 1.4;
 }
 .pole-chip:hover { background: rgba(107,91,138,.1); border-color: var(--phen); color: var(--phen); }
-.pole-chip.active { background: rgba(107,91,138,.15); border-color: var(--phen); color: var(--phen); }
-.t-sep { font-family: 'Space Mono', monospace; font-size: 7px; color: rgba(26,26,26,.25); }
+.pole-chip.active {
+  background: var(--phen); border-color: var(--phen); color: #fff; font-weight: bold;
+}
+.t-sep { font-family: 'Space Mono', monospace; font-size: 9px; color: rgba(26,26,26,.3); }
 
 /* ── Generate section ───────────────────────────────────────────────────── */
 .generate-section {
