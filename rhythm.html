@@ -376,29 +376,21 @@ body.edit-active .tension-row:hover { background: rgba(26,26,26,.05); }
   font-family: 'Cormorant Garamond', serif; font-size: .92rem; color: var(--muted); line-height: 1.6;
 }
 
-/* Strategy grid */
-.strategy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 22px; }
-@media (max-width: 860px) { .strategy-grid { grid-template-columns: 1fr; } }
-
-.s-card {
-  background: rgba(255,255,255,.5); border: 1px solid rgba(26,26,26,.1);
-  border-top-width: 3px; border-radius: 3px; padding: 18px 16px 20px;
-  opacity: 0; transform: translateY(12px); transition: opacity .4s, transform .4s;
+/* Notes textarea in rhythm cards */
+.rc-notes-wrap { padding: 0 14px 12px; }
+.rc-notes-label {
+  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--stone); display: block; margin-bottom: 5px;
 }
-.s-card.anim { opacity: 1; transform: none; }
-.s-card-morph { border-top-color: var(--morph); }
-.s-card-phen  { border-top-color: var(--phen); }
-.s-card-tempo { border-top-color: var(--tempo); }
-
-.s-eyebrow { font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .25em; text-transform: uppercase; margin-bottom: 4px; }
-.s-card-morph .s-eyebrow { color: var(--morph); }
-.s-card-phen  .s-eyebrow { color: var(--phen); }
-.s-card-tempo .s-eyebrow { color: var(--tempo); }
-.s-title { font-weight: 300; font-size: 1.35rem; letter-spacing: -.01em; margin-bottom: 5px; line-height: 1.2; }
-.s-frame { font-style: italic; font-size: .88rem; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
-.s-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-.s-list li { font-size: .9rem; line-height: 1.55; padding-left: 14px; position: relative; color: var(--ink); }
-.s-list li::before { content: '—'; position: absolute; left: 0; color: var(--stone); font-size: .8rem; }
+.rc-notes {
+  width: 100%; min-height: 70px; resize: vertical;
+  font-family: 'Cormorant Garamond', serif; font-size: .88rem; font-style: italic;
+  color: var(--ink); line-height: 1.55;
+  background: rgba(255,255,255,.6); border: 1px solid rgba(26,26,26,.14);
+  border-radius: 3px; padding: 8px 10px; outline: none; transition: border-color .2s;
+}
+.rc-notes:focus { border-color: var(--accent); }
+.rc-notes::placeholder { color: var(--stone); }
 
 .cross-note {
   background: rgba(140,69,24,.05); border: 1px solid rgba(140,69,24,.15);
@@ -689,27 +681,6 @@ body.edit-active .tension-row:hover { background: rgba(26,26,26,.05); }
 
   <div class="rhythm-threads" id="rhythm-threads"></div>
 
-  <div class="strategy-grid" id="strategy-grid" style="display:none">
-    <div class="s-card s-card-morph" id="s-morph">
-      <div class="s-eyebrow">Morphological</div>
-      <h3 class="s-title" id="s-morph-title">Form</h3>
-      <p class="s-frame" id="s-morph-frame"></p>
-      <ul class="s-list" id="s-morph-list"></ul>
-    </div>
-    <div class="s-card s-card-phen" id="s-phen">
-      <div class="s-eyebrow">Phenomenological</div>
-      <h3 class="s-title" id="s-phen-title">Experience</h3>
-      <p class="s-frame" id="s-phen-frame"></p>
-      <ul class="s-list" id="s-phen-list"></ul>
-    </div>
-    <div class="s-card s-card-tempo" id="s-tempo">
-      <div class="s-eyebrow">Temporal</div>
-      <h3 class="s-title" id="s-tempo-title">Rhythm</h3>
-      <p class="s-frame" id="s-tempo-frame"></p>
-      <ul class="s-list" id="s-tempo-list"></ul>
-    </div>
-  </div>
-
   <div class="cross-note" id="cross-note" style="display:none;"></div>
 </section>
 
@@ -780,6 +751,7 @@ function addRhythm(status) {
     color:  colorIdx(idx),
     status: status,
     items:  { geo:new Set(), morph:new Set(), phen:new Set(), tempo:new Set() },
+    notes:  '',
   };
   rhythms.push(r);
   renderSidebar();
@@ -884,6 +856,10 @@ function renderSidebar() {
       chainHtml += `</span>`;
     });
 
+    const notesPlaceholder = r.status === 'proposed'
+      ? 'Describe what this activation entails — new forms, interventions, programming…'
+      : 'Add notes about this rhythm — what makes it distinctive, its quality of awe…';
+
     div.innerHTML = `
       <div class="rc-head">
         <span class="rc-swatch" style="background:${r.color}; ${r.status==='proposed' ? `border-color:${r.color};` : ''}"></span>
@@ -898,6 +874,10 @@ function renderSidebar() {
         ${hasContent ? chainHtml : 'Click <em>Edit</em> to add items from the diagram'}
       </div>
       ${isEditing ? '<div class="rc-editing-hint">Click items in the diagram →</div>' : ''}
+      <div class="rc-notes-wrap">
+        <label class="rc-notes-label" for="notes-${r.id}">Notes</label>
+        <textarea class="rc-notes" id="notes-${r.id}" data-rhythm-id="${r.id}" placeholder="${notesPlaceholder}">${r.notes}</textarea>
+      </div>
     `;
 
     list.appendChild(div);
@@ -913,6 +893,15 @@ function renderSidebar() {
   });
   list.querySelectorAll('[data-del]').forEach(btn => {
     btn.addEventListener('click', () => deleteRhythm(+btn.dataset.del));
+  });
+
+  // Wire notes textareas — prevent clicks inside from triggering edit mode
+  list.querySelectorAll('.rc-notes').forEach(ta => {
+    ta.addEventListener('input', () => {
+      const r = getRhythm(+ta.dataset.rhythmId);
+      if (r) r.notes = ta.value;
+    });
+    ta.addEventListener('click', e => e.stopPropagation());
   });
 }
 
@@ -1123,8 +1112,6 @@ function generate() {
       chainHtml += ids.map(id => `<span class="thread-item">${label(col,id)}</span>`).join(' ');
     });
 
-    // Per-rhythm description
-    const desc = describeRhythm(r, isActivation);
 
     card.innerHTML = `
       <div class="thread-head">
@@ -1133,20 +1120,12 @@ function generate() {
         <span class="thread-status ${r.status==='proposed'?'thread-proposed':'thread-existing'}">${r.status}</span>
       </div>
       <div class="thread-chain">${chainHtml || '<em style="color:var(--stone);font-style:italic;font-size:.85em">No items selected</em>'}</div>
-      ${desc ? `<div class="thread-desc">${desc}</div>` : ''}
+      ${r.notes ? `<div class="thread-desc">${r.notes.replace(/\n/g,'<br>')}</div>` : ''}
     `;
     threadsEl.appendChild(card);
     requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('anim')));
   });
 
-  /* ── Strategy cards (activation mode only or if enough rhythms) ── */
-  const strategyGrid = document.getElementById('strategy-grid');
-  if (isActivation || allActive.length > 1) {
-    strategyGrid.style.display = '';
-    buildStrategyCards(existing, proposed, isActivation);
-  } else {
-    strategyGrid.style.display = 'none';
-  }
 
   /* ── Cross note ── */
   const crossEl = document.getElementById('cross-note');
@@ -1168,122 +1147,9 @@ function generate() {
   section.scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
-/* ── Per-rhythm description ── */
-function describeRhythm(r, isActivation) {
-  const morphIds = [...r.items.morph];
-  const phenIds  = [...r.items.phen];
-  const tempoIds = [...r.items.tempo];
-  const geoIds   = [...r.items.geo];
-
-  let parts = [];
-
-  if (r.status === 'proposed' && isActivation) {
-    if (morphIds.length) parts.push(`Introducing ${listJoin(morphIds.map(id=>label('morph',id)))} as new morphological forms would add ${hasDynamic(morphIds) ? 'living, non-human rhythms' : 'sensory richness'} to this place.`);
-    if (phenIds.some(id => ['alterity','threshold','sanctuary'].includes(id))) parts.push('The proposed phenomenological additions aim to deepen the quality of encounter — moving beyond the visual toward immersive, embodied experience.');
-    if (tempoIds.length) parts.push(`Activating ${listJoin(tempoIds.map(id=>id.toLowerCase()))} frequencies would expand when awe is available at this site.`);
-  } else {
-    // Existing rhythm description
-    const morphList = listJoin(morphIds.map(id=>label('morph',id)));
-    const tempoList = listJoin(tempoIds.map(id=>id.toLowerCase()));
-    if (morphIds.length && tempoIds.length) {
-      const isStable = tempoIds.includes('timeless') || tempoIds.includes('daily');
-      parts.push(`${morphList ? 'Drawing on ' + morphList + ', this' : 'This'} rhythm operates at a ${isStable ? 'reliably stable' : 'more ephemeral or periodic'} frequency${tempoList ? ' — ' + tempoList : ''}.`);
-    }
-    if (phenIds.includes('alterity') || phenIds.includes('surprise')) parts.push('The presence of alterity or surprise suggests this rhythm carries arrhythmic potential — encounters with the unexpected that interrupt the everyday.');
-    if (phenIds.includes('sanctuary') || phenIds.includes('threshold')) parts.push('Threshold and sanctuary qualities indicate a defined experiential register — a felt sense of entering or belonging to a distinct place.');
-  }
-
-  return parts.join(' ');
-}
-
-function hasDynamic(morphIds) {
-  return morphIds.some(id => ['animals','plants','weather','sounds','smells','people'].includes(id));
-}
-
-/* ── Build strategy cards ── */
-function buildStrategyCards(existing, proposed, isActivation) {
-  const allExisting = existing;
-  const allMorphEx  = unique(allExisting.flatMap(r => [...r.items.morph]));
-  const allPhenEx   = unique(allExisting.flatMap(r => [...r.items.phen]));
-  const allTempoEx  = unique(allExisting.flatMap(r => [...r.items.tempo]));
-  const allMorphPr  = unique(proposed.flatMap(r => [...r.items.morph]));
-  const allPhenPr   = unique(proposed.flatMap(r => [...r.items.phen]));
-  const allTempoPr  = unique(proposed.flatMap(r => [...r.items.tempo]));
-
-  // Morphological
-  const morphSugs = [];
-  if (isActivation) {
-    if (allMorphPr.length) morphSugs.push(`The proposed rhythms introduce ${listJoin(allMorphPr.map(id=>label('morph',id)))} — consider how these new forms relate spatially and temporally to existing ones.`);
-    if (!allMorphEx.includes('light') && !allMorphPr.includes('light')) morphSugs.push('Lighting interventions — directional, seasonal, or reactive — could extend the temporal range of existing rhythms into the evening.');
-    if (!allMorphEx.some(id=>['animals','plants','weather'].includes(id)) && !allMorphPr.some(id=>['animals','plants','weather'].includes(id))) morphSugs.push('Neither existing nor proposed rhythms include living or atmospheric forms. Introducing nature, animals, or weather-responsive elements would add non-human rhythms and conditions for alterity.');
-    if (!allMorphPr.includes('water') && !allMorphEx.includes('water')) morphSugs.push('Water features (reflecting pools, channels, fountains) introduce a reliably non-human rhythm and could anchor a new timeless frequency.');
-  } else {
-    if (allMorphEx.length < 4) morphSugs.push('The morphological palette is relatively narrow. A richer range of forms — living, sensory, social — would support a wider range of awe conditions.');
-    if (allMorphEx.length >= 4) morphSugs.push(`${allMorphEx.length} morphological elements are present across these rhythms. Consider which are stable (architecture, infrastructure) versus dynamic (weather, animals, events).`);
-    const stable = allMorphEx.filter(id => ['architecture','infrastructure','vistas','water'].includes(id));
-    const dynamic = allMorphEx.filter(id => ['animals','weather','events','people','plants','sounds'].includes(id));
-    if (stable.length && dynamic.length) morphSugs.push(`The mix of stable forms (${listJoin(stable.map(id=>label('morph',id)))}) and dynamic ones (${listJoin(dynamic.map(id=>label('morph',id)))}) suggests a polyrhythmic environment capable of different kinds of awe.`);
-  }
-  if (!morphSugs.length) morphSugs.push('Continue observing which morphological elements shift across seasons, times of day, and weather conditions — these transitions are often the sites of awe.');
-
-  // Phenomenological
-  const phenSugs = [];
-  if (isActivation) {
-    const newPhen = allPhenPr.filter(id => !allPhenEx.includes(id));
-    if (newPhen.length) phenSugs.push(`Proposed rhythms introduce new phenomenological qualities: ${listJoin(newPhen.map(id=>label('phen',id)))}. These expand the experiential range of this place.`);
-    const missing = ['alterity','threshold','sanctuary','surprise'].filter(id => !allPhenEx.includes(id) && !allPhenPr.includes(id));
-    if (missing.length) phenSugs.push(`Neither existing nor proposed rhythms include ${listJoin(missing)}. These binaries often distinguish an ordinary place from a genuinely awe-generating one.`);
-    if (allPhenPr.includes('threshold') || allPhenPr.includes('sanctuary')) phenSugs.push('Threshold and sanctuary conditions can be created through material transitions, lighting changes, or spatial enclosure — consider where these moments might be situated in relation to existing forms.');
-  } else {
-    const tensions = allPhenEx.filter(id => ['formal','social','ecological','evaluative','temporal-t','spatial'].includes(id));
-    const binaries = allPhenEx.filter(id => ['alterity','surprise','threshold','sanctuary'].includes(id));
-    if (tensions.length) phenSugs.push(`Active tensions — ${listJoin(tensions.map(id=>label('phen',id)))} — shape the quality of awe. Consider whether each tension tends toward arrhythmic disruption or eurythmic alignment.`);
-    if (!binaries.length) phenSugs.push('None of the four awe binaries (alterity, surprise, threshold, sanctuary) are present across any rhythm. These experiential qualities often tip an encounter from ordinary to memorable.');
-    if (binaries.includes('alterity')) phenSugs.push('The presence of alterity indicates encounters with something genuinely other — non-human, uncontrollable, or radically different. This is a significant awe asset.');
-  }
-  if (!phenSugs.length) phenSugs.push('The phenomenological profile of these rhythms is rich. Continue to observe how tensions shift across seasons, user groups, and times of day.');
-
-  // Temporal
-  const tempoSugs = [];
-  if (isActivation) {
-    const newTempo = allTempoPr.filter(id => !allTempoEx.includes(id));
-    if (newTempo.length) tempoSugs.push(`Proposed rhythms activate ${listJoin(newTempo.map(id=>id.toLowerCase()))} frequencies that are not currently present — this expands the temporal range of awe at this site.`);
-    if (!allTempoEx.includes('timeless') && !allTempoPr.includes('timeless')) tempoSugs.push('No timeless frequency exists in current or proposed rhythms. Consider introducing a permanently available anchor — a water feature, significant tree, or architectural element — that is always there.');
-    if (!allTempoEx.includes('recurring') && !allTempoPr.includes('recurring')) tempoSugs.push('Recurring programming (weekly, monthly) creates temporal expectations and the pleasure of anticipated return — a reliable rhythm that deepens familiarity.');
-  } else {
-    const tempoRange = allTempoEx.length;
-    if (tempoRange <= 2) tempoSugs.push(`This place operates at only ${tempoRange} temporal frequenc${tempoRange===1?'y':'ies'}. A fuller rhythmic profile would offer different kinds of awe across multiple timescales.`);
-    if (tempoRange >= 4) tempoSugs.push(`With ${tempoRange} temporal frequencies across these rhythms, this place is temporally rich — offering different encounters at different moments.`);
-    if (allTempoEx.includes('timeless') || allTempoEx.includes('daily')) tempoSugs.push('The presence of timeless or daily frequencies means awe is reliably available here — a significant urban asset.');
-    if (allTempoEx.includes('ephemeral') && !allTempoEx.includes('timeless')) tempoSugs.push('Without a timeless anchor, ephemeral awe may feel rare or difficult to plan for. Consider what could be permanently present to ground the more fleeting rhythms.');
-  }
-  if (!tempoSugs.length) tempoSugs.push('The temporal profile is balanced. Continue observing how different rhythms feel at different times of year and across different user groups.');
-
-  // Titles
-  document.getElementById('s-morph-title').textContent = isActivation ? 'New Forms' : 'Material Conditions';
-  document.getElementById('s-morph-frame').textContent = isActivation ? 'How proposed morphologies relate to and augment existing forms' : 'The material and sensory foundations of these rhythms';
-  document.getElementById('s-phen-title').textContent  = isActivation ? 'Experiential Shifts' : 'Experiential Quality';
-  document.getElementById('s-phen-frame').textContent  = isActivation ? 'How proposed rhythms change the phenomenological character of this place' : 'The tensions and binaries shaping how this place is experienced';
-  document.getElementById('s-tempo-title').textContent = isActivation ? 'Expanded Frequencies' : 'Temporal Range';
-  document.getElementById('s-tempo-frame').textContent = isActivation ? 'How proposed rhythms expand when and how awe is available' : 'The temporal rhythms through which awe manifests at this site';
-
-  renderList('s-morph-list', morphSugs);
-  renderList('s-phen-list',  phenSugs);
-  renderList('s-tempo-list', tempoSugs);
-
-  // Animate cards
-  document.querySelectorAll('.s-card').forEach(c => c.classList.remove('anim'));
-  document.querySelectorAll('.s-card').forEach((c,i) => setTimeout(() => c.classList.add('anim'), 120 + i*100));
-}
-
 /* ────────────────────────────────────────────────────────────────────────────
    HELPERS
 ──────────────────────────────────────────────────────────────────────────── */
-function renderList(id, items) {
-  const ul = document.getElementById(id);
-  ul.innerHTML = '';
-  items.forEach(text => { const li = document.createElement('li'); li.textContent = text; ul.appendChild(li); });
-}
 
 function getSharedItems(col, rhythmList) {
   if (rhythmList.length < 2) return [];
