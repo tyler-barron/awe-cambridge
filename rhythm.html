@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rhythm Analysis & Activation — Awe in Cambridge</title>
+<title>Rhythmanalysis & Rhythmactivation — Awe in Cambridge</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono&display=swap" rel="stylesheet">
 <style>
+/* ── Tokens ─────────────────────────────────────────────────────────────── */
 :root {
   --ink:       #1a1a1a;
   --parchment: #f6f6f6;
@@ -17,10 +18,6 @@
   --morph:     #8c4518;
   --phen:      #6b5b8a;
   --tempo:     #a07c2a;
-  --geo-rgb:   74,122,138;
-  --morph-rgb: 140,69,24;
-  --phen-rgb:  107,91,138;
-  --tempo-rgb: 160,124,42;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -31,432 +28,400 @@ body {
   line-height: 1.5;
 }
 body::before {
-  content:''; position:fixed; inset:0; pointer-events:none; z-index:998; opacity:.15;
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:999; opacity:.13;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
 }
 
-/* ── Page wrapper ───────────────────────────────────────────────────────── */
-.page-wrap { max-width: 1440px; margin: 0 auto; padding: 0 36px 120px; }
-@media (max-width: 600px) { .page-wrap { padding: 0 16px 80px; } }
+/* ── Page ───────────────────────────────────────────────────────────────── */
+.page-wrap { max-width: 1600px; margin: 0 auto; padding: 0 36px 120px; }
+@media (max-width: 640px) { .page-wrap { padding: 0 16px 80px; } }
 
 /* ── Header ─────────────────────────────────────────────────────────────── */
-.site-header {
-  padding: 32px 0 24px;
-  border-bottom: 1px solid rgba(140,69,24,.15);
-  margin-bottom: 32px;
-}
+.site-header { padding: 32px 0 24px; border-bottom: 1px solid rgba(140,69,24,.15); margin-bottom: 28px; }
 .back-link {
-  font-family: 'Space Mono', monospace;
-  font-size: 10px; letter-spacing: .35em; text-transform: uppercase;
-  color: var(--muted); text-decoration: none;
-  display: inline-block; margin-bottom: 14px; transition: color .2s;
+  font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .35em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; display: inline-block; margin-bottom: 14px; transition: color .2s;
 }
 .back-link:hover { color: var(--accent); }
-.header-body { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
-.header-text .eyebrow {
-  font-family: 'Space Mono', monospace;
-  font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 6px;
-}
-.page-title {
-  font-weight: 300; font-size: clamp(1.8rem, 4.5vw, 3rem);
-  letter-spacing: -.01em; line-height: 1.1; margin-bottom: 6px;
-}
-.page-subtitle {
-  font-style: italic; font-weight: 300; font-size: 1rem; color: var(--muted);
-}
-.location-inputs { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; }
-.input-group { display: flex; flex-direction: column; gap: 5px; }
-.input-label {
-  font-family: 'Space Mono', monospace;
-  font-size: 8.5px; letter-spacing: .25em; text-transform: uppercase; color: var(--stone);
-}
+.header-body { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.eyebrow { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.page-title { font-weight: 300; font-size: clamp(1.7rem, 4vw, 2.8rem); letter-spacing: -.01em; line-height: 1.1; margin-bottom: 4px; }
+.page-subtitle { font-style: italic; font-weight: 300; font-size: 1rem; color: var(--muted); }
+.loc-inputs { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+.input-group { display: flex; flex-direction: column; gap: 4px; }
+.input-label { font-family: 'Space Mono', monospace; font-size: 8.5px; letter-spacing: .25em; text-transform: uppercase; color: var(--stone); }
 .text-input, .date-input {
-  font-family: 'Cormorant Garamond', serif; font-size: .95rem;
-  color: var(--ink); background: rgba(255,255,255,.6);
-  border: 1px solid rgba(26,26,26,.18); border-radius: 3px;
-  padding: 7px 11px; outline: none; transition: border-color .2s; min-width: 180px;
+  font-family: 'Cormorant Garamond', serif; font-size: .95rem; color: var(--ink);
+  background: rgba(255,255,255,.65); border: 1px solid rgba(26,26,26,.18); border-radius: 3px;
+  padding: 7px 11px; outline: none; transition: border-color .2s; min-width: 170px;
 }
 .text-input:focus, .date-input:focus { border-color: var(--accent); }
 
-/* ── Mode Toggle ─────────────────────────────────────────────────────────── */
+/* ── Mode toggle ─────────────────────────────────────────────────────────── */
 .mode-bar {
-  display: flex; gap: 0; margin-bottom: 28px;
+  display: flex; margin-bottom: 24px;
   border: 1px solid rgba(26,26,26,.15); border-radius: 4px;
   overflow: hidden; width: fit-content;
 }
 .mode-btn {
-  font-family: 'Space Mono', monospace;
-  font-size: 9.5px; letter-spacing: .22em; text-transform: uppercase;
-  padding: 10px 24px; background: transparent; border: none;
-  cursor: pointer; color: var(--muted); transition: background .18s, color .18s;
-  display: flex; align-items: center; gap: 8px;
+  font-family: 'Space Mono', monospace; font-size: 9.5px; letter-spacing: .18em; text-transform: uppercase;
+  padding: 10px 22px; background: transparent; border: none; cursor: pointer; color: var(--muted);
+  transition: background .18s, color .18s; white-space: nowrap;
 }
 .mode-btn + .mode-btn { border-left: 1px solid rgba(26,26,26,.15); }
 .mode-btn:hover:not(.active) { background: rgba(26,26,26,.04); }
 .mode-btn.active { background: var(--ink); color: #fff; }
-.mode-btn .mode-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  border: 1.5px solid currentColor; flex-shrink: 0;
-}
-.mode-btn.active .mode-dot { background: currentColor; }
+
 .mode-desc {
-  font-family: 'Cormorant Garamond', serif; font-style: italic;
-  font-size: .9rem; color: var(--muted);
-  margin-left: 4px; margin-bottom: 22px; line-height: 1.5; max-width: 700px;
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300;
+  font-size: .95rem; color: var(--muted); margin-bottom: 20px; max-width: 680px; line-height: 1.55;
 }
+
+/* ── Main layout ─────────────────────────────────────────────────────────── */
+.main-layout { display: flex; gap: 0; align-items: flex-start; }
+
+/* ── Rhythm sidebar ─────────────────────────────────────────────────────── */
+.rhythm-sidebar {
+  width: 300px; flex-shrink: 0;
+  border: 1px solid rgba(26,26,26,.1); border-radius: 4px;
+  background: rgba(255,255,255,.4); overflow: hidden;
+  position: sticky; top: 24px;
+}
+.sidebar-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid rgba(26,26,26,.08);
+  background: rgba(26,26,26,.03);
+}
+.sidebar-head-label {
+  font-family: 'Space Mono', monospace; font-size: 8.5px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
+}
+.add-btn {
+  font-family: 'Space Mono', monospace; font-size: 8.5px; letter-spacing: .1em;
+  padding: 5px 10px; border-radius: 3px; border: 1px solid rgba(26,26,26,.2);
+  background: transparent; cursor: pointer; color: var(--muted); transition: all .15s;
+}
+.add-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+.add-proposed-btn {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .08em;
+  padding: 5px 10px; border-radius: 3px; border: 1.5px dashed rgba(26,26,26,.25);
+  background: transparent; cursor: pointer; color: var(--muted); transition: all .15s;
+  display: none;
+}
+.add-proposed-btn:hover { border-color: var(--accent); color: var(--accent); }
+body.mode-activation .add-proposed-btn { display: block; }
+body.mode-activation .add-btn { display: none; }
+
+.sidebar-empty {
+  padding: 24px 16px; text-align: center;
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: .9rem;
+  color: var(--stone); line-height: 1.5;
+}
+
+#rhythm-list { max-height: 70vh; overflow-y: auto; }
+
+/* ── Rhythm card ─────────────────────────────────────────────────────────── */
+.rc {
+  border-bottom: 1px solid rgba(26,26,26,.07);
+  transition: background .12s; position: relative;
+}
+.rc:last-child { border-bottom: none; }
+.rc.rc-editing { background: rgba(255,255,255,.7); }
+
+.rc-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 11px 14px 8px;
+}
+.rc-swatch {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.rc-proposed .rc-swatch { border: 1.5px dashed currentColor; background: transparent !important; }
+.rc-label {
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .1em;
+  color: var(--ink); flex: 1; text-transform: uppercase;
+}
+.rc-badge {
+  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .08em;
+  padding: 2px 6px; border-radius: 2px; text-transform: uppercase;
+}
+.rc-badge-existing { background: rgba(26,26,26,.08); color: var(--muted); }
+.rc-badge-proposed { background: rgba(140,69,24,.1); color: var(--accent); border: 1px dashed rgba(140,69,24,.3); }
+
+.rc-btns { display: flex; gap: 4px; }
+.rc-btn {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .04em;
+  padding: 3px 8px; border-radius: 2px; border: 1px solid rgba(26,26,26,.15);
+  background: transparent; cursor: pointer; color: var(--muted); transition: all .12s;
+}
+.rc-btn:hover { background: rgba(26,26,26,.06); }
+.rc-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+.rc-btn-del:hover { background: rgba(180,50,30,.08); border-color: rgba(180,50,30,.3); color: #b43220; }
+
+/* Chain summary inside card */
+.rc-chain {
+  padding: 0 14px 10px;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px;
+}
+.rc-chain-empty {
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: .82rem; color: var(--stone);
+  padding: 0 14px 10px;
+}
+.rc-dim-group { display: flex; align-items: baseline; gap: 2px; }
+.rc-dim-label {
+  font-family: 'Space Mono', monospace; font-size: 7px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--stone); margin-right: 1px;
+}
+.rc-item-chip {
+  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .03em;
+  padding: 1px 5px; border-radius: 2px; background: rgba(26,26,26,.07); color: var(--muted);
+  white-space: nowrap;
+}
+.rc-arrow {
+  font-size: 9px; color: rgba(26,26,26,.25); margin: 0 2px;
+  font-family: 'Space Mono', monospace;
+}
+
+/* Edit mode hint line */
+.rc-editing-hint {
+  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .1em;
+  color: var(--accent); padding: 0 14px 10px; display: none;
+}
+.rc-editing .rc-editing-hint { display: block; }
+
+/* ── Diagram wrapper ─────────────────────────────────────────────────────── */
+.diagram-wrapper { flex: 1; min-width: 0; padding-left: 20px; }
+
+/* Edit bar */
+.edit-bar {
+  background: var(--ink); color: #f0f0ee; border-radius: 3px;
+  padding: 10px 16px; margin-bottom: 12px; display: none;
+  align-items: center; justify-content: space-between; gap: 12px;
+}
+.edit-bar.visible { display: flex; }
+.edit-bar-info {
+  font-family: 'Space Mono', monospace; font-size: 8.5px; letter-spacing: .1em;
+  text-transform: uppercase; flex: 1;
+}
+.edit-bar-info em { color: var(--linen); font-style: normal; }
+.edit-done-btn {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .12em; text-transform: uppercase;
+  padding: 6px 14px; border-radius: 2px; border: 1px solid rgba(255,255,255,.3);
+  background: transparent; color: #fff; cursor: pointer; transition: background .15s;
+  white-space: nowrap; flex-shrink: 0;
+}
+.edit-done-btn:hover { background: rgba(255,255,255,.15); }
 
 /* ── Diagram outer ───────────────────────────────────────────────────────── */
 .diagram-outer {
   position: relative;
-  background: rgba(255,255,255,.35);
-  border: 1px solid rgba(26,26,26,.1);
-  border-radius: 4px;
-  overflow: visible;
-  margin-bottom: 36px;
+  border: 1px solid rgba(26,26,26,.1); border-radius: 4px;
+  background: rgba(255,255,255,.3); overflow: visible;
 }
-
-/* SVG connections layer */
 .conn-svg {
-  position: absolute; top: 0; left: 0;
-  width: 100%; height: 100%;
-  pointer-events: none; z-index: 10;
-  overflow: visible;
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 10; overflow: visible;
 }
 
-/* Dynamic/Stable axis bar */
-.axis-wrap {
-  position: absolute; left: -36px; top: 0; bottom: 0;
-  width: 28px; display: flex; flex-direction: column; align-items: center;
-  padding: 48px 0 24px;
+/* Axis */
+.axis-outer {
+  position: absolute; left: -28px; top: 0; bottom: 0;
+  display: flex; flex-direction: column; align-items: center; padding: 44px 0 20px;
+  pointer-events: none;
 }
 .axis-label {
-  font-family: 'Space Mono', monospace;
-  font-size: 7.5px; letter-spacing: .18em; text-transform: uppercase;
-  color: var(--stone); writing-mode: vertical-rl;
+  font-family: 'Space Mono', monospace; font-size: 7px; letter-spacing: .18em;
+  text-transform: uppercase; color: rgba(122,120,120,.6); writing-mode: vertical-rl;
 }
-.axis-label.ax-top { transform: rotate(180deg); margin-bottom: 10px; }
-.axis-label.ax-bot { margin-top: 10px; }
-.axis-line {
-  flex: 1; width: 1px;
-  background: linear-gradient(to bottom, rgba(74,122,138,.5), rgba(160,124,42,.5));
-}
+.axis-label.ax-top { transform: rotate(180deg); margin-bottom: 8px; }
+.axis-label.ax-bot { margin-top: 8px; }
+.axis-rule { flex: 1; width: 1px; background: linear-gradient(to bottom, rgba(74,122,138,.35), rgba(160,124,42,.35)); }
 
 /* ── Four-column grid ───────────────────────────────────────────────────── */
-.diagram-cols {
-  display: grid;
-  grid-template-columns: 1fr 1.35fr 1.35fr 1fr;
-}
+.diagram-cols { display: grid; grid-template-columns: 1fr 1.4fr 1.4fr 1fr; }
 
-/* ── Column wrap ─────────────────────────────────────────────────────────── */
-.col-wrap {
-  padding: 24px 0 28px;
-  position: relative;
-}
-.col-wrap + .col-wrap {
-  border-left: 1px solid rgba(26,26,26,.08);
-}
-.col-wrap.col-geo   { background: rgba(var(--geo-rgb),.03); }
-.col-wrap.col-morph { background: rgba(var(--morph-rgb),.03); }
-.col-wrap.col-phen  { background: rgba(var(--phen-rgb),.03); }
-.col-wrap.col-tempo { background: rgba(var(--tempo-rgb),.03); }
+/* ── Column ─────────────────────────────────────────────────────────────── */
+.col-wrap { padding: 22px 0 24px; }
+.col-wrap + .col-wrap { border-left: 1px solid rgba(26,26,26,.07); }
+.col-geo   { background: rgba(74,122,138,.025); }
+.col-morph { background: rgba(140,69,24,.025); }
+.col-phen  { background: rgba(107,91,138,.025); }
+.col-tempo { background: rgba(160,124,42,.025); }
 
-/* Column header */
-.col-head { padding: 0 18px 16px; border-bottom: 1px solid rgba(26,26,26,.07); margin-bottom: 12px; }
+.col-head { padding: 0 16px 14px; border-bottom: 1px solid rgba(26,26,26,.06); margin-bottom: 10px; }
 .col-num {
-  font-family: 'Space Mono', monospace;
-  font-size: 8px; letter-spacing: .2em; text-transform: uppercase; margin-bottom: 2px;
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .2em;
+  text-transform: uppercase; margin-bottom: 2px;
 }
 .col-geo   .col-num { color: var(--geo); }
 .col-morph .col-num { color: var(--morph); }
 .col-phen  .col-num { color: var(--phen); }
 .col-tempo .col-num { color: var(--tempo); }
 .col-cat {
-  font-family: 'Space Mono', monospace;
-  font-size: 7.5px; letter-spacing: .18em; text-transform: uppercase;
-  color: var(--stone); margin-bottom: 6px;
+  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--stone); margin-bottom: 5px;
 }
-.col-title {
-  font-weight: 300; font-size: 1.4rem;
-  letter-spacing: -.01em; line-height: 1.1;
-}
+.col-title { font-weight: 300; font-size: 1.3rem; letter-spacing: -.01em; line-height: 1.1; }
 
-/* Section labels within column */
 .col-section {
-  font-family: 'Space Mono', monospace;
-  font-size: 7.5px; letter-spacing: .18em; text-transform: uppercase;
-  color: var(--stone); padding: 10px 18px 6px;
-  border-top: 1px solid rgba(26,26,26,.06);
-  margin-top: 8px;
+  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--stone);
+  padding: 8px 16px 5px; border-top: 1px solid rgba(26,26,26,.05); margin-top: 6px;
 }
 .col-section:first-of-type { border-top: none; margin-top: 0; }
 
 /* ── Item row ───────────────────────────────────────────────────────────── */
 .item-row {
-  display: flex; align-items: center; gap: 9px;
-  padding: 7px 18px; cursor: pointer;
-  transition: background .12s;
-  position: relative;
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 16px; position: relative; transition: background .1s;
 }
-.item-row:hover { background: rgba(26,26,26,.04); }
+body.edit-active .item-row { cursor: pointer; }
+body.edit-active .item-row:hover { background: rgba(26,26,26,.05); }
 
-.item-dot {
-  width: 9px; height: 9px; border-radius: 50%;
-  border: 1.5px solid rgba(26,26,26,.25);
-  flex-shrink: 0; transition: all .15s;
-}
+/* rhythm dots container */
+.r-dots { display: flex; gap: 2px; min-width: 14px; align-items: center; flex-shrink: 0; }
+.r-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.r-dot.dashed { background: transparent !important; border: 1.5px dashed; }
+
+/* item name */
 .item-name {
-  font-family: 'Space Mono', monospace;
-  font-size: 8.5px; letter-spacing: .06em;
-  color: var(--muted); transition: color .15s;
-  line-height: 1.4;
+  font-family: 'Space Mono', monospace; font-size: 8.5px; letter-spacing: .05em;
+  color: var(--muted); line-height: 1.4; transition: color .12s;
 }
 
-/* Existing state */
-.col-geo   .item-row.existing { background: rgba(var(--geo-rgb),.1); }
-.col-morph .item-row.existing { background: rgba(var(--morph-rgb),.1); }
-.col-phen  .item-row.existing { background: rgba(var(--phen-rgb),.1); }
-.col-tempo .item-row.existing { background: rgba(var(--tempo-rgb),.1); }
+/* editing-active highlight */
+.item-row.r-active { background: rgba(26,26,26,.06); }
+.item-row.r-active .item-name { color: var(--ink); }
+.item-row.r-fade { opacity: 0.32; }
 
-.col-geo   .item-row.existing .item-dot { background: var(--geo);   border-color: var(--geo); }
-.col-morph .item-row.existing .item-dot { background: var(--morph); border-color: var(--morph); }
-.col-phen  .item-row.existing .item-dot { background: var(--phen);  border-color: var(--phen); }
-.col-tempo .item-row.existing .item-dot { background: var(--tempo); border-color: var(--tempo); }
-
-.col-geo   .item-row.existing .item-name { color: var(--geo); }
-.col-morph .item-row.existing .item-name { color: var(--morph); }
-.col-phen  .item-row.existing .item-name { color: var(--phen); }
-.col-tempo .item-row.existing .item-name { color: var(--tempo); }
-
-/* Proposed state (activation mode additions) */
-.col-geo   .item-row.proposed { background: rgba(var(--geo-rgb),.05); }
-.col-morph .item-row.proposed { background: rgba(var(--morph-rgb),.05); }
-.col-phen  .item-row.proposed { background: rgba(var(--phen-rgb),.05); }
-.col-tempo .item-row.proposed { background: rgba(var(--tempo-rgb),.05); }
-
-.col-geo   .item-row.proposed .item-dot { border-color: var(--geo);   border-style: dashed; }
-.col-morph .item-row.proposed .item-dot { border-color: var(--morph); border-style: dashed; }
-.col-phen  .item-row.proposed .item-dot { border-color: var(--phen);  border-style: dashed; }
-.col-tempo .item-row.proposed .item-dot { border-color: var(--tempo); border-style: dashed; }
-
-.col-geo   .item-row.proposed .item-name { color: var(--geo);   font-style: italic; }
-.col-morph .item-row.proposed .item-name { color: var(--morph); font-style: italic; }
-.col-phen  .item-row.proposed .item-name { color: var(--phen);  font-style: italic; }
-.col-tempo .item-row.proposed .item-name { color: var(--tempo); font-style: italic; }
-
-/* ── Tension items (special) ─────────────────────────────────────────────── */
+/* ── Tension rows ───────────────────────────────────────────────────────── */
 .tension-row {
-  padding: 8px 18px; cursor: pointer;
-  transition: background .12s; position: relative;
+  padding: 7px 16px; position: relative; transition: background .1s;
 }
-.tension-row:hover { background: rgba(26,26,26,.04); }
+body.edit-active .tension-row { cursor: pointer; }
+body.edit-active .tension-row:hover { background: rgba(26,26,26,.05); }
+.tension-row.r-active { background: rgba(26,26,26,.06); }
+.tension-row.r-fade { opacity: 0.32; }
 
+.tension-top { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
 .tension-type {
-  font-family: 'Space Mono', monospace;
-  font-size: 7.5px; letter-spacing: .12em; text-transform: uppercase;
-  color: var(--stone); margin-bottom: 5px;
+  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--stone);
 }
-.tension-poles-wrap { display: flex; align-items: center; gap: 6px; }
-.tension-dot {
-  width: 9px; height: 9px; border-radius: 50%;
-  border: 1.5px solid rgba(26,26,26,.25); flex-shrink: 0; transition: all .15s;
-}
-.t-poles {
-  display: flex; align-items: center; gap: 4px; flex: 1;
-}
+.tension-poles-wrap { display: flex; align-items: center; gap: 4px; margin-left: auto; }
 .pole-chip {
-  font-family: 'Space Mono', monospace;
-  font-size: 7.5px; letter-spacing: .06em;
-  padding: 2px 7px; border-radius: 2px;
-  border: 1px solid rgba(26,26,26,.18); background: transparent;
-  color: var(--muted); cursor: pointer; transition: all .12s; line-height: 1.4;
+  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .04em;
+  padding: 2px 7px; border-radius: 2px; border: 1px solid rgba(26,26,26,.16);
+  background: transparent; color: var(--muted); cursor: pointer; transition: all .12s; line-height: 1.4;
 }
-.pole-chip:hover { background: rgba(26,26,26,.06); }
-.col-phen .pole-chip.active {
-  background: rgba(var(--phen-rgb),.15);
-  border-color: var(--phen); color: var(--phen);
-}
-.t-sep {
-  font-family: 'Space Mono', monospace;
-  font-size: 7px; color: rgba(26,26,26,.3);
-}
-
-.tension-row.existing { background: rgba(var(--phen-rgb),.08); }
-.tension-row.existing .tension-dot { background: var(--phen); border-color: var(--phen); }
-.tension-row.existing .tension-type { color: var(--phen); }
-
-.tension-row.proposed { background: rgba(var(--phen-rgb),.04); }
-.tension-row.proposed .tension-dot { border-color: var(--phen); border-style: dashed; }
-.tension-row.proposed .tension-type { color: var(--phen); font-style: italic; }
-
-/* ── Hint below diagram ──────────────────────────────────────────────────── */
-.diagram-hint {
-  font-family: 'Space Mono', monospace;
-  font-size: 8px; letter-spacing: .15em; text-transform: uppercase;
-  color: var(--stone); text-align: center; margin-bottom: 10px;
-}
-.mode-legend {
-  display: flex; align-items: center; justify-content: center; gap: 24px;
-  margin-bottom: 24px; flex-wrap: wrap;
-}
-.legend-item { display: flex; align-items: center; gap: 7px; }
-.legend-dot {
-  width: 9px; height: 9px; border-radius: 50%;
-  border: 1.5px solid var(--phen);
-}
-.legend-dot.filled { background: var(--phen); }
-.legend-dot.dashed { border-style: dashed; }
-.legend-label {
-  font-family: 'Space Mono', monospace;
-  font-size: 8px; letter-spacing: .1em; color: var(--muted);
-}
-.legend-line-solid {
-  width: 20px; height: 1.5px; background: var(--geo); border-radius: 1px;
-}
-.legend-line-dashed {
-  width: 20px; height: 0; border-top: 1.5px dashed var(--geo);
-}
+.pole-chip:hover { background: rgba(107,91,138,.1); border-color: var(--phen); color: var(--phen); }
+.pole-chip.active { background: rgba(107,91,138,.15); border-color: var(--phen); color: var(--phen); }
+.t-sep { font-family: 'Space Mono', monospace; font-size: 7px; color: rgba(26,26,26,.25); }
 
 /* ── Generate section ───────────────────────────────────────────────────── */
 .generate-section {
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-  margin: 8px 0 52px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 36px 0 52px;
 }
 .generate-btn {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.05rem; letter-spacing: .04em;
-  color: var(--accent); background: transparent;
-  border: 1.5px solid var(--accent); border-radius: 3px;
-  padding: 13px 52px; cursor: pointer;
-  transition: background .2s, color .2s, opacity .2s;
+  font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; letter-spacing: .04em;
+  color: var(--accent); background: transparent; border: 1.5px solid var(--accent); border-radius: 3px;
+  padding: 13px 52px; cursor: pointer; transition: background .2s, color .2s, opacity .2s;
   max-width: 480px; width: 100%;
 }
 .generate-btn:hover:not(:disabled) { background: var(--accent); color: #fff; }
-.generate-btn:disabled { opacity: .32; cursor: not-allowed; }
-.gen-note {
-  font-family: 'Space Mono', monospace;
-  font-size: 8px; letter-spacing: .15em; text-transform: uppercase; color: var(--stone);
-}
+.generate-btn:disabled { opacity: .3; cursor: not-allowed; }
+.gen-note { font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .15em; text-transform: uppercase; color: var(--stone); }
 
-/* ── Output section ─────────────────────────────────────────────────────── */
+/* ── Output ─────────────────────────────────────────────────────────────── */
 #output-section {
-  opacity: 0; transform: translateY(20px);
-  transition: opacity .45s ease, transform .45s ease;
-  pointer-events: none;
+  opacity: 0; transform: translateY(18px);
+  transition: opacity .45s, transform .45s; pointer-events: none;
 }
-#output-section.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+#output-section.visible { opacity: 1; transform: none; pointer-events: auto; }
 
-.output-head { margin-bottom: 28px; }
-.output-eyebrow {
-  font-family: 'Space Mono', monospace;
-  font-size: 9px; letter-spacing: .28em; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 6px;
-}
-.output-title {
-  font-weight: 300; font-size: clamp(1.6rem, 3.5vw, 2.4rem);
-  letter-spacing: -.01em; margin-bottom: 4px; line-height: 1.15;
-}
-.output-meta {
-  font-family: 'Space Mono', monospace;
-  font-size: 8px; letter-spacing: .18em; text-transform: uppercase; color: var(--stone);
-}
+.out-head { margin-bottom: 24px; }
+.out-eyebrow { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .28em; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+.out-title { font-weight: 300; font-size: clamp(1.5rem, 3vw, 2.2rem); letter-spacing: -.01em; margin-bottom: 3px; }
+.out-meta { font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .18em; text-transform: uppercase; color: var(--stone); }
 
-/* Narrative box */
 .narrative-box {
-  background: rgba(255,255,255,.5);
-  border: 1px solid rgba(26,26,26,.1);
-  border-left: 3px solid var(--accent);
-  border-radius: 3px; padding: 20px 24px;
-  margin-bottom: 28px;
-  font-style: italic; font-size: 1rem;
-  color: var(--ink); line-height: 1.7;
+  background: rgba(255,255,255,.55); border: 1px solid rgba(26,26,26,.1);
+  border-left: 3px solid var(--accent); border-radius: 3px;
+  padding: 18px 22px; margin-bottom: 24px;
+  font-style: italic; font-size: 1rem; color: var(--ink); line-height: 1.75;
 }
 
-/* Output strategy cards */
-.strategy-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px; margin-bottom: 24px;
+/* Rhythm threads in output */
+.rhythm-threads { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+.thread-card {
+  background: rgba(255,255,255,.5); border: 1px solid rgba(26,26,26,.1);
+  border-left-width: 3px; border-radius: 3px; padding: 14px 18px;
+  opacity: 0; transform: translateY(10px); transition: opacity .35s, transform .35s;
 }
-@media (max-width: 900px) { .strategy-grid { grid-template-columns: 1fr; } }
-
-.strategy-card {
-  background: rgba(255,255,255,.5);
-  border: 1px solid rgba(26,26,26,.1);
-  border-top-width: 3px; border-radius: 3px;
-  padding: 20px 18px 22px;
-  opacity: 0; transform: translateY(14px);
-  transition: opacity .4s ease, transform .4s ease;
+.thread-card.anim { opacity: 1; transform: none; }
+.thread-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.thread-swatch { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.thread-label { font-family: 'Space Mono', monospace; font-size: 8.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.thread-status { font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .08em; padding: 2px 6px; border-radius: 2px; text-transform: uppercase; }
+.thread-existing { background: rgba(26,26,26,.07); color: var(--muted); }
+.thread-proposed { background: rgba(140,69,24,.1); color: var(--accent); border: 1px dashed rgba(140,69,24,.3); }
+.thread-chain {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px;
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .04em; color: var(--muted);
 }
-.strategy-card.anim { opacity: 1; transform: none; }
-.strategy-card.card-morph { border-top-color: var(--morph); }
-.strategy-card.card-phen  { border-top-color: var(--phen); }
-.strategy-card.card-tempo { border-top-color: var(--tempo); }
-
-.s-card-eyebrow {
-  font-family: 'Space Mono', monospace;
-  font-size: 8px; letter-spacing: .25em; text-transform: uppercase; margin-bottom: 4px;
-}
-.card-morph .s-card-eyebrow { color: var(--morph); }
-.card-phen  .s-card-eyebrow { color: var(--phen); }
-.card-tempo .s-card-eyebrow { color: var(--tempo); }
-
-.s-card-title {
-  font-weight: 300; font-size: 1.4rem;
-  letter-spacing: -.01em; margin-bottom: 6px; line-height: 1.2;
-}
-.s-card-frame {
-  font-style: italic; font-size: .88rem;
-  color: var(--muted); margin-bottom: 14px; line-height: 1.5;
-}
-.s-list {
-  list-style: none; padding: 0;
-  display: flex; flex-direction: column; gap: 9px;
-}
-.s-list li {
-  font-size: .92rem; line-height: 1.55;
-  padding-left: 14px; position: relative; color: var(--ink);
-}
-.s-list li::before {
-  content: '—'; position: absolute; left: 0;
-  color: var(--stone); font-size: .8rem;
+.thread-arrow { opacity: .35; }
+.thread-col-label { font-size: 7px; letter-spacing: .1em; text-transform: uppercase; color: var(--stone); margin-right: 2px; }
+.thread-item { padding: 1px 5px; border-radius: 2px; background: rgba(26,26,26,.06); }
+.thread-desc {
+  margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(26,26,26,.07);
+  font-family: 'Cormorant Garamond', serif; font-size: .92rem; color: var(--muted); line-height: 1.6;
 }
 
-/* Cross note */
+/* Strategy grid */
+.strategy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 22px; }
+@media (max-width: 860px) { .strategy-grid { grid-template-columns: 1fr; } }
+
+.s-card {
+  background: rgba(255,255,255,.5); border: 1px solid rgba(26,26,26,.1);
+  border-top-width: 3px; border-radius: 3px; padding: 18px 16px 20px;
+  opacity: 0; transform: translateY(12px); transition: opacity .4s, transform .4s;
+}
+.s-card.anim { opacity: 1; transform: none; }
+.s-card-morph { border-top-color: var(--morph); }
+.s-card-phen  { border-top-color: var(--phen); }
+.s-card-tempo { border-top-color: var(--tempo); }
+
+.s-eyebrow { font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .25em; text-transform: uppercase; margin-bottom: 4px; }
+.s-card-morph .s-eyebrow { color: var(--morph); }
+.s-card-phen  .s-eyebrow { color: var(--phen); }
+.s-card-tempo .s-eyebrow { color: var(--tempo); }
+.s-title { font-weight: 300; font-size: 1.35rem; letter-spacing: -.01em; margin-bottom: 5px; line-height: 1.2; }
+.s-frame { font-style: italic; font-size: .88rem; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+.s-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.s-list li { font-size: .9rem; line-height: 1.55; padding-left: 14px; position: relative; color: var(--ink); }
+.s-list li::before { content: '—'; position: absolute; left: 0; color: var(--stone); font-size: .8rem; }
+
 .cross-note {
-  background: rgba(140,69,24,.05);
-  border: 1px solid rgba(140,69,24,.15);
-  border-radius: 3px; padding: 16px 20px;
-  font-style: italic; font-size: .92rem;
-  color: var(--accent); line-height: 1.65;
+  background: rgba(140,69,24,.05); border: 1px solid rgba(140,69,24,.15);
+  border-radius: 3px; padding: 14px 18px;
+  font-style: italic; font-size: .92rem; color: var(--accent); line-height: 1.65;
 }
-
-/* ── Legend key for activation ───────────────────────────────────────────── */
-.activation-key {
-  display: none;
-  background: rgba(var(--phen-rgb),.05);
-  border: 1px solid rgba(var(--phen-rgb),.15);
-  border-radius: 3px; padding: 11px 16px;
-  margin-bottom: 18px;
-  font-family: 'Space Mono', monospace;
-  font-size: 8.5px; letter-spacing: .1em; color: var(--muted);
-  line-height: 1.7;
-}
-body.mode-activation .activation-key { display: block; }
 
 /* ── Mobile ──────────────────────────────────────────────────────────────── */
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
+  .main-layout { flex-direction: column; }
+  .rhythm-sidebar { width: 100%; position: static; }
+  .diagram-wrapper { padding-left: 0; padding-top: 16px; }
+  .axis-outer { display: none; }
+}
+@media (max-width: 760px) {
   .diagram-cols { grid-template-columns: 1fr 1fr; }
   .col-wrap + .col-wrap { border-left: none; }
-  .col-wrap:nth-child(2) { border-top: none; }
-  .col-wrap:nth-child(3), .col-wrap:nth-child(4) { border-top: 1px solid rgba(26,26,26,.08); }
-  .axis-wrap { display: none; }
+  .col-wrap:nth-child(3), .col-wrap:nth-child(4) { border-top: 1px solid rgba(26,26,26,.07); }
   .conn-svg { display: none; }
-  .diagram-hint { display: none; }
 }
-@media (max-width: 560px) {
+@media (max-width: 480px) {
   .diagram-cols { grid-template-columns: 1fr; }
-  .col-wrap:nth-child(n) { border-top: 1px solid rgba(26,26,26,.08); }
+  .col-wrap:nth-child(n) { border-top: 1px solid rgba(26,26,26,.07); }
 }
 </style>
 </head>
@@ -468,12 +433,12 @@ body.mode-activation .activation-key { display: block; }
 <header class="site-header">
   <a class="back-link" href="index.html#awe-atlas">← Awe Atlas</a>
   <div class="header-body">
-    <div class="header-text">
+    <div>
       <div class="eyebrow">Tool 04 &nbsp;·&nbsp; Planning</div>
-      <h1 class="page-title">Rhythm Analysis<br><em>&amp; Activation</em></h1>
-      <p class="page-subtitle">Map the rhythmic conditions of a place, then propose how to amplify awe within it</p>
+      <h1 class="page-title">Rhythm<em>analysis</em><br>&amp; Rhythm<em>activation</em></h1>
+      <p class="page-subtitle">Build distinct rhythms, then propose how to amplify them</p>
     </div>
-    <div class="location-inputs">
+    <div class="loc-inputs">
       <div class="input-group">
         <label class="input-label" for="loc-name">Location</label>
         <input class="text-input" id="loc-name" type="text" placeholder="e.g. Greene-Rose Heritage Park">
@@ -487,378 +452,268 @@ body.mode-activation .activation-key { display: block; }
 </header>
 
 <!-- ── MODE TOGGLE ─────────────────────────────────────────────────────────── -->
-<div class="mode-bar" role="tablist">
-  <button class="mode-btn active" id="btn-analysis" role="tab" data-mode="analysis">
-    <span class="mode-dot"></span>Rhythmanalysis
-  </button>
-  <button class="mode-btn" id="btn-activation" role="tab" data-mode="activation">
-    <span class="mode-dot"></span>Rhythmactivation
-  </button>
+<div class="mode-bar">
+  <button class="mode-btn active" data-mode="analysis">Rhythm<em style="font-style:italic">analysis</em></button>
+  <button class="mode-btn" data-mode="activation">Rhythm<em style="font-style:italic">activation</em></button>
 </div>
-<p class="mode-desc" id="mode-desc">
-  <span id="mode-desc-text">Click items across the four dimensions to map the existing rhythmic conditions of this place. Connections will appear between your selections.</span>
-</p>
+<p class="mode-desc" id="mode-desc">Map the existing rhythms of this place — each rhythm is a distinct thread connecting a location to its forms, phenomenological qualities, and temporal frequencies.</p>
 
-<div class="activation-key">
-  ● Solid dot = existing condition &nbsp;&nbsp; ○ Dashed dot = proposed addition (click twice to add) &nbsp;&nbsp; Solid lines = existing rhythms &nbsp;&nbsp; Dashed lines = new connections
-</div>
+<!-- ── MAIN LAYOUT ─────────────────────────────────────────────────────────── -->
+<div class="main-layout">
 
-<!-- ── DIAGRAM ──────────────────────────────────────────────────────────────── -->
-<div class="diagram-outer" id="diagram">
-
-  <!-- SVG overlay for connections -->
-  <svg class="conn-svg" id="conn-svg" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <marker id="arr-geo"   markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto">
-        <polygon points="0 0, 6 2.5, 0 5" fill="rgba(74,122,138,.5)"/>
-      </marker>
-      <marker id="arr-morph" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto">
-        <polygon points="0 0, 6 2.5, 0 5" fill="rgba(140,69,24,.5)"/>
-      </marker>
-      <marker id="arr-phen"  markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto">
-        <polygon points="0 0, 6 2.5, 0 5" fill="rgba(107,91,138,.5)"/>
-      </marker>
-    </defs>
-    <g id="conn-g"></g>
-  </svg>
-
-  <!-- Dynamic / Stable axis -->
-  <div class="axis-wrap">
-    <span class="axis-label ax-top">Dynamic</span>
-    <div class="axis-line"></div>
-    <span class="axis-label ax-bot">Stable</span>
-  </div>
-
-  <div class="diagram-cols">
-
-    <!-- ── Col 1: Geography ─────────────────────────────────────────────── -->
-    <div class="col-wrap col-geo">
-      <div class="col-head">
-        <div class="col-num">01</div>
-        <div class="col-cat">Geography</div>
-        <h2 class="col-title">Locations</h2>
-      </div>
-      <div id="geo-items">
-        <div class="item-row" data-col="geo" data-id="civic">
-          <div class="item-dot"></div>
-          <span class="item-name">Civic, Community<br>&amp; Cultural</span>
-        </div>
-        <div class="item-row" data-col="geo" data-id="corridors">
-          <div class="item-dot"></div>
-          <span class="item-name">Corridors</span>
-        </div>
-        <div class="item-row" data-col="geo" data-id="educational">
-          <div class="item-dot"></div>
-          <span class="item-name">Educational</span>
-        </div>
-        <div class="item-row" data-col="geo" data-id="industry">
-          <div class="item-dot"></div>
-          <span class="item-name">Industry &amp; Office</span>
-        </div>
-        <div class="item-row" data-col="geo" data-id="parks">
-          <div class="item-dot"></div>
-          <span class="item-name">Parks</span>
-        </div>
-        <div class="item-row" data-col="geo" data-id="plazas">
-          <div class="item-dot"></div>
-          <span class="item-name">Plazas</span>
-        </div>
-        <div class="item-row" data-col="geo" data-id="residences">
-          <div class="item-dot"></div>
-          <span class="item-name">Residences</span>
-        </div>
-        <div class="item-row" data-col="geo" data-id="streets">
-          <div class="item-dot"></div>
-          <span class="item-name">Streets</span>
-        </div>
-        <div class="item-row" data-col="geo" data-id="waterfronts">
-          <div class="item-dot"></div>
-          <span class="item-name">Waterfronts</span>
-        </div>
+  <!-- ── RHYTHM SIDEBAR ───────────────────────────────────────────────────── -->
+  <aside class="rhythm-sidebar">
+    <div class="sidebar-head">
+      <span class="sidebar-head-label">Rhythms</span>
+      <div style="display:flex;gap:6px;">
+        <button class="add-btn" id="add-existing-btn">+ Add Rhythm</button>
+        <button class="add-proposed-btn" id="add-proposed-btn">+ Propose New</button>
       </div>
     </div>
+    <div id="rhythm-list"></div>
+    <div class="sidebar-empty" id="sidebar-empty">
+      No rhythms yet.<br>Click <strong>+ Add Rhythm</strong> to begin mapping this place.
+    </div>
+  </aside>
 
-    <!-- ── Col 2: Morphology ─────────────────────────────────────────────── -->
-    <div class="col-wrap col-morph">
-      <div class="col-head">
-        <div class="col-num">02</div>
-        <div class="col-cat">Morphology</div>
-        <h2 class="col-title">Forms</h2>
-      </div>
-      <div class="col-section">Forms</div>
-      <div id="morph-items">
-        <div class="item-row" data-col="morph" data-id="animals">
-          <div class="item-dot"></div><span class="item-name">Animals</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="architecture">
-          <div class="item-dot"></div><span class="item-name">Architecture</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="art">
-          <div class="item-dot"></div><span class="item-name">Art &amp; Objects</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="communities">
-          <div class="item-dot"></div><span class="item-name">Communities</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="events">
-          <div class="item-dot"></div><span class="item-name">Events</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="greenspace">
-          <div class="item-dot"></div><span class="item-name">Green Space</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="infrastructure">
-          <div class="item-dot"></div><span class="item-name">Infrastructure</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="light">
-          <div class="item-dot"></div><span class="item-name">Light</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="people">
-          <div class="item-dot"></div><span class="item-name">People</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="plants">
-          <div class="item-dot"></div><span class="item-name">Plants</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="smells">
-          <div class="item-dot"></div><span class="item-name">Smells</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="sounds">
-          <div class="item-dot"></div><span class="item-name">Sounds</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="vistas">
-          <div class="item-dot"></div><span class="item-name">Vistas</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="water">
-          <div class="item-dot"></div><span class="item-name">Water</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="weather">
-          <div class="item-dot"></div><span class="item-name">Weather</span>
-        </div>
-      </div>
-      <div class="col-section">Wonders of Life</div>
-      <div id="wonder-items">
-        <div class="item-row" data-col="morph" data-id="moralbeauty">
-          <div class="item-dot"></div><span class="item-name">Moral Beauty</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="nature">
-          <div class="item-dot"></div><span class="item-name">Nature</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="visualdesign">
-          <div class="item-dot"></div><span class="item-name">Visual Design</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="lifedeath">
-          <div class="item-dot"></div><span class="item-name">Life &amp; Death</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="collective">
-          <div class="item-dot"></div><span class="item-name">Collective Effervescence</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="music">
-          <div class="item-dot"></div><span class="item-name">Music</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="spiritual">
-          <div class="item-dot"></div><span class="item-name">Spirituality / Religion</span>
-        </div>
-        <div class="item-row" data-col="morph" data-id="epiphany">
-          <div class="item-dot"></div><span class="item-name">Epiphany</span>
-        </div>
-      </div>
+  <!-- ── DIAGRAM ─────────────────────────────────────────────────────────── -->
+  <div class="diagram-wrapper">
+
+    <!-- Edit bar -->
+    <div class="edit-bar" id="edit-bar">
+      <span class="edit-bar-info">Editing <em id="edit-bar-name">Rhythm 01</em> — click items in the diagram to add or remove from this rhythm</span>
+      <button class="edit-done-btn" id="edit-done-btn">Done ✓</button>
     </div>
 
-    <!-- ── Col 3: Phenomenology ──────────────────────────────────────────── -->
-    <div class="col-wrap col-phen">
-      <div class="col-head">
-        <div class="col-num">03</div>
-        <div class="col-cat">Phenomenology</div>
-        <h2 class="col-title">Tensions &amp; Binaries</h2>
+    <div class="diagram-outer" id="diagram">
+      <svg class="conn-svg" id="conn-svg" xmlns="http://www.w3.org/2000/svg">
+        <g id="conn-g"></g>
+      </svg>
+
+      <div class="axis-outer">
+        <span class="axis-label ax-top">Dynamic</span>
+        <div class="axis-rule"></div>
+        <span class="axis-label ax-bot">Stable</span>
       </div>
-      <div class="col-section">Tensions</div>
-      <div id="tension-items">
 
-        <div class="tension-row" data-col="phen" data-id="formal">
-          <div class="tension-type">Formal</div>
-          <div class="tension-poles-wrap">
-            <div class="tension-dot"></div>
-            <div class="t-poles">
-              <button class="pole-chip" data-tension="formal" data-pole="left">Ornate</button>
-              <span class="t-sep">↔</span>
-              <button class="pole-chip" data-tension="formal" data-pole="right">Functional</button>
-            </div>
+      <div class="diagram-cols">
+
+        <!-- ── Col 1: Geography ──────────────────────────────────────────── -->
+        <div class="col-wrap col-geo">
+          <div class="col-head">
+            <div class="col-num">01</div>
+            <div class="col-cat">Geography</div>
+            <h2 class="col-title">Locations</h2>
+          </div>
+          <div id="geo-items">
+            <div class="item-row" data-col="geo" data-id="civic"><div class="r-dots"></div><span class="item-name">Civic, Community<br>&amp; Cultural</span></div>
+            <div class="item-row" data-col="geo" data-id="corridors"><div class="r-dots"></div><span class="item-name">Corridors</span></div>
+            <div class="item-row" data-col="geo" data-id="educational"><div class="r-dots"></div><span class="item-name">Educational</span></div>
+            <div class="item-row" data-col="geo" data-id="industry"><div class="r-dots"></div><span class="item-name">Industry &amp; Office</span></div>
+            <div class="item-row" data-col="geo" data-id="parks"><div class="r-dots"></div><span class="item-name">Parks</span></div>
+            <div class="item-row" data-col="geo" data-id="plazas"><div class="r-dots"></div><span class="item-name">Plazas</span></div>
+            <div class="item-row" data-col="geo" data-id="residences"><div class="r-dots"></div><span class="item-name">Residences</span></div>
+            <div class="item-row" data-col="geo" data-id="streets"><div class="r-dots"></div><span class="item-name">Streets</span></div>
+            <div class="item-row" data-col="geo" data-id="waterfronts"><div class="r-dots"></div><span class="item-name">Waterfronts</span></div>
           </div>
         </div>
 
-        <div class="tension-row" data-col="phen" data-id="social">
-          <div class="tension-type">Social</div>
-          <div class="tension-poles-wrap">
-            <div class="tension-dot"></div>
-            <div class="t-poles">
-              <button class="pole-chip" data-tension="social" data-pole="left">Inclusive</button>
-              <span class="t-sep">↔</span>
-              <button class="pole-chip" data-tension="social" data-pole="right">Exclusive</button>
-            </div>
+        <!-- ── Col 2: Morphology ─────────────────────────────────────────── -->
+        <div class="col-wrap col-morph">
+          <div class="col-head">
+            <div class="col-num">02</div>
+            <div class="col-cat">Morphology</div>
+            <h2 class="col-title">Forms</h2>
+          </div>
+          <div class="col-section">Forms</div>
+          <div id="morph-items">
+            <div class="item-row" data-col="morph" data-id="animals"><div class="r-dots"></div><span class="item-name">Animals</span></div>
+            <div class="item-row" data-col="morph" data-id="architecture"><div class="r-dots"></div><span class="item-name">Architecture</span></div>
+            <div class="item-row" data-col="morph" data-id="art"><div class="r-dots"></div><span class="item-name">Art &amp; Objects</span></div>
+            <div class="item-row" data-col="morph" data-id="communities"><div class="r-dots"></div><span class="item-name">Communities</span></div>
+            <div class="item-row" data-col="morph" data-id="events"><div class="r-dots"></div><span class="item-name">Events</span></div>
+            <div class="item-row" data-col="morph" data-id="greenspace"><div class="r-dots"></div><span class="item-name">Green Space</span></div>
+            <div class="item-row" data-col="morph" data-id="infrastructure"><div class="r-dots"></div><span class="item-name">Infrastructure</span></div>
+            <div class="item-row" data-col="morph" data-id="light"><div class="r-dots"></div><span class="item-name">Light</span></div>
+            <div class="item-row" data-col="morph" data-id="people"><div class="r-dots"></div><span class="item-name">People</span></div>
+            <div class="item-row" data-col="morph" data-id="plants"><div class="r-dots"></div><span class="item-name">Plants</span></div>
+            <div class="item-row" data-col="morph" data-id="smells"><div class="r-dots"></div><span class="item-name">Smells</span></div>
+            <div class="item-row" data-col="morph" data-id="sounds"><div class="r-dots"></div><span class="item-name">Sounds</span></div>
+            <div class="item-row" data-col="morph" data-id="vistas"><div class="r-dots"></div><span class="item-name">Vistas</span></div>
+            <div class="item-row" data-col="morph" data-id="water"><div class="r-dots"></div><span class="item-name">Water</span></div>
+            <div class="item-row" data-col="morph" data-id="weather"><div class="r-dots"></div><span class="item-name">Weather</span></div>
+          </div>
+          <div class="col-section">Wonders of Life</div>
+          <div id="wonder-items">
+            <div class="item-row" data-col="morph" data-id="moralbeauty"><div class="r-dots"></div><span class="item-name">Moral Beauty</span></div>
+            <div class="item-row" data-col="morph" data-id="nature-wonder"><div class="r-dots"></div><span class="item-name">Nature</span></div>
+            <div class="item-row" data-col="morph" data-id="visualdesign"><div class="r-dots"></div><span class="item-name">Visual Design</span></div>
+            <div class="item-row" data-col="morph" data-id="lifedeath"><div class="r-dots"></div><span class="item-name">Life &amp; Death</span></div>
+            <div class="item-row" data-col="morph" data-id="collective"><div class="r-dots"></div><span class="item-name">Collective Effervescence</span></div>
+            <div class="item-row" data-col="morph" data-id="music"><div class="r-dots"></div><span class="item-name">Music</span></div>
+            <div class="item-row" data-col="morph" data-id="spiritual"><div class="r-dots"></div><span class="item-name">Spirituality / Religion</span></div>
+            <div class="item-row" data-col="morph" data-id="epiphany"><div class="r-dots"></div><span class="item-name">Epiphany</span></div>
           </div>
         </div>
 
-        <div class="tension-row" data-col="phen" data-id="ecological">
-          <div class="tension-type">Ecological</div>
-          <div class="tension-poles-wrap">
-            <div class="tension-dot"></div>
-            <div class="t-poles">
-              <button class="pole-chip" data-tension="ecological" data-pole="left">Wild</button>
-              <span class="t-sep">↔</span>
-              <button class="pole-chip" data-tension="ecological" data-pole="right">Curated</button>
+        <!-- ── Col 3: Phenomenology ──────────────────────────────────────── -->
+        <div class="col-wrap col-phen">
+          <div class="col-head">
+            <div class="col-num">03</div>
+            <div class="col-cat">Phenomenology</div>
+            <h2 class="col-title">Tensions &amp; Binaries</h2>
+          </div>
+          <div class="col-section">Tensions</div>
+          <div id="tension-items">
+
+            <div class="tension-row" data-col="phen" data-id="formal">
+              <div class="tension-top">
+                <div class="r-dots"></div>
+                <span class="tension-type">Formal</span>
+                <div class="tension-poles-wrap">
+                  <button class="pole-chip" data-tension="formal" data-pole="left">Ornate</button>
+                  <span class="t-sep">↔</span>
+                  <button class="pole-chip" data-tension="formal" data-pole="right">Functional</button>
+                </div>
+              </div>
             </div>
+
+            <div class="tension-row" data-col="phen" data-id="social">
+              <div class="tension-top">
+                <div class="r-dots"></div>
+                <span class="tension-type">Social</span>
+                <div class="tension-poles-wrap">
+                  <button class="pole-chip" data-tension="social" data-pole="left">Inclusive</button>
+                  <span class="t-sep">↔</span>
+                  <button class="pole-chip" data-tension="social" data-pole="right">Exclusive</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="tension-row" data-col="phen" data-id="ecological">
+              <div class="tension-top">
+                <div class="r-dots"></div>
+                <span class="tension-type">Ecological</span>
+                <div class="tension-poles-wrap">
+                  <button class="pole-chip" data-tension="ecological" data-pole="left">Wild</button>
+                  <span class="t-sep">↔</span>
+                  <button class="pole-chip" data-tension="ecological" data-pole="right">Curated</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="tension-row" data-col="phen" data-id="evaluative">
+              <div class="tension-top">
+                <div class="r-dots"></div>
+                <span class="tension-type">Evaluative</span>
+                <div class="tension-poles-wrap">
+                  <button class="pole-chip" data-tension="evaluative" data-pole="left">Impressive</button>
+                  <span class="t-sep">↔</span>
+                  <button class="pole-chip" data-tension="evaluative" data-pole="right">Ordinary</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="tension-row" data-col="phen" data-id="temporal-t">
+              <div class="tension-top">
+                <div class="r-dots"></div>
+                <span class="tension-type">Temporal</span>
+                <div class="tension-poles-wrap">
+                  <button class="pole-chip" data-tension="temporal-t" data-pole="left">Novel</button>
+                  <span class="t-sep">↔</span>
+                  <button class="pole-chip" data-tension="temporal-t" data-pole="right">Familiar</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="tension-row" data-col="phen" data-id="spatial">
+              <div class="tension-top">
+                <div class="r-dots"></div>
+                <span class="tension-type">Spatial</span>
+                <div class="tension-poles-wrap">
+                  <button class="pole-chip" data-tension="spatial" data-pole="left">Expansive</button>
+                  <span class="t-sep">↔</span>
+                  <button class="pole-chip" data-tension="spatial" data-pole="right">Intimate</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="col-section">Binaries</div>
+          <div id="binary-items">
+            <div class="item-row" data-col="phen" data-id="alterity"><div class="r-dots"></div><span class="item-name">Alterity</span></div>
+            <div class="item-row" data-col="phen" data-id="surprise"><div class="r-dots"></div><span class="item-name">Surprise</span></div>
+            <div class="item-row" data-col="phen" data-id="threshold"><div class="r-dots"></div><span class="item-name">Threshold</span></div>
+            <div class="item-row" data-col="phen" data-id="sanctuary"><div class="r-dots"></div><span class="item-name">Sanctuary</span></div>
           </div>
         </div>
 
-        <div class="tension-row" data-col="phen" data-id="evaluative">
-          <div class="tension-type">Evaluative</div>
-          <div class="tension-poles-wrap">
-            <div class="tension-dot"></div>
-            <div class="t-poles">
-              <button class="pole-chip" data-tension="evaluative" data-pole="left">Impressive</button>
-              <span class="t-sep">↔</span>
-              <button class="pole-chip" data-tension="evaluative" data-pole="right">Ordinary</button>
-            </div>
+        <!-- ── Col 4: Temporality ─────────────────────────────────────────── -->
+        <div class="col-wrap col-tempo">
+          <div class="col-head">
+            <div class="col-num">04</div>
+            <div class="col-cat">Temporality</div>
+            <h2 class="col-title">Frequencies</h2>
+          </div>
+          <div id="tempo-items">
+            <div class="item-row" data-col="tempo" data-id="history"><div class="r-dots"></div><span class="item-name">History</span></div>
+            <div class="item-row" data-col="tempo" data-id="ephemeral"><div class="r-dots"></div><span class="item-name">Ephemeral</span></div>
+            <div class="item-row" data-col="tempo" data-id="periodic"><div class="r-dots"></div><span class="item-name">Periodic</span></div>
+            <div class="item-row" data-col="tempo" data-id="recurring"><div class="r-dots"></div><span class="item-name">Recurring</span></div>
+            <div class="item-row" data-col="tempo" data-id="seasonal"><div class="r-dots"></div><span class="item-name">Seasonal</span></div>
+            <div class="item-row" data-col="tempo" data-id="daily"><div class="r-dots"></div><span class="item-name">Daily</span></div>
+            <div class="item-row" data-col="tempo" data-id="timeless"><div class="r-dots"></div><span class="item-name">Timeless</span></div>
           </div>
         </div>
 
-        <div class="tension-row" data-col="phen" data-id="temporal">
-          <div class="tension-type">Temporal</div>
-          <div class="tension-poles-wrap">
-            <div class="tension-dot"></div>
-            <div class="t-poles">
-              <button class="pole-chip" data-tension="temporal" data-pole="left">Novel</button>
-              <span class="t-sep">↔</span>
-              <button class="pole-chip" data-tension="temporal" data-pole="right">Familiar</button>
-            </div>
-          </div>
-        </div>
+      </div><!-- /diagram-cols -->
+    </div><!-- /diagram-outer -->
+  </div><!-- /diagram-wrapper -->
+</div><!-- /main-layout -->
 
-        <div class="tension-row" data-col="phen" data-id="spatial">
-          <div class="tension-type">Spatial</div>
-          <div class="tension-poles-wrap">
-            <div class="tension-dot"></div>
-            <div class="t-poles">
-              <button class="pole-chip" data-tension="spatial" data-pole="left">Expansive</button>
-              <span class="t-sep">↔</span>
-              <button class="pole-chip" data-tension="spatial" data-pole="right">Intimate</button>
-            </div>
-          </div>
-        </div>
-
-      </div>
-      <div class="col-section">Binaries</div>
-      <div id="binary-items">
-        <div class="item-row" data-col="phen" data-id="alterity">
-          <div class="item-dot"></div><span class="item-name">Alterity</span>
-        </div>
-        <div class="item-row" data-col="phen" data-id="surprise">
-          <div class="item-dot"></div><span class="item-name">Surprise</span>
-        </div>
-        <div class="item-row" data-col="phen" data-id="threshold">
-          <div class="item-dot"></div><span class="item-name">Threshold</span>
-        </div>
-        <div class="item-row" data-col="phen" data-id="sanctuary">
-          <div class="item-dot"></div><span class="item-name">Sanctuary</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Col 4: Temporality ─────────────────────────────────────────────── -->
-    <div class="col-wrap col-tempo">
-      <div class="col-head">
-        <div class="col-num">04</div>
-        <div class="col-cat">Temporality</div>
-        <h2 class="col-title">Frequencies</h2>
-      </div>
-      <div id="tempo-items">
-        <div class="item-row" data-col="tempo" data-id="history">
-          <div class="item-dot"></div><span class="item-name">History</span>
-        </div>
-        <div class="item-row" data-col="tempo" data-id="ephemeral">
-          <div class="item-dot"></div><span class="item-name">Ephemeral</span>
-        </div>
-        <div class="item-row" data-col="tempo" data-id="periodic">
-          <div class="item-dot"></div><span class="item-name">Periodic</span>
-        </div>
-        <div class="item-row" data-col="tempo" data-id="recurring">
-          <div class="item-dot"></div><span class="item-name">Recurring</span>
-        </div>
-        <div class="item-row" data-col="tempo" data-id="seasonal">
-          <div class="item-dot"></div><span class="item-name">Seasonal</span>
-        </div>
-        <div class="item-row" data-col="tempo" data-id="daily">
-          <div class="item-dot"></div><span class="item-name">Daily</span>
-        </div>
-        <div class="item-row" data-col="tempo" data-id="timeless">
-          <div class="item-dot"></div><span class="item-name">Timeless</span>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /diagram-cols -->
-</div><!-- /diagram-outer -->
-
-<!-- Legend + hint -->
-<div class="diagram-hint">Click items to select · connections draw between adjacent columns</div>
-<div class="mode-legend" id="mode-legend-bar">
-  <div class="legend-item">
-    <div class="legend-dot filled"></div>
-    <span class="legend-label">Existing</span>
-  </div>
-  <div class="legend-item legend-proposed" style="display:none">
-    <div class="legend-dot dashed"></div>
-    <span class="legend-label">Proposed</span>
-  </div>
-  <div class="legend-item">
-    <div class="legend-line-solid"></div>
-    <span class="legend-label">Current rhythm</span>
-  </div>
-  <div class="legend-item legend-dashed-line" style="display:none">
-    <div class="legend-line-dashed"></div>
-    <span class="legend-label">Proposed rhythm</span>
-  </div>
-</div>
-
-<!-- ── GENERATE ────────────────────────────────────────────────────────────── -->
+<!-- ── GENERATE ─────────────────────────────────────────────────────────────── -->
 <div class="generate-section">
-  <button class="generate-btn" id="generate-btn" disabled>Generate Activation Strategy →</button>
-  <span class="gen-note" id="gen-note">Select conditions across dimensions to generate a strategy</span>
+  <button class="generate-btn" id="generate-btn" disabled>Generate Strategy →</button>
+  <span class="gen-note" id="gen-note">Add at least one rhythm to generate a strategy</span>
 </div>
 
-<!-- ── OUTPUT ──────────────────────────────────────────────────────────────── -->
+<!-- ── OUTPUT ───────────────────────────────────────────────────────────────── -->
 <section id="output-section" aria-live="polite">
-  <div class="output-head">
-    <div class="output-eyebrow" id="out-eyebrow">Rhythmanalysis</div>
-    <h2 class="output-title" id="out-title">Rhythmic Profile</h2>
-    <p class="output-meta" id="out-meta"></p>
+  <div class="out-head">
+    <div class="out-eyebrow" id="out-eyebrow">Rhythmanalysis</div>
+    <h2 class="out-title" id="out-title">Rhythmic Profile</h2>
+    <p class="out-meta" id="out-meta"></p>
   </div>
 
   <div class="narrative-box" id="out-narrative"></div>
 
-  <div class="strategy-grid">
-    <div class="strategy-card card-morph" id="card-morph">
-      <div class="s-card-eyebrow">Morphological</div>
-      <h3 class="s-card-title" id="morph-title">Form</h3>
-      <p class="s-card-frame" id="morph-frame"></p>
-      <ul class="s-list" id="morph-list"></ul>
+  <div class="rhythm-threads" id="rhythm-threads"></div>
+
+  <div class="strategy-grid" id="strategy-grid" style="display:none">
+    <div class="s-card s-card-morph" id="s-morph">
+      <div class="s-eyebrow">Morphological</div>
+      <h3 class="s-title" id="s-morph-title">Form</h3>
+      <p class="s-frame" id="s-morph-frame"></p>
+      <ul class="s-list" id="s-morph-list"></ul>
     </div>
-    <div class="strategy-card card-phen" id="card-phen">
-      <div class="s-card-eyebrow">Phenomenological</div>
-      <h3 class="s-card-title" id="phen-title">Experience</h3>
-      <p class="s-card-frame" id="phen-frame"></p>
-      <ul class="s-list" id="phen-list"></ul>
+    <div class="s-card s-card-phen" id="s-phen">
+      <div class="s-eyebrow">Phenomenological</div>
+      <h3 class="s-title" id="s-phen-title">Experience</h3>
+      <p class="s-frame" id="s-phen-frame"></p>
+      <ul class="s-list" id="s-phen-list"></ul>
     </div>
-    <div class="strategy-card card-tempo" id="card-tempo">
-      <div class="s-card-eyebrow">Temporal</div>
-      <h3 class="s-card-title" id="tempo-title">Rhythm</h3>
-      <p class="s-card-frame" id="tempo-frame"></p>
-      <ul class="s-list" id="tempo-list"></ul>
+    <div class="s-card s-card-tempo" id="s-tempo">
+      <div class="s-eyebrow">Temporal</div>
+      <h3 class="s-title" id="s-tempo-title">Rhythm</h3>
+      <p class="s-frame" id="s-tempo-frame"></p>
+      <ul class="s-list" id="s-tempo-list"></ul>
     </div>
   </div>
 
   <div class="cross-note" id="cross-note" style="display:none;"></div>
 </section>
 
-<footer style="border-top:1px solid rgba(26,26,26,.1); padding:28px 0; margin-top:80px; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.25em; text-transform:uppercase; color:var(--stone); text-align:center;">
+<footer style="border-top:1px solid rgba(26,26,26,.1);padding:28px 0;margin-top:80px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--stone);text-align:center;">
   Awe in Cambridge &nbsp;·&nbsp; Cambridge, MA &nbsp;·&nbsp; 2026
 </footer>
 
@@ -866,124 +721,241 @@ body.mode-activation .activation-key { display: block; }
 
 <script>
 /* ────────────────────────────────────────────────────────────────────────────
-   STATE
+   RHYTHM COLORS
 ──────────────────────────────────────────────────────────────────────────── */
-let currentMode = 'analysis'; // 'analysis' | 'activation'
-
-// Items: { el, col, id, state: 'none'|'existing'|'proposed' }
-const ITEMS = { geo: [], morph: [], phen: [], tempo: [] };
-
-// Tension pole states: { left: bool, right: bool }
-const TENSION_POLES = {
-  formal: { left:false, right:false },
-  social: { left:false, right:false },
-  ecological: { left:false, right:false },
-  evaluative: { left:false, right:false },
-  temporal: { left:false, right:false },
-  spatial: { left:false, right:false },
-};
+const RHYTHM_COLORS = [
+  '#2e6da4','#c0572a','#2e8a56','#8a4a7a',
+  '#a07c1a','#5a4a9a','#a04040','#3a7a72',
+];
 
 /* ────────────────────────────────────────────────────────────────────────────
-   INITIALIZE ITEMS
+   STATE
 ──────────────────────────────────────────────────────────────────────────── */
-document.querySelectorAll('.item-row').forEach(el => {
-  const col = el.dataset.col;
-  const id  = el.dataset.id;
-  const item = { el, col, id, state: 'none' };
-  ITEMS[col].push(item);
-  el.addEventListener('click', () => cycleItem(item));
+let mode      = 'analysis';  // 'analysis' | 'activation'
+let rhythms   = [];
+let nextId    = 1;
+let editing   = null;        // rhythm id currently being edited
+
+/* ────────────────────────────────────────────────────────────────────────────
+   ITEM LABELS (for display in rhythm cards + output)
+──────────────────────────────────────────────────────────────────────────── */
+const ITEM_LABELS = {};
+document.querySelectorAll('[data-col][data-id]').forEach(el => {
+  const key = el.dataset.col + ':' + el.dataset.id;
+  const nameEl = el.querySelector('.item-name') || el.querySelector('.tension-type');
+  if (nameEl) ITEM_LABELS[key] = nameEl.textContent.replace(/\s+/g,' ').trim();
 });
 
-// Tension rows
-document.querySelectorAll('.tension-row').forEach(el => {
-  const col = el.dataset.col; // 'phen'
-  const id  = el.dataset.id;
-  const item = { el, col, id, state: 'none', isTension: true };
-  ITEMS.phen.push(item);
-  // Click on the row background (not pole chips) to cycle state
-  el.addEventListener('click', (e) => {
-    if (!e.target.closest('.pole-chip')) cycleItem(item);
-  });
-});
+function label(col, id) {
+  return ITEM_LABELS[col + ':' + id] || id;
+}
 
-// Pole chip buttons
-document.querySelectorAll('.pole-chip').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const tensionId = btn.dataset.tension;
-    const pole      = btn.dataset.pole; // 'left' | 'right'
-    TENSION_POLES[tensionId][pole] = !TENSION_POLES[tensionId][pole];
-    btn.classList.toggle('active', TENSION_POLES[tensionId][pole]);
+/* ────────────────────────────────────────────────────────────────────────────
+   HELPERS
+──────────────────────────────────────────────────────────────────────────── */
+function getRhythm(id)  { return rhythms.find(r => r.id === id); }
+function colorIdx(idx)  { return RHYTHM_COLORS[idx % RHYTHM_COLORS.length]; }
+function allItems(r)    { return ['geo','morph','phen','tempo'].flatMap(c => [...r.items[c]].map(id => ({col:c, id}))); }
+function hasAny(r)      { return ['geo','morph','phen','tempo'].some(c => r.items[c].size > 0); }
 
-    // If a pole is now active, ensure the parent tension row is at least 'existing'
-    const anyActive = TENSION_POLES[tensionId].left || TENSION_POLES[tensionId].right;
-    const item = ITEMS.phen.find(i => i.id === tensionId);
-    if (item && item.state === 'none' && anyActive) {
-      item.state = 'existing';
-      item.el.classList.add('existing');
-    }
-    drawConnections();
-    checkGenerate();
-  });
-});
+function listJoin(arr) {
+  if (!arr.length) return '';
+  if (arr.length === 1) return arr[0];
+  if (arr.length === 2) return arr[0] + ' and ' + arr[1];
+  return arr.slice(0,-1).join(', ') + ', and ' + arr[arr.length-1];
+}
+function fmtDate(s) {
+  if (!s) return '';
+  return new Date(s+'T12:00:00').toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+}
 
-function cycleItem(item) {
-  const states = currentMode === 'analysis'
-    ? ['none', 'existing']
-    : ['none', 'existing', 'proposed'];
-  const idx = states.indexOf(item.state);
-  item.state = states[(idx + 1) % states.length];
+/* ────────────────────────────────────────────────────────────────────────────
+   ADD / DELETE RHYTHM
+──────────────────────────────────────────────────────────────────────────── */
+function addRhythm(status) {
+  const idx = rhythms.length;
+  const r = {
+    id:     nextId++,
+    label:  'Rhythm ' + String(idx+1).padStart(2,'0'),
+    color:  colorIdx(idx),
+    status: status,
+    items:  { geo:new Set(), morph:new Set(), phen:new Set(), tempo:new Set() },
+  };
+  rhythms.push(r);
+  renderSidebar();
+  startEditing(r.id);
+}
 
-  item.el.classList.remove('existing', 'proposed');
-  if (item.state !== 'none') item.el.classList.add(item.state);
-
-  // If tension row cycling to 'none', deactivate its pole chips
-  if (item.isTension && item.state === 'none') {
-    TENSION_POLES[item.id].left  = false;
-    TENSION_POLES[item.id].right = false;
-    item.el.querySelectorAll('.pole-chip').forEach(b => b.classList.remove('active'));
-  }
-
+function deleteRhythm(id) {
+  if (editing === id) stopEditing(false);
+  rhythms = rhythms.filter(r => r.id !== id);
+  // Relabel
+  rhythms.forEach((r, i) => { r.label = 'Rhythm ' + String(i+1).padStart(2,'0'); r.color = colorIdx(i); });
+  renderSidebar();
+  renderDots();
   drawConnections();
   checkGenerate();
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
-   MODE TOGGLE
+   EDIT MODE
 ──────────────────────────────────────────────────────────────────────────── */
-const modeDescText = {
-  analysis:   'Click items across the four dimensions to map the existing rhythmic conditions of this place. Connections will appear between your selections.',
-  activation: 'Click once to mark an existing condition, click again to add a proposed new element (dashed). Use this mode to imagine how the rhythm of a place could be amplified or rebalanced.'
-};
+function startEditing(id) {
+  editing = id;
+  const r = getRhythm(id);
+  document.getElementById('edit-bar').classList.add('visible');
+  document.getElementById('edit-bar-name').textContent = r.label;
+  document.body.classList.add('edit-active');
+  renderSidebar();
+  renderDots();
+  drawConnections();
+}
 
-document.querySelectorAll('.mode-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    currentMode = btn.dataset.mode;
-    document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b === btn));
-    document.getElementById('mode-desc-text').textContent = modeDescText[currentMode];
-    document.body.className = 'mode-' + currentMode;
+function stopEditing(rerender = true) {
+  editing = null;
+  document.getElementById('edit-bar').classList.remove('visible');
+  document.body.classList.remove('edit-active');
+  if (rerender) {
+    renderSidebar();
+    renderDots();
+    drawConnections();
+    checkGenerate();
+  }
+}
 
-    // Show/hide proposed legend
-    const showProposed = currentMode === 'activation';
-    document.querySelectorAll('.legend-proposed, .legend-dashed-line').forEach(el => {
-      el.style.display = showProposed ? '' : 'none';
-    });
+document.getElementById('edit-done-btn').addEventListener('click', () => stopEditing());
 
-    // If switching back to analysis, demote 'proposed' items to 'existing'
-    if (currentMode === 'analysis') {
-      Object.values(ITEMS).flat().forEach(item => {
-        if (item.state === 'proposed') {
-          item.state = 'existing';
-          item.el.classList.remove('proposed');
-          item.el.classList.add('existing');
-        }
-      });
+/* ────────────────────────────────────────────────────────────────────────────
+   TOGGLE ITEM FOR EDITING RHYTHM
+──────────────────────────────────────────────────────────────────────────── */
+document.querySelectorAll('[data-col][data-id]').forEach(el => {
+  el.addEventListener('click', () => {
+    if (editing === null) return;
+    const r   = getRhythm(editing);
+    const col = el.dataset.col;
+    const id  = el.dataset.id;
+    if (r.items[col].has(id)) {
+      r.items[col].delete(id);
+    } else {
+      r.items[col].add(id);
     }
-
+    renderSidebar();
+    renderDots();
     drawConnections();
     checkGenerate();
   });
 });
+
+// Pole chips: stop propagation (don't toggle rhythm item)
+document.querySelectorAll('.pole-chip').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    btn.classList.toggle('active');
+  });
+});
+
+/* ────────────────────────────────────────────────────────────────────────────
+   RENDER SIDEBAR
+──────────────────────────────────────────────────────────────────────────── */
+function renderSidebar() {
+  const list  = document.getElementById('rhythm-list');
+  const empty = document.getElementById('sidebar-empty');
+  empty.style.display = rhythms.length ? 'none' : '';
+  list.innerHTML = '';
+
+  rhythms.forEach(r => {
+    const isEditing = editing === r.id;
+    const div = document.createElement('div');
+    div.className = 'rc' + (r.status === 'proposed' ? ' rc-proposed' : '') + (isEditing ? ' rc-editing' : '');
+    div.dataset.id = r.id;
+
+    // Build chain summary
+    const cols = ['geo','morph','phen','tempo'];
+    const colLabels = { geo:'Geo', morph:'Form', phen:'Phen', tempo:'Time' };
+    let chainHtml = '';
+    let hasContent = false;
+    cols.forEach((col, ci) => {
+      const ids = [...r.items[col]];
+      if (!ids.length) return;
+      hasContent = true;
+      if (chainHtml) chainHtml += `<span class="rc-arrow">→</span>`;
+      chainHtml += `<span class="rc-dim-group"><span class="rc-dim-label">${colLabels[col]}</span>`;
+      chainHtml += ids.map(id => `<span class="rc-item-chip">${label(col,id)}</span>`).join(' ');
+      chainHtml += `</span>`;
+    });
+
+    div.innerHTML = `
+      <div class="rc-head">
+        <span class="rc-swatch" style="background:${r.color}; ${r.status==='proposed' ? `border-color:${r.color};` : ''}"></span>
+        <span class="rc-label">${r.label}</span>
+        <span class="rc-badge ${r.status === 'proposed' ? 'rc-badge-proposed' : 'rc-badge-existing'}">${r.status}</span>
+        <div class="rc-btns">
+          <button class="rc-btn ${isEditing ? 'active' : ''}" data-edit="${r.id}">${isEditing ? 'Editing…' : 'Edit'}</button>
+          <button class="rc-btn rc-btn-del" data-del="${r.id}">×</button>
+        </div>
+      </div>
+      <div class="${hasContent ? 'rc-chain' : 'rc-chain-empty'}">
+        ${hasContent ? chainHtml : 'Click <em>Edit</em> to add items from the diagram'}
+      </div>
+      ${isEditing ? '<div class="rc-editing-hint">Click items in the diagram →</div>' : ''}
+    `;
+
+    list.appendChild(div);
+  });
+
+  // Wire edit / delete buttons
+  list.querySelectorAll('[data-edit]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = +btn.dataset.edit;
+      if (editing === id) stopEditing();
+      else startEditing(id);
+    });
+  });
+  list.querySelectorAll('[data-del]').forEach(btn => {
+    btn.addEventListener('click', () => deleteRhythm(+btn.dataset.del));
+  });
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   RENDER DOTS ON DIAGRAM ITEMS
+──────────────────────────────────────────────────────────────────────────── */
+function renderDots() {
+  // Clear all dots and state classes
+  document.querySelectorAll('[data-col][data-id]').forEach(el => {
+    el.querySelector('.r-dots').innerHTML = '';
+    el.classList.remove('r-active', 'r-fade');
+  });
+
+  // For every rhythm, add colored dots to its items
+  rhythms.forEach(r => {
+    const isProposed = r.status === 'proposed';
+    ['geo','morph','phen','tempo'].forEach(col => {
+      r.items[col].forEach(id => {
+        const el = document.querySelector(`[data-col="${col}"][data-id="${id}"]`);
+        if (!el) return;
+        const dot = document.createElement('span');
+        dot.className = 'r-dot' + (isProposed ? ' dashed' : '');
+        dot.style.background = isProposed ? 'transparent' : r.color;
+        if (isProposed) dot.style.borderColor = r.color;
+        el.querySelector('.r-dots').appendChild(dot);
+      });
+    });
+  });
+
+  // If editing, highlight active items, fade others
+  if (editing !== null) {
+    const r = getRhythm(editing);
+    document.querySelectorAll('[data-col][data-id]').forEach(el => {
+      const col = el.dataset.col;
+      const id  = el.dataset.id;
+      if (r.items[col].has(id)) {
+        el.classList.add('r-active');
+      } else {
+        el.classList.add('r-fade');
+      }
+    });
+  }
+}
 
 /* ────────────────────────────────────────────────────────────────────────────
    SVG CONNECTIONS
@@ -991,367 +963,317 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
 const diagramEl = document.getElementById('diagram');
 const connG     = document.getElementById('conn-g');
 
-// Column color pairs for strokes [geo→morph, morph→phen, phen→tempo]
-const STROKE_COLORS = [
-  { existing: 'rgba(74,122,138,.35)',  proposed: 'rgba(74,122,138,.18)',  marker: 'arr-geo' },
-  { existing: 'rgba(140,69,24,.35)',   proposed: 'rgba(140,69,24,.18)',   marker: 'arr-morph' },
-  { existing: 'rgba(107,91,138,.35)',  proposed: 'rgba(107,91,138,.18)',  marker: 'arr-phen' },
-];
-
-function getItemMidRight(el) {
-  const dr = diagramEl.getBoundingClientRect();
-  const r  = el.getBoundingClientRect();
-  return { x: r.right - dr.left, y: r.top - dr.top + r.height / 2 };
+function midRight(el, dr) {
+  const r = el.getBoundingClientRect();
+  return { x: r.right - dr.left, y: r.top - dr.top + r.height/2 };
 }
-function getItemMidLeft(el) {
-  const dr = diagramEl.getBoundingClientRect();
-  const r  = el.getBoundingClientRect();
-  return { x: r.left - dr.left, y: r.top - dr.top + r.height / 2 };
+function midLeft(el, dr) {
+  const r = el.getBoundingClientRect();
+  return { x: r.left - dr.left, y: r.top - dr.top + r.height/2 };
 }
 
 function drawConnections() {
   connG.innerHTML = '';
-  const diagRect = diagramEl.getBoundingClientRect();
-  if (diagRect.width === 0) return;
+  const dr = diagramEl.getBoundingClientRect();
+  if (!dr.width) return;
 
-  const cols = [ITEMS.geo, ITEMS.morph, ITEMS.phen, ITEMS.tempo];
+  rhythms.forEach(r => {
+    const isProposed = r.status === 'proposed';
+    // When editing a different rhythm, fade this one
+    const dimmed = editing !== null && editing !== r.id;
+    const opacity = dimmed ? 0.07 : (isProposed ? 0.28 : 0.42);
+    const width   = dimmed ? '1' : (editing === r.id ? '2.2' : '1.6');
+    const dashed  = isProposed ? '7 5' : null;
 
-  for (let ci = 0; ci < cols.length - 1; ci++) {
-    const fromActive = cols[ci].filter(i => i.state !== 'none');
-    const toActive   = cols[ci + 1].filter(i => i.state !== 'none');
-    const sc         = STROKE_COLORS[ci];
-
-    fromActive.forEach(fromItem => {
-      toActive.forEach(toItem => {
-        const p1 = getItemMidRight(fromItem.el);
-        const p2 = getItemMidLeft(toItem.el);
-        const dx = (p2.x - p1.x) * 0.42;
-
-        const isProposed = fromItem.state === 'proposed' || toItem.state === 'proposed';
-        const color  = isProposed ? sc.proposed : sc.existing;
-        const dashes = isProposed ? '5 4' : null;
-        const width  = isProposed ? '1.2' : '1.5';
-
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d',
-          `M ${p1.x} ${p1.y} C ${p1.x + dx} ${p1.y} ${p2.x - dx} ${p2.y} ${p2.x} ${p2.y}`
-        );
-        path.setAttribute('fill', 'none');
-        path.setAttribute('stroke', color);
-        path.setAttribute('stroke-width', width);
-        if (dashes) path.setAttribute('stroke-dasharray', dashes);
-        // Only show arrowhead for non-proposed connections to keep clutter low
-        if (!isProposed) path.setAttribute('marker-end', 'url(#' + sc.marker + ')');
-
-        connG.appendChild(path);
+    const cols = ['geo','morph','phen','tempo'];
+    for (let ci = 0; ci < cols.length - 1; ci++) {
+      const fc = cols[ci], tc = cols[ci+1];
+      [...r.items[fc]].forEach(fid => {
+        [...r.items[tc]].forEach(tid => {
+          const fel = document.querySelector(`[data-col="${fc}"][data-id="${fid}"]`);
+          const tel = document.querySelector(`[data-col="${tc}"][data-id="${tid}"]`);
+          if (!fel || !tel) return;
+          const p1 = midRight(fel, dr);
+          const p2 = midLeft(tel, dr);
+          const dx = (p2.x - p1.x) * 0.42;
+          const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+          path.setAttribute('d', `M ${p1.x} ${p1.y} C ${p1.x+dx} ${p1.y} ${p2.x-dx} ${p2.y} ${p2.x} ${p2.y}`);
+          path.setAttribute('fill','none');
+          path.setAttribute('stroke', r.color);
+          path.setAttribute('stroke-opacity', String(opacity));
+          path.setAttribute('stroke-width', width);
+          if (dashed) path.setAttribute('stroke-dasharray', dashed);
+          connG.appendChild(path);
+        });
       });
-    });
-  }
+    }
+  });
 }
 
-// Redraw on resize (debounced)
 let resizeTimer;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(drawConnections, 80);
-});
-// Redraw on scroll (connections move with page)
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(drawConnections, 80); });
 window.addEventListener('scroll', drawConnections, { passive: true });
 
 /* ────────────────────────────────────────────────────────────────────────────
-   GENERATE BUTTON ENABLE
+   MODE TOGGLE
 ──────────────────────────────────────────────────────────────────────────── */
-function allItems() { return Object.values(ITEMS).flat(); }
-function activeItems(col) { return ITEMS[col].filter(i => i.state !== 'none'); }
-function existingItems(col) { return ITEMS[col].filter(i => i.state === 'existing'); }
-function proposedItems(col) { return ITEMS[col].filter(i => i.state === 'proposed'); }
-function hasId(col, id) { return ITEMS[col].some(i => i.id === id && i.state !== 'none'); }
-function isProposedId(col, id) { return ITEMS[col].some(i => i.id === id && i.state === 'proposed'); }
+const modeDescriptions = {
+  analysis:   'Map the existing rhythms of this place — each rhythm is a distinct thread connecting a location to its forms, phenomenological qualities, and temporal frequencies.',
+  activation: 'Add proposed new rhythms to show how this place could be activated. Existing rhythms remain; proposed ones appear as dashed connections. Generate a strategy to see the comparison.',
+};
 
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    mode = btn.dataset.mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('mode-desc').textContent = modeDescriptions[mode];
+    document.body.className = editing !== null ? 'edit-active mode-'+mode : 'mode-'+mode;
+    checkGenerate();
+  });
+});
+
+/* ────────────────────────────────────────────────────────────────────────────
+   GENERATE BUTTON
+──────────────────────────────────────────────────────────────────────────── */
 function checkGenerate() {
-  const anySelected = allItems().some(i => i.state !== 'none');
-  const btn  = document.getElementById('generate-btn');
-  const note = document.getElementById('gen-note');
-  btn.disabled = !anySelected;
-  note.textContent = anySelected
-    ? (currentMode === 'activation'
-        ? 'Ready — generate a strategy for this place'
-        : 'Ready — or switch to Rhythmactivation to propose additions')
-    : 'Select conditions across dimensions to generate a strategy';
+  const anyRhythm = rhythms.some(r => hasAny(r));
+  const btn = document.getElementById('generate-btn');
+  btn.disabled = !anyRhythm;
+  document.getElementById('gen-note').textContent = anyRhythm
+    ? 'Ready — click to generate an analysis'
+    : 'Add at least one rhythm to generate a strategy';
 }
+
+document.getElementById('add-existing-btn').addEventListener('click', () => addRhythm('existing'));
+document.getElementById('add-proposed-btn').addEventListener('click', () => addRhythm('proposed'));
+document.getElementById('generate-btn').addEventListener('click', generate);
 
 /* ────────────────────────────────────────────────────────────────────────────
    GENERATE OUTPUT
 ──────────────────────────────────────────────────────────────────────────── */
-document.getElementById('generate-btn').addEventListener('click', generate);
-
 function generate() {
-  const isActivation = currentMode === 'activation';
+  if (editing !== null) stopEditing();
 
-  // Collect labels
-  const geoLabels   = activeItems('geo').map(i => i.el.querySelector('.item-name').textContent.replace(/\n/g,' ').trim());
-  const morphLabels  = activeItems('morph').map(i => i.el.querySelector('.item-name').textContent.replace(/\n/g,' ').trim());
-  const phenLabels   = activeItems('phen').map(i => {
-    const t = i.el.querySelector('.tension-type');
-    return t ? t.textContent : i.el.querySelector('.item-name').textContent;
-  });
-  const tempoLabels  = activeItems('tempo').map(i => i.el.querySelector('.item-name').textContent);
+  const isActivation = mode === 'activation';
+  const existing  = rhythms.filter(r => r.status === 'existing' && hasAny(r));
+  const proposed  = rhythms.filter(r => r.status === 'proposed' && hasAny(r));
+  const allActive = [...existing, ...proposed];
 
-  const propGeo   = proposedItems('geo').map(i => i.el.querySelector('.item-name').textContent.replace(/\n/g,' ').trim());
-  const propMorph = proposedItems('morph').map(i => i.el.querySelector('.item-name').textContent.replace(/\n/g,' ').trim());
-  const propPhen  = proposedItems('phen').map(i => {
-    const t = i.el.querySelector('.tension-type');
-    return t ? t.textContent : i.el.querySelector('.item-name').textContent;
-  });
-  const propTempo = proposedItems('tempo').map(i => i.el.querySelector('.item-name').textContent);
+  /* ── Meta ── */
+  const locName = document.getElementById('loc-name').value.trim();
+  const locDate = document.getElementById('loc-date').value;
+  let meta = locName || '';
+  if (locDate) meta += (meta ? ' · ' : '') + fmtDate(locDate);
+  meta += (meta ? ' · ' : '') + 'Generated ' + fmtDate(new Date().toISOString().slice(0,10));
 
-  // Active tensions with pole state
-  const activeTensions = Object.keys(TENSION_POLES).filter(id => {
-    const item = ITEMS.phen.find(i => i.id === id);
-    return item && item.state !== 'none';
-  });
+  document.getElementById('out-eyebrow').textContent = isActivation ? 'Rhythmactivation' : 'Rhythmanalysis';
+  document.getElementById('out-title').textContent   = isActivation ? 'Activation Strategy' : 'Rhythmic Profile';
+  document.getElementById('out-meta').textContent    = meta;
 
   /* ── Narrative ── */
   let narrative = '';
-
-  if (geoLabels.length) {
-    const geoStr = listJoin(geoLabels);
-    narrative += `This rhythmanalysis considers ${geoStr} as the primary location type${geoLabels.length > 1 ? 's' : ''}. `;
-  }
-  if (morphLabels.length) {
-    const mStr = listJoin(morphLabels);
-    narrative += `The morphological profile includes ${mStr}, `;
-    if (morphLabels.length < 4) {
-      narrative += `a relatively contained set of forms that may limit the range of awe conditions present. `;
-    } else {
-      narrative += `a diverse array of forms offering multiple conditions for awe. `;
-    }
-  }
-  if (activeTensions.length) {
-    const tStr = listJoin(activeTensions.map(id => id.charAt(0).toUpperCase() + id.slice(1)));
-    narrative += `The phenomenological character is shaped by ${tStr} tension${activeTensions.length > 1 ? 's' : ''}`;
-    // Note which binaries are active
-    const binaries = ['alterity','surprise','threshold','sanctuary'].filter(b => hasId('phen', b));
-    if (binaries.length) {
-      narrative += ` alongside the presence of ${listJoin(binaries)}. `;
-    } else {
-      narrative += `. `;
-    }
-  }
-  if (tempoLabels.length) {
-    narrative += `Temporally, this place is animated by ${listJoin(tempoLabels.map(t => t.toLowerCase()))} frequencies.`;
-  }
-  if (!narrative) {
-    narrative = 'Select items across the four dimensions to generate a rhythmic profile for this place.';
+  if (locName) narrative += `This rhythmanalysis considers ${locName}. `;
+  if (existing.length === 1) {
+    narrative += `One existing rhythm has been identified. `;
+  } else if (existing.length > 1) {
+    narrative += `${existing.length} existing rhythms have been mapped, forming a polyrhythmic profile. `;
   }
 
-  if (isActivation && (propMorph.length || propGeo.length || propPhen.length || propTempo.length)) {
-    narrative += ' The rhythmactivation proposes introducing ';
-    const proposals = [...propGeo, ...propMorph, ...propPhen, ...propTempo];
-    narrative += listJoin(proposals) + (proposals.length > 1 ? ' as new elements' : ' as a new element');
-    narrative += ' to amplify and rebalance the awe potential of this site.';
+  // Describe shared nodes
+  const sharedGeo = getSharedItems('geo', existing);
+  if (sharedGeo.length) narrative += `The rhythms are grounded in ${listJoin(sharedGeo.map(id => label('geo', id)))}, a shared geography. `;
+
+  const allMorphIds = unique(existing.flatMap(r => [...r.items.morph]));
+  if (allMorphIds.length) narrative += `Together they draw on ${allMorphIds.length} morphological elements: ${listJoin(allMorphIds.map(id => label('morph',id)))}. `;
+
+  const allPhenIds = unique(existing.flatMap(r => [...r.items.phen]));
+  if (allPhenIds.length) narrative += `The phenomenological character spans ${listJoin(allPhenIds.map(id => label('phen',id)))}. `;
+
+  const allTempoIds = unique(existing.flatMap(r => [...r.items.tempo]));
+  if (allTempoIds.length) narrative += `Temporally, this place operates at ${listJoin(allTempoIds.map(id => id))} frequencies.`;
+
+  if (isActivation && proposed.length) {
+    const propMorphIds = unique(proposed.flatMap(r => [...r.items.morph]));
+    const propTempoIds = unique(proposed.flatMap(r => [...r.items.tempo]));
+    narrative += ` The rhythmactivation proposes ${proposed.length} new rhythm${proposed.length>1?'s':''}, introducing ${propMorphIds.length ? listJoin(propMorphIds.map(id=>label('morph',id)))+' as new morphological forms' : 'new connections'}`;
+    if (propTempoIds.length) narrative += ` and activating ${listJoin(propTempoIds.map(id=>id))} frequencies`;
+    narrative += `.`;
   }
 
-  /* ── Morphological card ── */
-  const morphSuggestions = [];
-  if (isActivation) {
-    if (!hasId('morph','water') && (hasId('geo','waterfronts') || hasId('geo','parks'))) {
-      morphSuggestions.push('Introduce a water feature — a reflecting pool, fountain, or naturalized channel — to foreground a non-human rhythm and invite alterity.');
-    }
-    if (!hasId('morph','light')) {
-      morphSuggestions.push('Layer lighting interventions — seasonal, reactive, or directional — to extend the temporal availability of awe into the evening.');
-    }
-    if (!hasId('morph','art') && !hasId('morph','visualdesign')) {
-      morphSuggestions.push('Commission site-specific art or visual design elements to create focal points of beauty and wonder.');
-    }
-    if (!hasId('morph','events') && !hasId('morph','communities')) {
-      morphSuggestions.push('Program recurring community events — weekly markets, monthly performances, or seasonal gatherings — to activate social morphologies and collective effervescence.');
-    }
-    if (!hasId('morph','plants') && !hasId('morph','greenspace') && !hasId('morph','nature')) {
-      morphSuggestions.push('Introduce vegetation, ecological plantings, or a Miyawaki-style forest to embed non-human rhythms and create conditions for alterity.');
-    }
-    if (propGeo.length) {
-      morphSuggestions.push('The addition of ' + listJoin(propGeo) + ' as a location type opens possibilities for new morphological programming — consider what forms this new geography makes available.');
-    }
-    if (propMorph.length) {
-      morphSuggestions.push('Proposed additions (' + listJoin(propMorph) + ') should be calibrated to the existing morphological palette to avoid dissonance — consider how each new form amplifies or contrasts existing ones.');
-    }
-  } else {
-    // Analysis mode observations
-    if (morphLabels.length === 0) {
-      morphSuggestions.push('No morphological forms identified yet. Observing the material conditions of this place — its textures, volumes, living presences, and sensory qualities — is the first step of rhythmanalysis.');
-    } else if (morphLabels.length < 3) {
-      morphSuggestions.push(`The morphological profile (${listJoin(morphLabels)}) is sparse. This place may underperform in its capacity to elicit awe, relying on a narrow set of forms.`);
-    } else {
-      morphSuggestions.push(`This place draws on ${morphLabels.length} morphological elements, suggesting a layered sensory environment. Consider which forms are dynamic (changing across time) versus stable (fixed and permanent).`);
-    }
-    if (hasId('morph','animals') || hasId('morph','weather') || hasId('morph','plants')) {
-      morphSuggestions.push('The presence of living or atmospheric forms (animals, weather, plants) introduces non-human rhythms — a key condition for experiences of alterity and awe.');
-    }
-    if (hasId('morph','events') || hasId('morph','communities') || hasId('morph','collective')) {
-      morphSuggestions.push('Social and communal morphologies are present. These forms carry the potential for collective effervescence — shared emotional states that can intensify and amplify awe.');
-    }
-  }
-  if (!morphSuggestions.length) morphSuggestions.push('The morphological conditions of this place appear well-developed. Continue to observe how these forms shift across seasons and times of day.');
-
-  /* ── Phenomenological card ── */
-  const phenSuggestions = [];
-  if (isActivation) {
-    if (!TENSION_POLES.ecological.left && !hasId('morph','animals') && !hasId('morph','plants') && !hasId('morph','nature')) {
-      phenSuggestions.push('Accentuate the ecological tension toward wildness — unmown patches, volunteer vegetation, or wildlife habitats can introduce genuine otherness and unpredictability.');
-    }
-    if (!hasId('phen','alterity')) {
-      phenSuggestions.push('Introduce encounters with the radically non-human — living presences, uncontrolled systems, or weather-responsive elements — to create conditions for alterity.');
-    }
-    if (!hasId('phen','threshold')) {
-      phenSuggestions.push('Design a threshold — a marked entry, lighting change, or material shift — that signals a different experiential register and primes visitors for awe.');
-    }
-    if (!hasId('phen','sanctuary') && (TENSION_POLES.spatial.left || hasId('geo','parks'))) {
-      phenSuggestions.push('Introduce moments of enclosure — a planted alcove, overhead canopy, or sheltered seat — to create sanctuary within an expansive setting.');
-    }
-    if (!hasId('phen','surprise')) {
-      phenSuggestions.push('Design for surprise: seasonal installations, hidden features, or elements that change with the time of day to introduce arrhythmic moments of the unexpected.');
-    }
-    if (TENSION_POLES.social.right) {
-      phenSuggestions.push('Reduce perceived barriers to access — improve wayfinding, lower visual and social thresholds, and create explicit welcoming gestures to shift the social tension toward inclusion.');
-    }
-    if (propPhen.length) {
-      phenSuggestions.push('Proposed phenomenological additions (' + listJoin(propPhen) + ') signal a desire to deepen the experiential richness of this site — consider how these qualities might be legible to a first-time visitor.');
-    }
-  } else {
-    // Analysis mode
-    if (activeTensions.length === 0) {
-      phenSuggestions.push('No phenomenological tensions identified. Observing which qualities are in productive tension — wildness vs. curation, novelty vs. familiarity — is central to rhythmanalysis.');
-    } else {
-      const eurythmic = activeTensions.filter(id => {
-        const p = TENSION_POLES[id];
-        return p.right && !p.left; // right poles tend toward familiarity/harmony
-      });
-      const arrhythmic = activeTensions.filter(id => {
-        const p = TENSION_POLES[id];
-        return p.left && !p.right;
-      });
-      if (arrhythmic.length > eurythmic.length) {
-        phenSuggestions.push('The phenomenological profile skews arrhythmic — toward disruption, novelty, and transformation. This space is likely experienced as dynamic and stimulating.');
-      } else if (eurythmic.length > arrhythmic.length) {
-        phenSuggestions.push('The phenomenological profile skews eurythmic — toward familiarity, continuity, and alignment. This space may reward return visits and slow attunement.');
-      } else {
-        phenSuggestions.push('The phenomenological tensions are balanced between arrhythmic and eurythmic qualities — a productive tension that may offer different encounters at different times.');
-      }
-    }
-    const binariesPresent = ['alterity','surprise','threshold','sanctuary'].filter(b => hasId('phen', b));
-    if (binariesPresent.length > 0) {
-      phenSuggestions.push(`The presence of ${listJoin(binariesPresent)} indicates this place has conditions for heightened experiential encounter — qualities that push beyond the everyday.`);
-    } else {
-      phenSuggestions.push('None of the awe binaries (alterity, surprise, threshold, sanctuary) are currently present. These qualities are often what distinguish an ordinary place from an awe-generating one.');
-    }
-  }
-  if (!phenSuggestions.length) phenSuggestions.push('The phenomenological conditions of this place are rich. Monitor how these experiential qualities shift with season, time of day, and changing programming.');
-
-  /* ── Temporal card ── */
-  const tempoSuggestions = [];
-  if (isActivation) {
-    if (!hasId('tempo','timeless') && !hasId('tempo','daily')) {
-      tempoSuggestions.push('Establish a reliably available anchor — a permanent planting, architectural element, or water feature — so that awe is accessible independently of events or seasons.');
-    }
-    if (!hasId('tempo','recurring')) {
-      tempoSuggestions.push('Introduce a recurring programming cycle — weekly, monthly, or seasonal events — to establish rhythmic expectations and the pleasure of anticipated return.');
-    }
-    if (!hasId('tempo','history') && !hasId('tempo','ephemeral')) {
-      tempoSuggestions.push('Engage the temporal extremes: ephemeral installations (one-time events) and historical interpretation (honoring the past) together expand the temporal range of the place.');
-    }
-    if (hasId('tempo','seasonal') && !hasId('morph','plants') && !hasId('morph','weather')) {
-      tempoSuggestions.push('The seasonal frequency calls for morphological reinforcement — plantings, water, or weather-sensitive materials that make the change of seasons perceptible and celebrated.');
-    }
-    if (!hasId('tempo','history') && (hasId('geo','civic') || hasId('geo','educational'))) {
-      tempoSuggestions.push('This location type has temporal depth — consider introducing historical interpretation through signage, public art, or naming to activate the frequency of history.');
-    }
-    if (propTempo.length) {
-      tempoSuggestions.push('Adding ' + listJoin(propTempo) + ' as proposed frequencies would expand the rhythmic profile of this place, creating new windows of availability for awe.');
-    }
-  } else {
-    // Analysis mode
-    if (tempoLabels.length === 0) {
-      tempoSuggestions.push('No temporal frequencies identified. Consider how often awe is reliably available at this site — is it always there, or only under specific conditions?');
-    } else if (tempoLabels.length === 1) {
-      tempoSuggestions.push(`This place operates primarily at a single temporal frequency (${tempoLabels[0].toLowerCase()}). A richer rhythmic profile would offer awe across multiple timescales.`);
-    } else {
-      tempoSuggestions.push(`This place operates across ${tempoLabels.length} temporal frequencies (${listJoin(tempoLabels.map(t=>t.toLowerCase()))}), suggesting a polyrhythmic environment. Each frequency addresses a different relationship with time.`);
-    }
-    if (hasId('tempo','timeless') || hasId('tempo','daily')) {
-      tempoSuggestions.push('The presence of timeless or daily frequencies means awe is reliably available at this site — a significant asset for everyday urban life.');
-    }
-    if (hasId('tempo','ephemeral') || hasId('tempo','periodic')) {
-      tempoSuggestions.push('Ephemeral or periodic frequencies introduce arrhythmic potential — the possibility of unexpected, unrepeatable encounter that disrupts the routine of daily life.');
-    }
-  }
-  if (!tempoSuggestions.length) tempoSuggestions.push('The temporal profile of this place is well-rounded. Continue to observe how different frequencies feel across the year and across different user groups.');
-
-  /* ── Cross-dimensional note ── */
-  let crossNote = '';
-  const totalActive = allItems().filter(i => i.state !== 'none').length;
-  const totalProposed = allItems().filter(i => i.state === 'proposed').length;
-  if (isActivation && totalProposed > 0) {
-    const eurythmicGoal = activeTensions.some(id => TENSION_POLES[id].right);
-    const arrhythmicGoal = activeTensions.some(id => TENSION_POLES[id].left);
-    if (arrhythmicGoal && !eurythmicGoal) {
-      crossNote = 'The proposed activation leans arrhythmic — toward disruption, novelty, and renewal. This is effective for stimulating awe, but consider whether the stable, familiar qualities of this place are being honored alongside the new.';
-    } else if (eurythmicGoal && !arrhythmicGoal) {
-      crossNote = 'The proposed activation leans eurythmic — toward harmony, continuity, and alignment. This can deepen the subtle dimensions of awe, but consider whether there are opportunities to introduce productive disruption or surprise.';
-    } else if (totalProposed > 5) {
-      crossNote = 'A substantial rhythmactivation is proposed. Consider sequencing these interventions — beginning with anchoring, stable elements before layering dynamic and ephemeral ones.';
-    }
-  } else if (!isActivation && totalActive < 4) {
-    crossNote = 'This rhythmanalysis is preliminary. Continue observing this place across different times of day and seasons to build a more complete rhythmic portrait.';
-  }
-
-  /* ── Render ── */
-  document.getElementById('out-eyebrow').textContent = isActivation ? 'Rhythmactivation' : 'Rhythmanalysis';
-  document.getElementById('out-title').textContent   = isActivation ? 'Activation Strategy' : 'Rhythmic Profile';
-
-  const locName = document.getElementById('loc-name').value.trim();
-  const locDate = document.getElementById('loc-date').value;
-  let meta = '';
-  if (locName) meta += locName;
-  if (locDate) meta += (meta ? ' · ' : '') + fmtDate(locDate);
-  meta += (meta ? ' · ' : '') + 'Generated ' + fmtDate(new Date().toISOString().slice(0,10));
-  document.getElementById('out-meta').textContent = meta;
-
+  if (!narrative.trim()) narrative = 'Build rhythms in the diagram to generate a rhythmic profile for this place.';
   document.getElementById('out-narrative').textContent = narrative;
 
-  // Card titles / frames
-  if (isActivation) {
-    document.getElementById('morph-title').textContent = 'New Forms';
-    document.getElementById('morph-frame').textContent = 'Material and sensory interventions to enrich the conditions for awe';
-    document.getElementById('phen-title').textContent  = 'Deepen Experience';
-    document.getElementById('phen-frame').textContent  = 'Phenomenological interventions to cultivate richer encounters and heightened awareness';
-    document.getElementById('tempo-title').textContent = 'Expand Rhythms';
-    document.getElementById('tempo-frame').textContent = 'Temporal interventions to broaden when and how awe is accessible';
+  /* ── Rhythm threads ── */
+  const threadsEl = document.getElementById('rhythm-threads');
+  threadsEl.innerHTML = '';
+  allActive.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'thread-card';
+    card.style.borderLeftColor = r.color;
+    card.style.transitionDelay = (i * 80) + 'ms';
+
+    const cols = ['geo','morph','phen','tempo'];
+    const colLabels = { geo:'Geo', morph:'Form', phen:'Phen', tempo:'Time' };
+    let chainHtml = '';
+    cols.forEach((col, ci) => {
+      const ids = [...r.items[col]];
+      if (!ids.length) return;
+      if (chainHtml) chainHtml += `<span class="thread-arrow">→</span>`;
+      chainHtml += `<span class="thread-col-label">${colLabels[col]}</span>`;
+      chainHtml += ids.map(id => `<span class="thread-item">${label(col,id)}</span>`).join(' ');
+    });
+
+    // Per-rhythm description
+    const desc = describeRhythm(r, isActivation);
+
+    card.innerHTML = `
+      <div class="thread-head">
+        <span class="thread-swatch" style="background:${r.color}"></span>
+        <span class="thread-label">${r.label}</span>
+        <span class="thread-status ${r.status==='proposed'?'thread-proposed':'thread-existing'}">${r.status}</span>
+      </div>
+      <div class="thread-chain">${chainHtml || '<em style="color:var(--stone);font-style:italic;font-size:.85em">No items selected</em>'}</div>
+      ${desc ? `<div class="thread-desc">${desc}</div>` : ''}
+    `;
+    threadsEl.appendChild(card);
+    requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('anim')));
+  });
+
+  /* ── Strategy cards (activation mode only or if enough rhythms) ── */
+  const strategyGrid = document.getElementById('strategy-grid');
+  if (isActivation || allActive.length > 1) {
+    strategyGrid.style.display = '';
+    buildStrategyCards(existing, proposed, isActivation);
   } else {
-    document.getElementById('morph-title').textContent = 'What Is Here';
-    document.getElementById('morph-frame').textContent = 'The material and sensory conditions currently present in this place';
-    document.getElementById('phen-title').textContent  = 'How It Feels';
-    document.getElementById('phen-frame').textContent  = 'The phenomenological qualities and tensions shaping the experience of this place';
-    document.getElementById('tempo-title').textContent = 'When It Happens';
-    document.getElementById('tempo-frame').textContent = 'The temporal rhythms through which awe manifests at this site';
+    strategyGrid.style.display = 'none';
   }
 
-  renderList('morph-list', morphSuggestions);
-  renderList('phen-list',  phenSuggestions);
-  renderList('tempo-list', tempoSuggestions);
-
+  /* ── Cross note ── */
   const crossEl = document.getElementById('cross-note');
+  let crossNote = '';
+  if (isActivation && proposed.length === 0) {
+    crossNote = 'Switch to Rhythmactivation mode and click "+ Propose New" to add proposed rhythms and see how they compare to existing ones.';
+  } else if (!isActivation && existing.length >= 3) {
+    const tempoRange = unique(existing.flatMap(r => [...r.items.tempo]));
+    if (tempoRange.length >= 4) {
+      crossNote = `With ${tempoRange.length} temporal frequencies across ${existing.length} rhythms, this place has a rich polyrhythmic profile. Consider switching to Rhythmactivation to explore how new rhythms might fill remaining gaps.`;
+    }
+  }
   crossEl.style.display = crossNote ? '' : 'none';
   crossEl.textContent = crossNote;
 
+  /* ── Show output ── */
   const section = document.getElementById('output-section');
   section.classList.add('visible');
-  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  section.scrollIntoView({ behavior:'smooth', block:'start' });
+}
 
-  document.querySelectorAll('.strategy-card').forEach(c => c.classList.remove('anim'));
-  document.querySelectorAll('.strategy-card').forEach((c, i) => {
-    setTimeout(() => c.classList.add('anim'), 120 + i * 110);
-  });
+/* ── Per-rhythm description ── */
+function describeRhythm(r, isActivation) {
+  const morphIds = [...r.items.morph];
+  const phenIds  = [...r.items.phen];
+  const tempoIds = [...r.items.tempo];
+  const geoIds   = [...r.items.geo];
+
+  let parts = [];
+
+  if (r.status === 'proposed' && isActivation) {
+    if (morphIds.length) parts.push(`Introducing ${listJoin(morphIds.map(id=>label('morph',id)))} as new morphological forms would add ${hasDynamic(morphIds) ? 'living, non-human rhythms' : 'sensory richness'} to this place.`);
+    if (phenIds.some(id => ['alterity','threshold','sanctuary'].includes(id))) parts.push('The proposed phenomenological additions aim to deepen the quality of encounter — moving beyond the visual toward immersive, embodied experience.');
+    if (tempoIds.length) parts.push(`Activating ${listJoin(tempoIds.map(id=>id.toLowerCase()))} frequencies would expand when awe is available at this site.`);
+  } else {
+    // Existing rhythm description
+    const morphList = listJoin(morphIds.map(id=>label('morph',id)));
+    const tempoList = listJoin(tempoIds.map(id=>id.toLowerCase()));
+    if (morphIds.length && tempoIds.length) {
+      const isStable = tempoIds.includes('timeless') || tempoIds.includes('daily');
+      parts.push(`${morphList ? 'Drawing on ' + morphList + ', this' : 'This'} rhythm operates at a ${isStable ? 'reliably stable' : 'more ephemeral or periodic'} frequency${tempoList ? ' — ' + tempoList : ''}.`);
+    }
+    if (phenIds.includes('alterity') || phenIds.includes('surprise')) parts.push('The presence of alterity or surprise suggests this rhythm carries arrhythmic potential — encounters with the unexpected that interrupt the everyday.');
+    if (phenIds.includes('sanctuary') || phenIds.includes('threshold')) parts.push('Threshold and sanctuary qualities indicate a defined experiential register — a felt sense of entering or belonging to a distinct place.');
+  }
+
+  return parts.join(' ');
+}
+
+function hasDynamic(morphIds) {
+  return morphIds.some(id => ['animals','plants','weather','sounds','smells','people'].includes(id));
+}
+
+/* ── Build strategy cards ── */
+function buildStrategyCards(existing, proposed, isActivation) {
+  const allExisting = existing;
+  const allMorphEx  = unique(allExisting.flatMap(r => [...r.items.morph]));
+  const allPhenEx   = unique(allExisting.flatMap(r => [...r.items.phen]));
+  const allTempoEx  = unique(allExisting.flatMap(r => [...r.items.tempo]));
+  const allMorphPr  = unique(proposed.flatMap(r => [...r.items.morph]));
+  const allPhenPr   = unique(proposed.flatMap(r => [...r.items.phen]));
+  const allTempoPr  = unique(proposed.flatMap(r => [...r.items.tempo]));
+
+  // Morphological
+  const morphSugs = [];
+  if (isActivation) {
+    if (allMorphPr.length) morphSugs.push(`The proposed rhythms introduce ${listJoin(allMorphPr.map(id=>label('morph',id)))} — consider how these new forms relate spatially and temporally to existing ones.`);
+    if (!allMorphEx.includes('light') && !allMorphPr.includes('light')) morphSugs.push('Lighting interventions — directional, seasonal, or reactive — could extend the temporal range of existing rhythms into the evening.');
+    if (!allMorphEx.some(id=>['animals','plants','weather'].includes(id)) && !allMorphPr.some(id=>['animals','plants','weather'].includes(id))) morphSugs.push('Neither existing nor proposed rhythms include living or atmospheric forms. Introducing nature, animals, or weather-responsive elements would add non-human rhythms and conditions for alterity.');
+    if (!allMorphPr.includes('water') && !allMorphEx.includes('water')) morphSugs.push('Water features (reflecting pools, channels, fountains) introduce a reliably non-human rhythm and could anchor a new timeless frequency.');
+  } else {
+    if (allMorphEx.length < 4) morphSugs.push('The morphological palette is relatively narrow. A richer range of forms — living, sensory, social — would support a wider range of awe conditions.');
+    if (allMorphEx.length >= 4) morphSugs.push(`${allMorphEx.length} morphological elements are present across these rhythms. Consider which are stable (architecture, infrastructure) versus dynamic (weather, animals, events).`);
+    const stable = allMorphEx.filter(id => ['architecture','infrastructure','vistas','water'].includes(id));
+    const dynamic = allMorphEx.filter(id => ['animals','weather','events','people','plants','sounds'].includes(id));
+    if (stable.length && dynamic.length) morphSugs.push(`The mix of stable forms (${listJoin(stable.map(id=>label('morph',id)))}) and dynamic ones (${listJoin(dynamic.map(id=>label('morph',id)))}) suggests a polyrhythmic environment capable of different kinds of awe.`);
+  }
+  if (!morphSugs.length) morphSugs.push('Continue observing which morphological elements shift across seasons, times of day, and weather conditions — these transitions are often the sites of awe.');
+
+  // Phenomenological
+  const phenSugs = [];
+  if (isActivation) {
+    const newPhen = allPhenPr.filter(id => !allPhenEx.includes(id));
+    if (newPhen.length) phenSugs.push(`Proposed rhythms introduce new phenomenological qualities: ${listJoin(newPhen.map(id=>label('phen',id)))}. These expand the experiential range of this place.`);
+    const missing = ['alterity','threshold','sanctuary','surprise'].filter(id => !allPhenEx.includes(id) && !allPhenPr.includes(id));
+    if (missing.length) phenSugs.push(`Neither existing nor proposed rhythms include ${listJoin(missing)}. These binaries often distinguish an ordinary place from a genuinely awe-generating one.`);
+    if (allPhenPr.includes('threshold') || allPhenPr.includes('sanctuary')) phenSugs.push('Threshold and sanctuary conditions can be created through material transitions, lighting changes, or spatial enclosure — consider where these moments might be situated in relation to existing forms.');
+  } else {
+    const tensions = allPhenEx.filter(id => ['formal','social','ecological','evaluative','temporal-t','spatial'].includes(id));
+    const binaries = allPhenEx.filter(id => ['alterity','surprise','threshold','sanctuary'].includes(id));
+    if (tensions.length) phenSugs.push(`Active tensions — ${listJoin(tensions.map(id=>label('phen',id)))} — shape the quality of awe. Consider whether each tension tends toward arrhythmic disruption or eurythmic alignment.`);
+    if (!binaries.length) phenSugs.push('None of the four awe binaries (alterity, surprise, threshold, sanctuary) are present across any rhythm. These experiential qualities often tip an encounter from ordinary to memorable.');
+    if (binaries.includes('alterity')) phenSugs.push('The presence of alterity indicates encounters with something genuinely other — non-human, uncontrollable, or radically different. This is a significant awe asset.');
+  }
+  if (!phenSugs.length) phenSugs.push('The phenomenological profile of these rhythms is rich. Continue to observe how tensions shift across seasons, user groups, and times of day.');
+
+  // Temporal
+  const tempoSugs = [];
+  if (isActivation) {
+    const newTempo = allTempoPr.filter(id => !allTempoEx.includes(id));
+    if (newTempo.length) tempoSugs.push(`Proposed rhythms activate ${listJoin(newTempo.map(id=>id.toLowerCase()))} frequencies that are not currently present — this expands the temporal range of awe at this site.`);
+    if (!allTempoEx.includes('timeless') && !allTempoPr.includes('timeless')) tempoSugs.push('No timeless frequency exists in current or proposed rhythms. Consider introducing a permanently available anchor — a water feature, significant tree, or architectural element — that is always there.');
+    if (!allTempoEx.includes('recurring') && !allTempoPr.includes('recurring')) tempoSugs.push('Recurring programming (weekly, monthly) creates temporal expectations and the pleasure of anticipated return — a reliable rhythm that deepens familiarity.');
+  } else {
+    const tempoRange = allTempoEx.length;
+    if (tempoRange <= 2) tempoSugs.push(`This place operates at only ${tempoRange} temporal frequenc${tempoRange===1?'y':'ies'}. A fuller rhythmic profile would offer different kinds of awe across multiple timescales.`);
+    if (tempoRange >= 4) tempoSugs.push(`With ${tempoRange} temporal frequencies across these rhythms, this place is temporally rich — offering different encounters at different moments.`);
+    if (allTempoEx.includes('timeless') || allTempoEx.includes('daily')) tempoSugs.push('The presence of timeless or daily frequencies means awe is reliably available here — a significant urban asset.');
+    if (allTempoEx.includes('ephemeral') && !allTempoEx.includes('timeless')) tempoSugs.push('Without a timeless anchor, ephemeral awe may feel rare or difficult to plan for. Consider what could be permanently present to ground the more fleeting rhythms.');
+  }
+  if (!tempoSugs.length) tempoSugs.push('The temporal profile is balanced. Continue observing how different rhythms feel at different times of year and across different user groups.');
+
+  // Titles
+  document.getElementById('s-morph-title').textContent = isActivation ? 'New Forms' : 'Material Conditions';
+  document.getElementById('s-morph-frame').textContent = isActivation ? 'How proposed morphologies relate to and augment existing forms' : 'The material and sensory foundations of these rhythms';
+  document.getElementById('s-phen-title').textContent  = isActivation ? 'Experiential Shifts' : 'Experiential Quality';
+  document.getElementById('s-phen-frame').textContent  = isActivation ? 'How proposed rhythms change the phenomenological character of this place' : 'The tensions and binaries shaping how this place is experienced';
+  document.getElementById('s-tempo-title').textContent = isActivation ? 'Expanded Frequencies' : 'Temporal Range';
+  document.getElementById('s-tempo-frame').textContent = isActivation ? 'How proposed rhythms expand when and how awe is available' : 'The temporal rhythms through which awe manifests at this site';
+
+  renderList('s-morph-list', morphSugs);
+  renderList('s-phen-list',  phenSugs);
+  renderList('s-tempo-list', tempoSugs);
+
+  // Animate cards
+  document.querySelectorAll('.s-card').forEach(c => c.classList.remove('anim'));
+  document.querySelectorAll('.s-card').forEach((c,i) => setTimeout(() => c.classList.add('anim'), 120 + i*100));
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -1360,25 +1282,19 @@ function generate() {
 function renderList(id, items) {
   const ul = document.getElementById(id);
   ul.innerHTML = '';
-  items.forEach(text => {
-    const li = document.createElement('li');
-    li.textContent = text;
-    ul.appendChild(li);
-  });
+  items.forEach(text => { const li = document.createElement('li'); li.textContent = text; ul.appendChild(li); });
 }
 
-function listJoin(arr) {
-  if (!arr.length) return '';
-  if (arr.length === 1) return arr[0];
-  if (arr.length === 2) return arr[0] + ' and ' + arr[1];
-  return arr.slice(0, -1).join(', ') + ', and ' + arr[arr.length - 1];
+function getSharedItems(col, rhythmList) {
+  if (rhythmList.length < 2) return [];
+  const first = [...rhythmList[0].items[col]];
+  return first.filter(id => rhythmList.every(r => r.items[col].has(id)));
 }
 
-function fmtDate(str) {
-  if (!str) return '';
-  const d = new Date(str + 'T12:00:00');
-  return d.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-}
+function unique(arr) { return [...new Set(arr)]; }
+
+/* ── Init ── */
+renderSidebar();
 </script>
 </body>
 </html>
