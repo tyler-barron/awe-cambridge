@@ -6,743 +6,457 @@
 <title>Rhythm Analysis & Activation — Awe in Cambridge</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono&display=swap" rel="stylesheet">
 <style>
-/* ── Tokens ─────────────────────────────────────────────────────────────── */
 :root {
   --ink:       #1a1a1a;
-  --charcoal:  #2c2c2c;
   --parchment: #f6f6f6;
   --linen:     #e6e6e4;
   --stone:     #7a7878;
-  --accent:    #8c4518;
   --muted:     #4a4a4a;
-
-  --geo:   #4a7a8a;
-  --morph: #8c4518;
-  --phen:  #6b5b8a;
-  --tempo: #a07c2a;
+  --accent:    #8c4518;
+  --geo:       #4a7a8a;
+  --morph:     #8c4518;
+  --phen:      #6b5b8a;
+  --tempo:     #a07c2a;
+  --geo-rgb:   74,122,138;
+  --morph-rgb: 140,69,24;
+  --phen-rgb:  107,91,138;
+  --tempo-rgb: 160,124,42;
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-
 body {
-  min-height: 100%;
   background: var(--parchment);
   color: var(--ink);
   font-family: 'Cormorant Garamond', serif;
-  line-height: 1.6;
+  line-height: 1.5;
 }
-
-/* ── Grain overlay ───────────────────────────────────────────────────────── */
 body::before {
-  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 998; opacity: .18;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:998; opacity:.15;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
 }
 
-/* ── Layout ──────────────────────────────────────────────────────────────── */
-.page-wrap {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 40px 120px;
-}
-@media (max-width: 600px) { .page-wrap { padding: 0 20px 80px; } }
+/* ── Page wrapper ───────────────────────────────────────────────────────── */
+.page-wrap { max-width: 1440px; margin: 0 auto; padding: 0 36px 120px; }
+@media (max-width: 600px) { .page-wrap { padding: 0 16px 80px; } }
 
-/* ── Header ──────────────────────────────────────────────────────────────── */
+/* ── Header ─────────────────────────────────────────────────────────────── */
 .site-header {
-  padding: 36px 0 28px;
-  border-bottom: 1px solid rgba(140,69,24,.18);
-  margin-bottom: 40px;
+  padding: 32px 0 24px;
+  border-bottom: 1px solid rgba(140,69,24,.15);
+  margin-bottom: 32px;
 }
-
 .back-link {
   font-family: 'Space Mono', monospace;
-  font-size: 10px;
-  letter-spacing: .35em;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-decoration: none;
-  display: inline-block;
-  margin-bottom: 16px;
-  transition: color .2s;
+  font-size: 10px; letter-spacing: .35em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none;
+  display: inline-block; margin-bottom: 14px; transition: color .2s;
 }
 .back-link:hover { color: var(--accent); }
-
-.eyebrow {
+.header-body { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+.header-text .eyebrow {
   font-family: 'Space Mono', monospace;
-  font-size: 10px;
-  letter-spacing: .3em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 8px;
+  font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 6px;
 }
-
 .page-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 300;
-  font-size: clamp(2.2rem, 5vw, 3.4rem);
-  letter-spacing: -.01em;
-  line-height: 1.1;
-  margin-bottom: 8px;
+  font-weight: 300; font-size: clamp(1.8rem, 4.5vw, 3rem);
+  letter-spacing: -.01em; line-height: 1.1; margin-bottom: 6px;
 }
-
 .page-subtitle {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-weight: 300;
-  font-size: 1.05rem;
-  color: var(--muted);
-  margin-bottom: 28px;
+  font-style: italic; font-weight: 300; font-size: 1rem; color: var(--muted);
 }
-
-/* ── Location inputs ─────────────────────────────────────────────────────── */
-.location-row {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex: 1;
-  min-width: 200px;
-}
-
+.location-inputs { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; }
+.input-group { display: flex; flex-direction: column; gap: 5px; }
 .input-label {
   font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .3em;
-  text-transform: uppercase;
-  color: var(--muted);
+  font-size: 8.5px; letter-spacing: .25em; text-transform: uppercase; color: var(--stone);
 }
-
 .text-input, .date-input {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1rem;
-  color: var(--ink);
-  background: rgba(255,255,255,.6);
-  border: 1px solid rgba(26,26,26,.18);
-  border-radius: 3px;
-  padding: 8px 12px;
-  outline: none;
-  transition: border-color .2s;
+  font-family: 'Cormorant Garamond', serif; font-size: .95rem;
+  color: var(--ink); background: rgba(255,255,255,.6);
+  border: 1px solid rgba(26,26,26,.18); border-radius: 3px;
+  padding: 7px 11px; outline: none; transition: border-color .2s; min-width: 180px;
 }
-.text-input:focus, .date-input:focus {
-  border-color: var(--accent);
+.text-input:focus, .date-input:focus { border-color: var(--accent); }
+
+/* ── Mode Toggle ─────────────────────────────────────────────────────────── */
+.mode-bar {
+  display: flex; gap: 0; margin-bottom: 28px;
+  border: 1px solid rgba(26,26,26,.15); border-radius: 4px;
+  overflow: hidden; width: fit-content;
+}
+.mode-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 9.5px; letter-spacing: .22em; text-transform: uppercase;
+  padding: 10px 24px; background: transparent; border: none;
+  cursor: pointer; color: var(--muted); transition: background .18s, color .18s;
+  display: flex; align-items: center; gap: 8px;
+}
+.mode-btn + .mode-btn { border-left: 1px solid rgba(26,26,26,.15); }
+.mode-btn:hover:not(.active) { background: rgba(26,26,26,.04); }
+.mode-btn.active { background: var(--ink); color: #fff; }
+.mode-btn .mode-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  border: 1.5px solid currentColor; flex-shrink: 0;
+}
+.mode-btn.active .mode-dot { background: currentColor; }
+.mode-desc {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: .9rem; color: var(--muted);
+  margin-left: 4px; margin-bottom: 22px; line-height: 1.5; max-width: 700px;
 }
 
-.divider {
-  height: 1px;
-  background: rgba(26,26,26,.1);
-  margin: 40px 0;
-}
-
-/* ── Analysis grid ───────────────────────────────────────────────────────── */
-.analysis-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  align-items: start;
-}
-
-@media (max-width: 1100px) {
-  .analysis-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 640px) {
-  .analysis-grid { grid-template-columns: 1fr; }
-}
-
-/* ── Analysis column ─────────────────────────────────────────────────────── */
-.analysis-col {
-  background: rgba(255,255,255,.4);
+/* ── Diagram outer ───────────────────────────────────────────────────────── */
+.diagram-outer {
+  position: relative;
+  background: rgba(255,255,255,.35);
   border: 1px solid rgba(26,26,26,.1);
-  border-radius: 3px;
-  border-top-width: 3px;
-  padding: 22px 18px 24px;
+  border-radius: 4px;
+  overflow: visible;
+  margin-bottom: 36px;
+}
+
+/* SVG connections layer */
+.conn-svg {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; z-index: 10;
+  overflow: visible;
+}
+
+/* Dynamic/Stable axis bar */
+.axis-wrap {
+  position: absolute; left: -36px; top: 0; bottom: 0;
+  width: 28px; display: flex; flex-direction: column; align-items: center;
+  padding: 48px 0 24px;
+}
+.axis-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 7.5px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--stone); writing-mode: vertical-rl;
+}
+.axis-label.ax-top { transform: rotate(180deg); margin-bottom: 10px; }
+.axis-label.ax-bot { margin-top: 10px; }
+.axis-line {
+  flex: 1; width: 1px;
+  background: linear-gradient(to bottom, rgba(74,122,138,.5), rgba(160,124,42,.5));
+}
+
+/* ── Four-column grid ───────────────────────────────────────────────────── */
+.diagram-cols {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr 1.35fr 1fr;
+}
+
+/* ── Column wrap ─────────────────────────────────────────────────────────── */
+.col-wrap {
+  padding: 24px 0 28px;
   position: relative;
 }
+.col-wrap + .col-wrap {
+  border-left: 1px solid rgba(26,26,26,.08);
+}
+.col-wrap.col-geo   { background: rgba(var(--geo-rgb),.03); }
+.col-wrap.col-morph { background: rgba(var(--morph-rgb),.03); }
+.col-wrap.col-phen  { background: rgba(var(--phen-rgb),.03); }
+.col-wrap.col-tempo { background: rgba(var(--tempo-rgb),.03); }
 
-.analysis-col.col-geo   { border-top-color: var(--geo); }
-.analysis-col.col-morph { border-top-color: var(--morph); }
-.analysis-col.col-phen  { border-top-color: var(--phen); }
-.analysis-col.col-tempo { border-top-color: var(--tempo); }
-
+/* Column header */
+.col-head { padding: 0 18px 16px; border-bottom: 1px solid rgba(26,26,26,.07); margin-bottom: 12px; }
 .col-num {
   font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .25em;
-  text-transform: uppercase;
-  margin-bottom: 2px;
+  font-size: 8px; letter-spacing: .2em; text-transform: uppercase; margin-bottom: 2px;
 }
 .col-geo   .col-num { color: var(--geo); }
 .col-morph .col-num { color: var(--morph); }
 .col-phen  .col-num { color: var(--phen); }
 .col-tempo .col-num { color: var(--tempo); }
-
-.col-name {
+.col-cat {
   font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 10px;
+  font-size: 7.5px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--stone); margin-bottom: 6px;
 }
-
 .col-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 300;
-  font-size: 1.45rem;
-  letter-spacing: -.01em;
-  margin-bottom: 18px;
-  line-height: 1.2;
+  font-weight: 300; font-size: 1.4rem;
+  letter-spacing: -.01em; line-height: 1.1;
 }
 
-/* ── Stability spectrum ───────────────────────────────────────────────────── */
-.stability-block {
-  background: rgba(26,26,26,.03);
-  border: 1px solid rgba(26,26,26,.07);
-  border-radius: 3px;
-  padding: 12px 14px 14px;
-  margin-bottom: 22px;
-}
-
-.stability-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 4px;
-}
-
-.stability-label {
+/* Section labels within column */
+.col-section {
   font-family: 'Space Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: var(--muted);
+  font-size: 7.5px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--stone); padding: 10px 18px 6px;
+  border-top: 1px solid rgba(26,26,26,.06);
+  margin-top: 8px;
 }
+.col-section:first-of-type { border-top: none; margin-top: 0; }
 
-.stability-value {
+/* ── Item row ───────────────────────────────────────────────────────────── */
+.item-row {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 18px; cursor: pointer;
+  transition: background .12s;
+  position: relative;
+}
+.item-row:hover { background: rgba(26,26,26,.04); }
+
+.item-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  border: 1.5px solid rgba(26,26,26,.25);
+  flex-shrink: 0; transition: all .15s;
+}
+.item-name {
   font-family: 'Space Mono', monospace;
-  font-size: 8.5px;
-  color: var(--ink);
-}
-
-.stability-info {
-  font-family: 'Space Mono', monospace;
-  font-size: 7.5px;
-  color: var(--stone);
-  margin-bottom: 10px;
-  line-height: 1.5;
-}
-
-.stability-poles {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 4px;
-}
-
-.stability-pole {
-  font-family: 'Space Mono', monospace;
-  font-size: 8px;
-  color: var(--muted);
-  letter-spacing: .05em;
-}
-
-/* ── Range sliders (stability + tension) ─────────────────────────────────── */
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 3px;
-  background: var(--linen);
-  border-radius: 2px;
-  outline: none;
-  cursor: pointer;
-}
-
-input[type="range"].geo-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 14px; height: 14px;
-  background: var(--geo);
-  border-radius: 50%;
-  cursor: pointer;
-  transition: transform .15s;
-}
-input[type="range"].geo-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
-input[type="range"].geo-slider::-moz-range-thumb {
-  width: 14px; height: 14px; background: var(--geo); border: none; border-radius: 50%; cursor: pointer;
-}
-
-input[type="range"].morph-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 14px; height: 14px;
-  background: var(--morph);
-  border-radius: 50%;
-  cursor: pointer;
-  transition: transform .15s;
-}
-input[type="range"].morph-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
-input[type="range"].morph-slider::-moz-range-thumb {
-  width: 14px; height: 14px; background: var(--morph); border: none; border-radius: 50%; cursor: pointer;
-}
-
-input[type="range"].phen-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 14px; height: 14px;
-  background: var(--phen);
-  border-radius: 50%;
-  cursor: pointer;
-  transition: transform .15s;
-}
-input[type="range"].phen-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
-input[type="range"].phen-slider::-moz-range-thumb {
-  width: 14px; height: 14px; background: var(--phen); border: none; border-radius: 50%; cursor: pointer;
-}
-
-input[type="range"].tempo-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 14px; height: 14px;
-  background: var(--tempo);
-  border-radius: 50%;
-  cursor: pointer;
-  transition: transform .15s;
-}
-input[type="range"].tempo-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
-input[type="range"].tempo-slider::-moz-range-thumb {
-  width: 14px; height: 14px; background: var(--tempo); border: none; border-radius: 50%; cursor: pointer;
-}
-
-/* ── Toggle tags ─────────────────────────────────────────────────────────── */
-.section-label {
-  font-family: 'Space Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.tag-note {
-  font-family: 'Space Mono', monospace;
-  font-size: 7.5px;
-  color: var(--stone);
-  margin-bottom: 10px;
-  font-style: normal;
-}
-
-.tags-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 4px;
-}
-
-.tag-btn {
-  font-family: 'Space Mono', monospace;
-  font-size: 8.5px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  border: 1px solid currentColor;
-  background: transparent;
-  cursor: pointer;
-  transition: background .15s, color .15s;
-  letter-spacing: .04em;
+  font-size: 8.5px; letter-spacing: .06em;
+  color: var(--muted); transition: color .15s;
   line-height: 1.4;
 }
 
-.col-geo .tag-btn   { color: var(--geo); }
-.col-morph .tag-btn { color: var(--morph); }
-.col-phen .tag-btn  { color: var(--phen); }
+/* Existing state */
+.col-geo   .item-row.existing { background: rgba(var(--geo-rgb),.1); }
+.col-morph .item-row.existing { background: rgba(var(--morph-rgb),.1); }
+.col-phen  .item-row.existing { background: rgba(var(--phen-rgb),.1); }
+.col-tempo .item-row.existing { background: rgba(var(--tempo-rgb),.1); }
 
-.col-geo .tag-btn.selected   { background: var(--geo);   color: #fff; }
-.col-morph .tag-btn.selected { background: var(--morph); color: #fff; }
-.col-phen .tag-btn.selected  { background: var(--phen);  color: #fff; }
+.col-geo   .item-row.existing .item-dot { background: var(--geo);   border-color: var(--geo); }
+.col-morph .item-row.existing .item-dot { background: var(--morph); border-color: var(--morph); }
+.col-phen  .item-row.existing .item-dot { background: var(--phen);  border-color: var(--phen); }
+.col-tempo .item-row.existing .item-dot { background: var(--tempo); border-color: var(--tempo); }
 
-/* ── Sub-section separator ───────────────────────────────────────────────── */
-.sub-divider {
-  height: 1px;
-  background: rgba(26,26,26,.08);
-  margin: 18px 0 16px;
-}
+.col-geo   .item-row.existing .item-name { color: var(--geo); }
+.col-morph .item-row.existing .item-name { color: var(--morph); }
+.col-phen  .item-row.existing .item-name { color: var(--phen); }
+.col-tempo .item-row.existing .item-name { color: var(--tempo); }
 
-/* ── Tension sliders ─────────────────────────────────────────────────────── */
+/* Proposed state (activation mode additions) */
+.col-geo   .item-row.proposed { background: rgba(var(--geo-rgb),.05); }
+.col-morph .item-row.proposed { background: rgba(var(--morph-rgb),.05); }
+.col-phen  .item-row.proposed { background: rgba(var(--phen-rgb),.05); }
+.col-tempo .item-row.proposed { background: rgba(var(--tempo-rgb),.05); }
+
+.col-geo   .item-row.proposed .item-dot { border-color: var(--geo);   border-style: dashed; }
+.col-morph .item-row.proposed .item-dot { border-color: var(--morph); border-style: dashed; }
+.col-phen  .item-row.proposed .item-dot { border-color: var(--phen);  border-style: dashed; }
+.col-tempo .item-row.proposed .item-dot { border-color: var(--tempo); border-style: dashed; }
+
+.col-geo   .item-row.proposed .item-name { color: var(--geo);   font-style: italic; }
+.col-morph .item-row.proposed .item-name { color: var(--morph); font-style: italic; }
+.col-phen  .item-row.proposed .item-name { color: var(--phen);  font-style: italic; }
+.col-tempo .item-row.proposed .item-name { color: var(--tempo); font-style: italic; }
+
+/* ── Tension items (special) ─────────────────────────────────────────────── */
 .tension-row {
-  margin-bottom: 14px;
+  padding: 8px 18px; cursor: pointer;
+  transition: background .12s; position: relative;
 }
-.tension-poles {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 4px;
-}
-.tension-pole {
+.tension-row:hover { background: rgba(26,26,26,.04); }
+
+.tension-type {
   font-family: 'Space Mono', monospace;
-  font-size: 7.5px;
-  color: var(--muted);
-  letter-spacing: .04em;
+  font-size: 7.5px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--stone); margin-bottom: 5px;
 }
-
-/* ── Binary toggles ──────────────────────────────────────────────────────── */
-.binaries-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.tension-poles-wrap { display: flex; align-items: center; gap: 6px; }
+.tension-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  border: 1.5px solid rgba(26,26,26,.25); flex-shrink: 0; transition: all .15s;
 }
-
-.binary-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+.t-poles {
+  display: flex; align-items: center; gap: 4px; flex: 1;
 }
-
-.binary-label-wrap {
-  display: flex;
-  flex-direction: column;
-}
-
-.binary-name {
+.pole-chip {
   font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--ink);
+  font-size: 7.5px; letter-spacing: .06em;
+  padding: 2px 7px; border-radius: 2px;
+  border: 1px solid rgba(26,26,26,.18); background: transparent;
+  color: var(--muted); cursor: pointer; transition: all .12s; line-height: 1.4;
 }
-
-.binary-desc {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: .8rem;
-  color: var(--muted);
-  line-height: 1.3;
-  margin-top: 2px;
+.pole-chip:hover { background: rgba(26,26,26,.06); }
+.col-phen .pole-chip.active {
+  background: rgba(var(--phen-rgb),.15);
+  border-color: var(--phen); color: var(--phen);
 }
-
-/* CSS toggle switch */
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 36px;
-  height: 20px;
-  flex-shrink: 0;
-}
-.toggle-switch input { opacity: 0; width: 0; height: 0; }
-.toggle-track {
-  position: absolute;
-  cursor: pointer;
-  inset: 0;
-  background: var(--linen);
-  border-radius: 20px;
-  transition: background .2s;
-  border: 1px solid rgba(26,26,26,.15);
-}
-.toggle-track::after {
-  content: '';
-  position: absolute;
-  left: 3px; top: 3px;
-  width: 12px; height: 12px;
-  background: #fff;
-  border-radius: 50%;
-  transition: transform .2s, background .2s;
-  box-shadow: 0 1px 3px rgba(0,0,0,.2);
-}
-.toggle-switch input:checked + .toggle-track {
-  background: var(--phen);
-  border-color: var(--phen);
-}
-.toggle-switch input:checked + .toggle-track::after {
-  transform: translateX(16px);
-}
-
-/* ── Temporality spectrum ─────────────────────────────────────────────────── */
-.tempo-spectrum {
-  display: flex;
-  gap: 10px;
-  position: relative;
-}
-
-.tempo-gradient-bar {
-  width: 6px;
-  border-radius: 3px;
-  flex-shrink: 0;
-  background: linear-gradient(to bottom,
-    rgba(160, 124, 42, 0.08) 0%,
-    rgba(160, 124, 42, 0.2) 20%,
-    rgba(160, 124, 42, 0.4) 40%,
-    rgba(160, 124, 42, 0.65) 65%,
-    rgba(160, 124, 42, 0.85) 82%,
-    rgba(160, 124, 42, 1.0) 100%
-  );
-}
-
-.tempo-options {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex: 1;
-}
-
-.tempo-card {
-  border: 1px solid rgba(160,124,42,.2);
-  border-radius: 3px;
-  padding: 9px 12px;
-  cursor: pointer;
-  transition: background .15s, border-color .15s;
-  background: transparent;
-  text-align: left;
-  width: 100%;
-}
-.tempo-card:hover {
-  background: rgba(160,124,42,.06);
-  border-color: rgba(160,124,42,.4);
-}
-.tempo-card.selected {
-  background: rgba(160,124,42,.12);
-  border-color: var(--tempo);
-}
-
-.tempo-card-name {
+.t-sep {
   font-family: 'Space Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--tempo);
-  margin-bottom: 2px;
-}
-.tempo-card-desc {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: .82rem;
-  color: var(--muted);
-  line-height: 1.3;
+  font-size: 7px; color: rgba(26,26,26,.3);
 }
 
-/* ── Morphology SVG network ───────────────────────────────────────────────── */
-.morph-network-wrap {
-  margin-top: 18px;
-  border-top: 1px solid rgba(26,26,26,.08);
-  padding-top: 14px;
-}
+.tension-row.existing { background: rgba(var(--phen-rgb),.08); }
+.tension-row.existing .tension-dot { background: var(--phen); border-color: var(--phen); }
+.tension-row.existing .tension-type { color: var(--phen); }
 
-.network-label {
+.tension-row.proposed { background: rgba(var(--phen-rgb),.04); }
+.tension-row.proposed .tension-dot { border-color: var(--phen); border-style: dashed; }
+.tension-row.proposed .tension-type { color: var(--phen); font-style: italic; }
+
+/* ── Hint below diagram ──────────────────────────────────────────────────── */
+.diagram-hint {
   font-family: 'Space Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 8px;
-  display: block;
+  font-size: 8px; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--stone); text-align: center; margin-bottom: 10px;
+}
+.mode-legend {
+  display: flex; align-items: center; justify-content: center; gap: 24px;
+  margin-bottom: 24px; flex-wrap: wrap;
+}
+.legend-item { display: flex; align-items: center; gap: 7px; }
+.legend-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  border: 1.5px solid var(--phen);
+}
+.legend-dot.filled { background: var(--phen); }
+.legend-dot.dashed { border-style: dashed; }
+.legend-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px; letter-spacing: .1em; color: var(--muted);
+}
+.legend-line-solid {
+  width: 20px; height: 1.5px; background: var(--geo); border-radius: 1px;
+}
+.legend-line-dashed {
+  width: 20px; height: 0; border-top: 1.5px dashed var(--geo);
 }
 
-#morph-svg {
-  width: 100%;
-  height: 340px;
-  display: block;
-}
-
-/* ── Generate button ─────────────────────────────────────────────────────── */
+/* ── Generate section ───────────────────────────────────────────────────── */
 .generate-section {
-  margin: 48px 0 56px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  margin: 8px 0 52px;
 }
-
 .generate-btn {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.05rem;
-  letter-spacing: .04em;
-  color: var(--accent);
-  background: transparent;
-  border: 1.5px solid var(--accent);
-  border-radius: 3px;
-  padding: 14px 48px;
-  cursor: pointer;
+  font-size: 1.05rem; letter-spacing: .04em;
+  color: var(--accent); background: transparent;
+  border: 1.5px solid var(--accent); border-radius: 3px;
+  padding: 13px 52px; cursor: pointer;
   transition: background .2s, color .2s, opacity .2s;
-  width: 100%;
-  max-width: 480px;
+  max-width: 480px; width: 100%;
 }
-.generate-btn:hover:not(:disabled) {
-  background: var(--accent);
-  color: #fff;
-}
-.generate-btn:disabled {
-  opacity: .35;
-  cursor: not-allowed;
-}
-
-.generate-note {
+.generate-btn:hover:not(:disabled) { background: var(--accent); color: #fff; }
+.generate-btn:disabled { opacity: .32; cursor: not-allowed; }
+.gen-note {
   font-family: 'Space Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .15em;
-  color: var(--stone);
-  text-transform: uppercase;
+  font-size: 8px; letter-spacing: .15em; text-transform: uppercase; color: var(--stone);
 }
 
-/* ── Output section ──────────────────────────────────────────────────────── */
+/* ── Output section ─────────────────────────────────────────────────────── */
 #output-section {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity .5s ease, transform .5s ease;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity .45s ease, transform .45s ease;
   pointer-events: none;
 }
-#output-section.visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
+#output-section.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
-.output-header {
-  margin-bottom: 32px;
+.output-head { margin-bottom: 28px; }
+.output-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: .28em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 6px;
 }
-
 .output-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 300;
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
-  letter-spacing: -.01em;
-  margin-bottom: 6px;
+  font-weight: 300; font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  letter-spacing: -.01em; margin-bottom: 4px; line-height: 1.15;
 }
-
-.output-subtitle {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-weight: 300;
-  font-size: 1rem;
-  color: var(--muted);
-  max-width: 600px;
-}
-
 .output-meta {
   font-family: 'Space Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: .2em;
-  color: var(--stone);
-  text-transform: uppercase;
-  margin-top: 10px;
+  font-size: 8px; letter-spacing: .18em; text-transform: uppercase; color: var(--stone);
 }
 
-.output-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-@media (max-width: 900px) {
-  .output-cards { grid-template-columns: 1fr; }
-}
-
-.output-card {
+/* Narrative box */
+.narrative-box {
   background: rgba(255,255,255,.5);
   border: 1px solid rgba(26,26,26,.1);
-  border-top-width: 3px;
-  border-radius: 3px;
-  padding: 22px 20px 24px;
-  opacity: 0;
-  transform: translateY(16px);
+  border-left: 3px solid var(--accent);
+  border-radius: 3px; padding: 20px 24px;
+  margin-bottom: 28px;
+  font-style: italic; font-size: 1rem;
+  color: var(--ink); line-height: 1.7;
+}
+
+/* Output strategy cards */
+.strategy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px; margin-bottom: 24px;
+}
+@media (max-width: 900px) { .strategy-grid { grid-template-columns: 1fr; } }
+
+.strategy-card {
+  background: rgba(255,255,255,.5);
+  border: 1px solid rgba(26,26,26,.1);
+  border-top-width: 3px; border-radius: 3px;
+  padding: 20px 18px 22px;
+  opacity: 0; transform: translateY(14px);
   transition: opacity .4s ease, transform .4s ease;
 }
-.output-card.card-reactivate { border-top-color: var(--morph); }
-.output-card.card-reawaken   { border-top-color: var(--phen); }
-.output-card.card-rebalance  { border-top-color: var(--tempo); }
+.strategy-card.anim { opacity: 1; transform: none; }
+.strategy-card.card-morph { border-top-color: var(--morph); }
+.strategy-card.card-phen  { border-top-color: var(--phen); }
+.strategy-card.card-tempo { border-top-color: var(--tempo); }
 
-.output-card.anim { opacity: 1; transform: translateY(0); }
-
-.card-eyebrow {
+.s-card-eyebrow {
   font-family: 'Space Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: .25em;
-  text-transform: uppercase;
-  margin-bottom: 4px;
+  font-size: 8px; letter-spacing: .25em; text-transform: uppercase; margin-bottom: 4px;
 }
-.card-reactivate .card-eyebrow { color: var(--morph); }
-.card-reawaken   .card-eyebrow { color: var(--phen); }
-.card-rebalance  .card-eyebrow { color: var(--tempo); }
+.card-morph .s-card-eyebrow { color: var(--morph); }
+.card-phen  .s-card-eyebrow { color: var(--phen); }
+.card-tempo .s-card-eyebrow { color: var(--tempo); }
 
-.card-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 300;
-  font-size: 1.55rem;
-  margin-bottom: 8px;
-  line-height: 1.2;
+.s-card-title {
+  font-weight: 300; font-size: 1.4rem;
+  letter-spacing: -.01em; margin-bottom: 6px; line-height: 1.2;
 }
-
-.card-frame {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: .9rem;
-  color: var(--muted);
-  margin-bottom: 16px;
-  line-height: 1.5;
+.s-card-frame {
+  font-style: italic; font-size: .88rem;
+  color: var(--muted); margin-bottom: 14px; line-height: 1.5;
 }
-
-.suggestion-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.s-list {
+  list-style: none; padding: 0;
+  display: flex; flex-direction: column; gap: 9px;
+}
+.s-list li {
+  font-size: .92rem; line-height: 1.55;
+  padding-left: 14px; position: relative; color: var(--ink);
+}
+.s-list li::before {
+  content: '—'; position: absolute; left: 0;
+  color: var(--stone); font-size: .8rem;
 }
 
-.suggestion-list li {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: .95rem;
-  line-height: 1.55;
-  color: var(--ink);
-  padding-left: 14px;
-  position: relative;
-}
-
-.suggestion-list li::before {
-  content: '—';
-  position: absolute;
-  left: 0;
-  color: var(--stone);
-  font-size: .8rem;
-}
-
-.stability-note {
-  font-family: 'Space Mono', monospace;
-  font-size: 7.5px;
-  letter-spacing: .08em;
-  color: var(--stone);
-  border-top: 1px solid rgba(26,26,26,.08);
-  padding-top: 12px;
-  line-height: 1.6;
-}
-
+/* Cross note */
 .cross-note {
-  margin-top: 28px;
-  background: rgba(140,69,24,.06);
+  background: rgba(140,69,24,.05);
   border: 1px solid rgba(140,69,24,.15);
-  border-radius: 3px;
-  padding: 16px 20px;
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: .95rem;
-  color: var(--accent);
-  line-height: 1.6;
+  border-radius: 3px; padding: 16px 20px;
+  font-style: italic; font-size: .92rem;
+  color: var(--accent); line-height: 1.65;
 }
 
-/* ── Footer ──────────────────────────────────────────────────────────────── */
-.site-footer {
-  border-top: 1px solid rgba(26,26,26,.1);
-  padding: 32px 0;
-  margin-top: 80px;
+/* ── Legend key for activation ───────────────────────────────────────────── */
+.activation-key {
+  display: none;
+  background: rgba(var(--phen-rgb),.05);
+  border: 1px solid rgba(var(--phen-rgb),.15);
+  border-radius: 3px; padding: 11px 16px;
+  margin-bottom: 18px;
   font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .25em;
-  text-transform: uppercase;
-  color: var(--stone);
-  text-align: center;
+  font-size: 8.5px; letter-spacing: .1em; color: var(--muted);
+  line-height: 1.7;
 }
+body.mode-activation .activation-key { display: block; }
 
-/* ── Responsive tweaks ───────────────────────────────────────────────────── */
-@media (max-width: 768px) {
-  .location-row { flex-direction: column; }
+/* ── Mobile ──────────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .diagram-cols { grid-template-columns: 1fr 1fr; }
+  .col-wrap + .col-wrap { border-left: none; }
+  .col-wrap:nth-child(2) { border-top: none; }
+  .col-wrap:nth-child(3), .col-wrap:nth-child(4) { border-top: 1px solid rgba(26,26,26,.08); }
+  .axis-wrap { display: none; }
+  .conn-svg { display: none; }
+  .diagram-hint { display: none; }
+}
+@media (max-width: 560px) {
+  .diagram-cols { grid-template-columns: 1fr; }
+  .col-wrap:nth-child(n) { border-top: 1px solid rgba(26,26,26,.08); }
 }
 </style>
 </head>
@@ -750,790 +464,899 @@ input[type="range"].tempo-slider::-moz-range-thumb {
 
 <div class="page-wrap">
 
-  <!-- ── HEADER ─────────────────────────────────────────────────────────── -->
-  <header class="site-header">
-    <a class="back-link" href="index.html#awe-atlas">← Awe Atlas</a>
-    <div class="eyebrow">Planning Tool</div>
-    <h1 class="page-title">Rhythm Analysis</h1>
-    <p class="page-subtitle">A tool to analyze and activate places through awe</p>
-
-    <div class="location-row">
+<!-- ── HEADER ─────────────────────────────────────────────────────────────── -->
+<header class="site-header">
+  <a class="back-link" href="index.html#awe-atlas">← Awe Atlas</a>
+  <div class="header-body">
+    <div class="header-text">
+      <div class="eyebrow">Tool 04 &nbsp;·&nbsp; Planning</div>
+      <h1 class="page-title">Rhythm Analysis<br><em>&amp; Activation</em></h1>
+      <p class="page-subtitle">Map the rhythmic conditions of a place, then propose how to amplify awe within it</p>
+    </div>
+    <div class="location-inputs">
       <div class="input-group">
-        <label class="input-label" for="location-name">Location name</label>
-        <input class="text-input" id="location-name" type="text" placeholder="e.g. Charles River Esplanade">
+        <label class="input-label" for="loc-name">Location</label>
+        <input class="text-input" id="loc-name" type="text" placeholder="e.g. Greene-Rose Heritage Park">
       </div>
       <div class="input-group">
-        <label class="input-label" for="analysis-date">Date</label>
-        <input class="date-input" id="analysis-date" type="date">
+        <label class="input-label" for="loc-date">Date</label>
+        <input class="date-input" id="loc-date" type="date">
       </div>
     </div>
-  </header>
+  </div>
+</header>
 
-  <div class="divider"></div>
+<!-- ── MODE TOGGLE ─────────────────────────────────────────────────────────── -->
+<div class="mode-bar" role="tablist">
+  <button class="mode-btn active" id="btn-analysis" role="tab" data-mode="analysis">
+    <span class="mode-dot"></span>Rhythmanalysis
+  </button>
+  <button class="mode-btn" id="btn-activation" role="tab" data-mode="activation">
+    <span class="mode-dot"></span>Rhythmactivation
+  </button>
+</div>
+<p class="mode-desc" id="mode-desc">
+  <span id="mode-desc-text">Click items across the four dimensions to map the existing rhythmic conditions of this place. Connections will appear between your selections.</span>
+</p>
 
-  <!-- ── ANALYSIS GRID ──────────────────────────────────────────────────── -->
-  <div class="analysis-grid">
+<div class="activation-key">
+  ● Solid dot = existing condition &nbsp;&nbsp; ○ Dashed dot = proposed addition (click twice to add) &nbsp;&nbsp; Solid lines = existing rhythms &nbsp;&nbsp; Dashed lines = new connections
+</div>
 
-    <!-- ── Column 1: Geography ──────────────────────────────────────────── -->
-    <div class="analysis-col col-geo">
-      <div class="col-num">01</div>
-      <div class="col-name">Geography</div>
-      <h2 class="col-title">Place</h2>
+<!-- ── DIAGRAM ──────────────────────────────────────────────────────────────── -->
+<div class="diagram-outer" id="diagram">
 
-      <div class="stability-block">
-        <div class="stability-header">
-          <span class="stability-label">Current State</span>
-          <span class="stability-value" id="geo-stab-val">50 — Neutral</span>
-        </div>
-        <div class="stability-info">Stable = fixed &amp; permanent · Dynamic = changing &amp; programmable</div>
-        <div class="stability-poles">
-          <span class="stability-pole">Stable</span>
-          <span class="stability-pole">Dynamic</span>
-        </div>
-        <input type="range" class="geo-slider" id="geo-stability" min="0" max="100" value="50">
-      </div>
+  <!-- SVG overlay for connections -->
+  <svg class="conn-svg" id="conn-svg" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arr-geo"   markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto">
+        <polygon points="0 0, 6 2.5, 0 5" fill="rgba(74,122,138,.5)"/>
+      </marker>
+      <marker id="arr-morph" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto">
+        <polygon points="0 0, 6 2.5, 0 5" fill="rgba(140,69,24,.5)"/>
+      </marker>
+      <marker id="arr-phen"  markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto">
+        <polygon points="0 0, 6 2.5, 0 5" fill="rgba(107,91,138,.5)"/>
+      </marker>
+    </defs>
+    <g id="conn-g"></g>
+  </svg>
 
-      <span class="section-label">Geographic Type</span>
-      <p class="tag-note">Select all that apply to this location</p>
-      <div class="tags-wrap" id="geo-tags">
-        <button class="tag-btn" data-tag="Waterfront">Waterfront</button>
-        <button class="tag-btn" data-tag="Park & Green Space">Park &amp; Green Space</button>
-        <button class="tag-btn" data-tag="Street & Sidewalk">Street &amp; Sidewalk</button>
-        <button class="tag-btn" data-tag="Institutional Campus">Institutional Campus</button>
-        <button class="tag-btn" data-tag="Commercial District">Commercial District</button>
-        <button class="tag-btn" data-tag="Residential">Residential</button>
-        <button class="tag-btn" data-tag="Transit Hub">Transit Hub</button>
-        <button class="tag-btn" data-tag="Cultural Venue">Cultural Venue</button>
-        <button class="tag-btn" data-tag="Industrial Edge">Industrial Edge</button>
-      </div>
-    </div>
-
-    <!-- ── Column 2: Morphology ─────────────────────────────────────────── -->
-    <div class="analysis-col col-morph">
-      <div class="col-num">02</div>
-      <div class="col-name">Morphology</div>
-      <h2 class="col-title">Form</h2>
-
-      <div class="stability-block">
-        <div class="stability-header">
-          <span class="stability-label">Current State</span>
-          <span class="stability-value" id="morph-stab-val">50 — Neutral</span>
-        </div>
-        <div class="stability-info">Stable = fixed &amp; permanent · Dynamic = changing &amp; programmable</div>
-        <div class="stability-poles">
-          <span class="stability-pole">Stable</span>
-          <span class="stability-pole">Dynamic</span>
-        </div>
-        <input type="range" class="morph-slider" id="morph-stability" min="0" max="100" value="50">
-      </div>
-
-      <span class="section-label">Morphological Elements</span>
-      <div class="tags-wrap" id="morph-tags">
-        <button class="tag-btn" data-tag="Animals">Animals</button>
-        <button class="tag-btn" data-tag="Architecture">Architecture</button>
-        <button class="tag-btn" data-tag="Art & Objects">Art &amp; Objects</button>
-        <button class="tag-btn" data-tag="Communities">Communities</button>
-        <button class="tag-btn" data-tag="Events">Events</button>
-        <button class="tag-btn" data-tag="Green Space">Green Space</button>
-        <button class="tag-btn" data-tag="Infrastructure">Infrastructure</button>
-        <button class="tag-btn" data-tag="Light">Light</button>
-        <button class="tag-btn" data-tag="People">People</button>
-        <button class="tag-btn" data-tag="Plants">Plants</button>
-        <button class="tag-btn" data-tag="Smells">Smells</button>
-        <button class="tag-btn" data-tag="Sounds">Sounds</button>
-        <button class="tag-btn" data-tag="Vistas">Vistas</button>
-        <button class="tag-btn" data-tag="Water">Water</button>
-        <button class="tag-btn" data-tag="Weather">Weather</button>
-      </div>
-
-      <div class="morph-network-wrap">
-        <span class="network-label">Morphological Network</span>
-        <svg id="morph-svg" viewBox="0 0 320 340" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-              <polygon points="0 0, 8 3, 0 6" fill="rgba(140,69,24,0.6)"/>
-            </marker>
-          </defs>
-          <text id="morph-svg-empty" x="160" y="175" text-anchor="middle"
-            font-family="Space Mono, monospace" font-size="9" fill="rgba(74,74,74,0.4)"
-            letter-spacing="2">Select morphologies to see network</text>
-          <g id="morph-arrows"></g>
-          <g id="morph-nodes"></g>
-        </svg>
-      </div>
-    </div>
-
-    <!-- ── Column 3: Phenomenology ──────────────────────────────────────── -->
-    <div class="analysis-col col-phen">
-      <div class="col-num">03</div>
-      <div class="col-name">Phenomenology</div>
-      <h2 class="col-title">Experience</h2>
-
-      <div class="stability-block">
-        <div class="stability-header">
-          <span class="stability-label">Current State</span>
-          <span class="stability-value" id="phen-stab-val">50 — Neutral</span>
-        </div>
-        <div class="stability-info">Stable = fixed &amp; permanent · Dynamic = changing &amp; programmable</div>
-        <div class="stability-poles">
-          <span class="stability-pole">Stable</span>
-          <span class="stability-pole">Dynamic</span>
-        </div>
-        <input type="range" class="phen-slider" id="phen-stability" min="0" max="100" value="50">
-      </div>
-
-      <!-- A: Characteristics -->
-      <span class="section-label">A — Characteristics</span>
-      <div class="tags-wrap" id="phen-tags">
-        <button class="tag-btn" data-tag="Beauty">Beauty</button>
-        <button class="tag-btn" data-tag="Mystery">Mystery</button>
-        <button class="tag-btn" data-tag="Wonder">Wonder</button>
-        <button class="tag-btn" data-tag="Vastness">Vastness</button>
-        <button class="tag-btn" data-tag="Interconnection">Interconnection</button>
-      </div>
-
-      <div class="sub-divider"></div>
-
-      <!-- B: Tensions -->
-      <span class="section-label">B — Tensions</span>
-
-      <div class="tension-row">
-        <div class="tension-poles">
-          <span class="tension-pole">Ornate</span>
-          <span class="tension-pole">Utilitarian</span>
-        </div>
-        <input type="range" class="phen-slider" id="t-ornate" min="0" max="100" value="50">
-      </div>
-
-      <div class="tension-row">
-        <div class="tension-poles">
-          <span class="tension-pole">Inclusive</span>
-          <span class="tension-pole">Exclusive</span>
-        </div>
-        <input type="range" class="phen-slider" id="t-inclusive" min="0" max="100" value="50">
-      </div>
-
-      <div class="tension-row">
-        <div class="tension-poles">
-          <span class="tension-pole">Wild</span>
-          <span class="tension-pole">Curated</span>
-        </div>
-        <input type="range" class="phen-slider" id="t-wild" min="0" max="100" value="50">
-      </div>
-
-      <div class="tension-row">
-        <div class="tension-poles">
-          <span class="tension-pole">Impressive</span>
-          <span class="tension-pole">Ordinary</span>
-        </div>
-        <input type="range" class="phen-slider" id="t-impressive" min="0" max="100" value="50">
-      </div>
-
-      <div class="tension-row">
-        <div class="tension-poles">
-          <span class="tension-pole">Novel</span>
-          <span class="tension-pole">Familiar</span>
-        </div>
-        <input type="range" class="phen-slider" id="t-novel" min="0" max="100" value="50">
-      </div>
-
-      <div class="tension-row">
-        <div class="tension-poles">
-          <span class="tension-pole">Expansive</span>
-          <span class="tension-pole">Intimate</span>
-        </div>
-        <input type="range" class="phen-slider" id="t-expansive" min="0" max="100" value="50">
-      </div>
-
-      <div class="sub-divider"></div>
-
-      <!-- C: Binaries -->
-      <span class="section-label">C — Binaries</span>
-      <div class="binaries-wrap">
-
-        <div class="binary-row">
-          <div class="binary-label-wrap">
-            <span class="binary-name">Surprise</span>
-            <span class="binary-desc">Encounter with the unexpected; things that depart from prior expectations</span>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="b-surprise">
-            <span class="toggle-track"></span>
-          </label>
-        </div>
-
-        <div class="binary-row">
-          <div class="binary-label-wrap">
-            <span class="binary-name">Alterity</span>
-            <span class="binary-desc">Presence of the radically other — non-human life, forces beyond control</span>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="b-alterity">
-            <span class="toggle-track"></span>
-          </label>
-        </div>
-
-        <div class="binary-row">
-          <div class="binary-label-wrap">
-            <span class="binary-name">Threshold</span>
-            <span class="binary-desc">Marked entry or transition that signals a shift in experiential register</span>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="b-threshold">
-            <span class="toggle-track"></span>
-          </label>
-        </div>
-
-        <div class="binary-row">
-          <div class="binary-label-wrap">
-            <span class="binary-name">Sanctuary</span>
-            <span class="binary-desc">Feeling of protected enclosure; a place apart from the ordinary flow</span>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="b-sanctuary">
-            <span class="toggle-track"></span>
-          </label>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ── Column 4: Temporality ─────────────────────────────────────────── -->
-    <div class="analysis-col col-tempo">
-      <div class="col-num">04</div>
-      <div class="col-name">Temporality</div>
-      <h2 class="col-title">Time</h2>
-
-      <div class="stability-block">
-        <div class="stability-header">
-          <span class="stability-label">Current State</span>
-          <span class="stability-value" id="tempo-stab-val">50 — Neutral</span>
-        </div>
-        <div class="stability-info">Stable = fixed &amp; permanent · Dynamic = changing &amp; programmable</div>
-        <div class="stability-poles">
-          <span class="stability-pole">Stable</span>
-          <span class="stability-pole">Dynamic</span>
-        </div>
-        <input type="range" class="tempo-slider" id="tempo-stability" min="0" max="100" value="50">
-      </div>
-
-      <span class="section-label">Temporal Frequency</span>
-      <div class="tempo-spectrum">
-        <div class="tempo-gradient-bar"></div>
-        <div class="tempo-options" id="tempo-options">
-          <button class="tempo-card" data-tempo="Ephemeral">
-            <div class="tempo-card-name">Ephemeral</div>
-            <div class="tempo-card-desc">Once — unlikely to occur again</div>
-          </button>
-          <button class="tempo-card" data-tempo="Periodic">
-            <div class="tempo-card-name">Periodic</div>
-            <div class="tempo-card-desc">Unpredictable or inconsistent cycle</div>
-          </button>
-          <button class="tempo-card" data-tempo="Seasonal">
-            <div class="tempo-card-name">Seasonal</div>
-            <div class="tempo-card-desc">Returns with natural cycles</div>
-          </button>
-          <button class="tempo-card" data-tempo="Recurring">
-            <div class="tempo-card-name">Recurring</div>
-            <div class="tempo-card-desc">Scheduled by human activity</div>
-          </button>
-          <button class="tempo-card" data-tempo="Daily">
-            <div class="tempo-card-name">Daily</div>
-            <div class="tempo-card-desc">Available within an ordinary day</div>
-          </button>
-          <button class="tempo-card" data-tempo="Always">
-            <div class="tempo-card-name">Always</div>
-            <div class="tempo-card-desc">Continuously available — always there</div>
-          </button>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /analysis-grid -->
-
-  <!-- ── GENERATE BUTTON ─────────────────────────────────────────────────── -->
-  <div class="generate-section">
-    <button class="generate-btn" id="generate-btn" disabled>
-      Generate Rhythm Activation →
-    </button>
-    <span class="generate-note" id="generate-note">Select at least one option across dimensions to activate</span>
+  <!-- Dynamic / Stable axis -->
+  <div class="axis-wrap">
+    <span class="axis-label ax-top">Dynamic</span>
+    <div class="axis-line"></div>
+    <span class="axis-label ax-bot">Stable</span>
   </div>
 
-  <!-- ── OUTPUT ─────────────────────────────────────────────────────────── -->
-  <section id="output-section" aria-live="polite">
-    <div class="output-header">
-      <div class="eyebrow">Generated Analysis</div>
-      <h2 class="output-title">Rhythm Activation</h2>
-      <p class="output-subtitle">Evidence-based suggestions to reactivate, reawaken, and rebalance this space through awe</p>
-      <p class="output-meta" id="output-meta"></p>
+  <div class="diagram-cols">
+
+    <!-- ── Col 1: Geography ─────────────────────────────────────────────── -->
+    <div class="col-wrap col-geo">
+      <div class="col-head">
+        <div class="col-num">01</div>
+        <div class="col-cat">Geography</div>
+        <h2 class="col-title">Locations</h2>
+      </div>
+      <div id="geo-items">
+        <div class="item-row" data-col="geo" data-id="civic">
+          <div class="item-dot"></div>
+          <span class="item-name">Civic, Community<br>&amp; Cultural</span>
+        </div>
+        <div class="item-row" data-col="geo" data-id="corridors">
+          <div class="item-dot"></div>
+          <span class="item-name">Corridors</span>
+        </div>
+        <div class="item-row" data-col="geo" data-id="educational">
+          <div class="item-dot"></div>
+          <span class="item-name">Educational</span>
+        </div>
+        <div class="item-row" data-col="geo" data-id="industry">
+          <div class="item-dot"></div>
+          <span class="item-name">Industry &amp; Office</span>
+        </div>
+        <div class="item-row" data-col="geo" data-id="parks">
+          <div class="item-dot"></div>
+          <span class="item-name">Parks</span>
+        </div>
+        <div class="item-row" data-col="geo" data-id="plazas">
+          <div class="item-dot"></div>
+          <span class="item-name">Plazas</span>
+        </div>
+        <div class="item-row" data-col="geo" data-id="residences">
+          <div class="item-dot"></div>
+          <span class="item-name">Residences</span>
+        </div>
+        <div class="item-row" data-col="geo" data-id="streets">
+          <div class="item-dot"></div>
+          <span class="item-name">Streets</span>
+        </div>
+        <div class="item-row" data-col="geo" data-id="waterfronts">
+          <div class="item-dot"></div>
+          <span class="item-name">Waterfronts</span>
+        </div>
+      </div>
     </div>
 
-    <div class="output-cards">
-      <div class="output-card card-reactivate" id="card-reactivate">
-        <div class="card-eyebrow">Morphological</div>
-        <h3 class="card-title">Reactivate</h3>
-        <p class="card-frame">Physical and sensory interventions to enrich the material conditions for awe</p>
-        <ul class="suggestion-list" id="reactivate-list"></ul>
-        <div class="stability-note" id="reactivate-note"></div>
+    <!-- ── Col 2: Morphology ─────────────────────────────────────────────── -->
+    <div class="col-wrap col-morph">
+      <div class="col-head">
+        <div class="col-num">02</div>
+        <div class="col-cat">Morphology</div>
+        <h2 class="col-title">Forms</h2>
       </div>
-      <div class="output-card card-reawaken" id="card-reawaken">
-        <div class="card-eyebrow">Phenomenological</div>
-        <h3 class="card-title">Reawaken</h3>
-        <p class="card-frame">Experiential interventions to cultivate depth of feeling and perceptual encounter</p>
-        <ul class="suggestion-list" id="reawaken-list"></ul>
-        <div class="stability-note" id="reawaken-note"></div>
+      <div class="col-section">Forms</div>
+      <div id="morph-items">
+        <div class="item-row" data-col="morph" data-id="animals">
+          <div class="item-dot"></div><span class="item-name">Animals</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="architecture">
+          <div class="item-dot"></div><span class="item-name">Architecture</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="art">
+          <div class="item-dot"></div><span class="item-name">Art &amp; Objects</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="communities">
+          <div class="item-dot"></div><span class="item-name">Communities</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="events">
+          <div class="item-dot"></div><span class="item-name">Events</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="greenspace">
+          <div class="item-dot"></div><span class="item-name">Green Space</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="infrastructure">
+          <div class="item-dot"></div><span class="item-name">Infrastructure</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="light">
+          <div class="item-dot"></div><span class="item-name">Light</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="people">
+          <div class="item-dot"></div><span class="item-name">People</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="plants">
+          <div class="item-dot"></div><span class="item-name">Plants</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="smells">
+          <div class="item-dot"></div><span class="item-name">Smells</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="sounds">
+          <div class="item-dot"></div><span class="item-name">Sounds</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="vistas">
+          <div class="item-dot"></div><span class="item-name">Vistas</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="water">
+          <div class="item-dot"></div><span class="item-name">Water</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="weather">
+          <div class="item-dot"></div><span class="item-name">Weather</span>
+        </div>
       </div>
-      <div class="output-card card-rebalance" id="card-rebalance">
-        <div class="card-eyebrow">Temporal</div>
-        <h3 class="card-title">Rebalance</h3>
-        <p class="card-frame">Temporal interventions to expand the rhythmic range and accessibility of awe</p>
-        <ul class="suggestion-list" id="rebalance-list"></ul>
-        <div class="stability-note" id="rebalance-note"></div>
+      <div class="col-section">Wonders of Life</div>
+      <div id="wonder-items">
+        <div class="item-row" data-col="morph" data-id="moralbeauty">
+          <div class="item-dot"></div><span class="item-name">Moral Beauty</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="nature">
+          <div class="item-dot"></div><span class="item-name">Nature</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="visualdesign">
+          <div class="item-dot"></div><span class="item-name">Visual Design</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="lifedeath">
+          <div class="item-dot"></div><span class="item-name">Life &amp; Death</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="collective">
+          <div class="item-dot"></div><span class="item-name">Collective Effervescence</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="music">
+          <div class="item-dot"></div><span class="item-name">Music</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="spiritual">
+          <div class="item-dot"></div><span class="item-name">Spirituality / Religion</span>
+        </div>
+        <div class="item-row" data-col="morph" data-id="epiphany">
+          <div class="item-dot"></div><span class="item-name">Epiphany</span>
+        </div>
       </div>
     </div>
 
-    <div class="cross-note" id="cross-note" style="display:none;"></div>
-  </section>
+    <!-- ── Col 3: Phenomenology ──────────────────────────────────────────── -->
+    <div class="col-wrap col-phen">
+      <div class="col-head">
+        <div class="col-num">03</div>
+        <div class="col-cat">Phenomenology</div>
+        <h2 class="col-title">Tensions &amp; Binaries</h2>
+      </div>
+      <div class="col-section">Tensions</div>
+      <div id="tension-items">
 
-  <!-- ── FOOTER ─────────────────────────────────────────────────────────── -->
-  <footer class="site-footer">
-    Awe in Cambridge &nbsp;·&nbsp; Cambridge, MA &nbsp;·&nbsp; 2026
-  </footer>
+        <div class="tension-row" data-col="phen" data-id="formal">
+          <div class="tension-type">Formal</div>
+          <div class="tension-poles-wrap">
+            <div class="tension-dot"></div>
+            <div class="t-poles">
+              <button class="pole-chip" data-tension="formal" data-pole="left">Ornate</button>
+              <span class="t-sep">↔</span>
+              <button class="pole-chip" data-tension="formal" data-pole="right">Functional</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="tension-row" data-col="phen" data-id="social">
+          <div class="tension-type">Social</div>
+          <div class="tension-poles-wrap">
+            <div class="tension-dot"></div>
+            <div class="t-poles">
+              <button class="pole-chip" data-tension="social" data-pole="left">Inclusive</button>
+              <span class="t-sep">↔</span>
+              <button class="pole-chip" data-tension="social" data-pole="right">Exclusive</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="tension-row" data-col="phen" data-id="ecological">
+          <div class="tension-type">Ecological</div>
+          <div class="tension-poles-wrap">
+            <div class="tension-dot"></div>
+            <div class="t-poles">
+              <button class="pole-chip" data-tension="ecological" data-pole="left">Wild</button>
+              <span class="t-sep">↔</span>
+              <button class="pole-chip" data-tension="ecological" data-pole="right">Curated</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="tension-row" data-col="phen" data-id="evaluative">
+          <div class="tension-type">Evaluative</div>
+          <div class="tension-poles-wrap">
+            <div class="tension-dot"></div>
+            <div class="t-poles">
+              <button class="pole-chip" data-tension="evaluative" data-pole="left">Impressive</button>
+              <span class="t-sep">↔</span>
+              <button class="pole-chip" data-tension="evaluative" data-pole="right">Ordinary</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="tension-row" data-col="phen" data-id="temporal">
+          <div class="tension-type">Temporal</div>
+          <div class="tension-poles-wrap">
+            <div class="tension-dot"></div>
+            <div class="t-poles">
+              <button class="pole-chip" data-tension="temporal" data-pole="left">Novel</button>
+              <span class="t-sep">↔</span>
+              <button class="pole-chip" data-tension="temporal" data-pole="right">Familiar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="tension-row" data-col="phen" data-id="spatial">
+          <div class="tension-type">Spatial</div>
+          <div class="tension-poles-wrap">
+            <div class="tension-dot"></div>
+            <div class="t-poles">
+              <button class="pole-chip" data-tension="spatial" data-pole="left">Expansive</button>
+              <span class="t-sep">↔</span>
+              <button class="pole-chip" data-tension="spatial" data-pole="right">Intimate</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-section">Binaries</div>
+      <div id="binary-items">
+        <div class="item-row" data-col="phen" data-id="alterity">
+          <div class="item-dot"></div><span class="item-name">Alterity</span>
+        </div>
+        <div class="item-row" data-col="phen" data-id="surprise">
+          <div class="item-dot"></div><span class="item-name">Surprise</span>
+        </div>
+        <div class="item-row" data-col="phen" data-id="threshold">
+          <div class="item-dot"></div><span class="item-name">Threshold</span>
+        </div>
+        <div class="item-row" data-col="phen" data-id="sanctuary">
+          <div class="item-dot"></div><span class="item-name">Sanctuary</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Col 4: Temporality ─────────────────────────────────────────────── -->
+    <div class="col-wrap col-tempo">
+      <div class="col-head">
+        <div class="col-num">04</div>
+        <div class="col-cat">Temporality</div>
+        <h2 class="col-title">Frequencies</h2>
+      </div>
+      <div id="tempo-items">
+        <div class="item-row" data-col="tempo" data-id="history">
+          <div class="item-dot"></div><span class="item-name">History</span>
+        </div>
+        <div class="item-row" data-col="tempo" data-id="ephemeral">
+          <div class="item-dot"></div><span class="item-name">Ephemeral</span>
+        </div>
+        <div class="item-row" data-col="tempo" data-id="periodic">
+          <div class="item-dot"></div><span class="item-name">Periodic</span>
+        </div>
+        <div class="item-row" data-col="tempo" data-id="recurring">
+          <div class="item-dot"></div><span class="item-name">Recurring</span>
+        </div>
+        <div class="item-row" data-col="tempo" data-id="seasonal">
+          <div class="item-dot"></div><span class="item-name">Seasonal</span>
+        </div>
+        <div class="item-row" data-col="tempo" data-id="daily">
+          <div class="item-dot"></div><span class="item-name">Daily</span>
+        </div>
+        <div class="item-row" data-col="tempo" data-id="timeless">
+          <div class="item-dot"></div><span class="item-name">Timeless</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /diagram-cols -->
+</div><!-- /diagram-outer -->
+
+<!-- Legend + hint -->
+<div class="diagram-hint">Click items to select · connections draw between adjacent columns</div>
+<div class="mode-legend" id="mode-legend-bar">
+  <div class="legend-item">
+    <div class="legend-dot filled"></div>
+    <span class="legend-label">Existing</span>
+  </div>
+  <div class="legend-item legend-proposed" style="display:none">
+    <div class="legend-dot dashed"></div>
+    <span class="legend-label">Proposed</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-line-solid"></div>
+    <span class="legend-label">Current rhythm</span>
+  </div>
+  <div class="legend-item legend-dashed-line" style="display:none">
+    <div class="legend-line-dashed"></div>
+    <span class="legend-label">Proposed rhythm</span>
+  </div>
+</div>
+
+<!-- ── GENERATE ────────────────────────────────────────────────────────────── -->
+<div class="generate-section">
+  <button class="generate-btn" id="generate-btn" disabled>Generate Activation Strategy →</button>
+  <span class="gen-note" id="gen-note">Select conditions across dimensions to generate a strategy</span>
+</div>
+
+<!-- ── OUTPUT ──────────────────────────────────────────────────────────────── -->
+<section id="output-section" aria-live="polite">
+  <div class="output-head">
+    <div class="output-eyebrow" id="out-eyebrow">Rhythmanalysis</div>
+    <h2 class="output-title" id="out-title">Rhythmic Profile</h2>
+    <p class="output-meta" id="out-meta"></p>
+  </div>
+
+  <div class="narrative-box" id="out-narrative"></div>
+
+  <div class="strategy-grid">
+    <div class="strategy-card card-morph" id="card-morph">
+      <div class="s-card-eyebrow">Morphological</div>
+      <h3 class="s-card-title" id="morph-title">Form</h3>
+      <p class="s-card-frame" id="morph-frame"></p>
+      <ul class="s-list" id="morph-list"></ul>
+    </div>
+    <div class="strategy-card card-phen" id="card-phen">
+      <div class="s-card-eyebrow">Phenomenological</div>
+      <h3 class="s-card-title" id="phen-title">Experience</h3>
+      <p class="s-card-frame" id="phen-frame"></p>
+      <ul class="s-list" id="phen-list"></ul>
+    </div>
+    <div class="strategy-card card-tempo" id="card-tempo">
+      <div class="s-card-eyebrow">Temporal</div>
+      <h3 class="s-card-title" id="tempo-title">Rhythm</h3>
+      <p class="s-card-frame" id="tempo-frame"></p>
+      <ul class="s-list" id="tempo-list"></ul>
+    </div>
+  </div>
+
+  <div class="cross-note" id="cross-note" style="display:none;"></div>
+</section>
+
+<footer style="border-top:1px solid rgba(26,26,26,.1); padding:28px 0; margin-top:80px; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.25em; text-transform:uppercase; color:var(--stone); text-align:center;">
+  Awe in Cambridge &nbsp;·&nbsp; Cambridge, MA &nbsp;·&nbsp; 2026
+</footer>
 
 </div><!-- /page-wrap -->
 
 <script>
-/* ── State ─────────────────────────────────────────────────────────────── */
-const state = {
-  geoTags:    new Set(),
-  morphTags:  new Set(),
-  phenTags:   new Set(),
-  geoStab:    50,
-  morphStab:  50,
-  phenStab:   50,
-  tempoStab:  50,
-  tensions: {
-    ornate:    50,
-    inclusive: 50,
-    wild:      50,
-    impressive:50,
-    novel:     50,
-    expansive: 50,
-  },
-  binaries: {
-    surprise:  false,
-    alterity:  false,
-    threshold: false,
-    sanctuary: false,
-  },
-  tempo: null,
+/* ────────────────────────────────────────────────────────────────────────────
+   STATE
+──────────────────────────────────────────────────────────────────────────── */
+let currentMode = 'analysis'; // 'analysis' | 'activation'
+
+// Items: { el, col, id, state: 'none'|'existing'|'proposed' }
+const ITEMS = { geo: [], morph: [], phen: [], tempo: [] };
+
+// Tension pole states: { left: bool, right: bool }
+const TENSION_POLES = {
+  formal: { left:false, right:false },
+  social: { left:false, right:false },
+  ecological: { left:false, right:false },
+  evaluative: { left:false, right:false },
+  temporal: { left:false, right:false },
+  spatial: { left:false, right:false },
 };
 
-/* ── Stability label helper ─────────────────────────────────────────────── */
-function stabLabel(v) {
-  if (v < 20)  return v + ' — Stable';
-  if (v < 40)  return v + ' — Mostly Stable';
-  if (v < 60)  return v + ' — Neutral';
-  if (v < 80)  return v + ' — Mostly Dynamic';
-  return v + ' — Dynamic';
-}
+/* ────────────────────────────────────────────────────────────────────────────
+   INITIALIZE ITEMS
+──────────────────────────────────────────────────────────────────────────── */
+document.querySelectorAll('.item-row').forEach(el => {
+  const col = el.dataset.col;
+  const id  = el.dataset.id;
+  const item = { el, col, id, state: 'none' };
+  ITEMS[col].push(item);
+  el.addEventListener('click', () => cycleItem(item));
+});
 
-/* ── Stability sliders ──────────────────────────────────────────────────── */
-function wireStab(inputId, valId, stateKey) {
-  const el = document.getElementById(inputId);
-  const lbl = document.getElementById(valId);
-  el.addEventListener('input', () => {
-    state[stateKey] = +el.value;
-    lbl.textContent = stabLabel(+el.value);
-    checkEnableGenerate();
+// Tension rows
+document.querySelectorAll('.tension-row').forEach(el => {
+  const col = el.dataset.col; // 'phen'
+  const id  = el.dataset.id;
+  const item = { el, col, id, state: 'none', isTension: true };
+  ITEMS.phen.push(item);
+  // Click on the row background (not pole chips) to cycle state
+  el.addEventListener('click', (e) => {
+    if (!e.target.closest('.pole-chip')) cycleItem(item);
   });
-}
-wireStab('geo-stability',   'geo-stab-val',   'geoStab');
-wireStab('morph-stability', 'morph-stab-val', 'morphStab');
-wireStab('phen-stability',  'phen-stab-val',  'phenStab');
-wireStab('tempo-stability', 'tempo-stab-val', 'tempoStab');
+});
 
-/* ── Tag toggle helper ──────────────────────────────────────────────────── */
-function wireTags(containerId, stateSet) {
-  const container = document.getElementById(containerId);
-  container.querySelectorAll('.tag-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const t = btn.dataset.tag;
-      if (stateSet.has(t)) {
-        stateSet.delete(t);
-        btn.classList.remove('selected');
-      } else {
-        stateSet.add(t);
-        btn.classList.add('selected');
-      }
-      if (stateSet === state.morphTags) updateMorphNetwork();
-      checkEnableGenerate();
+// Pole chip buttons
+document.querySelectorAll('.pole-chip').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const tensionId = btn.dataset.tension;
+    const pole      = btn.dataset.pole; // 'left' | 'right'
+    TENSION_POLES[tensionId][pole] = !TENSION_POLES[tensionId][pole];
+    btn.classList.toggle('active', TENSION_POLES[tensionId][pole]);
+
+    // If a pole is now active, ensure the parent tension row is at least 'existing'
+    const anyActive = TENSION_POLES[tensionId].left || TENSION_POLES[tensionId].right;
+    const item = ITEMS.phen.find(i => i.id === tensionId);
+    if (item && item.state === 'none' && anyActive) {
+      item.state = 'existing';
+      item.el.classList.add('existing');
+    }
+    drawConnections();
+    checkGenerate();
+  });
+});
+
+function cycleItem(item) {
+  const states = currentMode === 'analysis'
+    ? ['none', 'existing']
+    : ['none', 'existing', 'proposed'];
+  const idx = states.indexOf(item.state);
+  item.state = states[(idx + 1) % states.length];
+
+  item.el.classList.remove('existing', 'proposed');
+  if (item.state !== 'none') item.el.classList.add(item.state);
+
+  // If tension row cycling to 'none', deactivate its pole chips
+  if (item.isTension && item.state === 'none') {
+    TENSION_POLES[item.id].left  = false;
+    TENSION_POLES[item.id].right = false;
+    item.el.querySelectorAll('.pole-chip').forEach(b => b.classList.remove('active'));
+  }
+
+  drawConnections();
+  checkGenerate();
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   MODE TOGGLE
+──────────────────────────────────────────────────────────────────────────── */
+const modeDescText = {
+  analysis:   'Click items across the four dimensions to map the existing rhythmic conditions of this place. Connections will appear between your selections.',
+  activation: 'Click once to mark an existing condition, click again to add a proposed new element (dashed). Use this mode to imagine how the rhythm of a place could be amplified or rebalanced.'
+};
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentMode = btn.dataset.mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('mode-desc-text').textContent = modeDescText[currentMode];
+    document.body.className = 'mode-' + currentMode;
+
+    // Show/hide proposed legend
+    const showProposed = currentMode === 'activation';
+    document.querySelectorAll('.legend-proposed, .legend-dashed-line').forEach(el => {
+      el.style.display = showProposed ? '' : 'none';
     });
-  });
-}
-wireTags('geo-tags',   state.geoTags);
-wireTags('morph-tags', state.morphTags);
-wireTags('phen-tags',  state.phenTags);
 
-/* ── Tension sliders ────────────────────────────────────────────────────── */
-const tensionMap = {
-  't-ornate':    'ornate',
-  't-inclusive': 'inclusive',
-  't-wild':      'wild',
-  't-impressive':'impressive',
-  't-novel':     'novel',
-  't-expansive': 'expansive',
-};
-Object.entries(tensionMap).forEach(([id, key]) => {
-  const el = document.getElementById(id);
-  el.addEventListener('input', () => {
-    state.tensions[key] = +el.value;
-    checkEnableGenerate();
-  });
-});
-
-/* ── Binary toggles ─────────────────────────────────────────────────────── */
-const binaryMap = {
-  'b-surprise':  'surprise',
-  'b-alterity':  'alterity',
-  'b-threshold': 'threshold',
-  'b-sanctuary': 'sanctuary',
-};
-Object.entries(binaryMap).forEach(([id, key]) => {
-  const el = document.getElementById(id);
-  el.addEventListener('change', () => {
-    state.binaries[key] = el.checked;
-    checkEnableGenerate();
-  });
-});
-
-/* ── Temporality cards ──────────────────────────────────────────────────── */
-document.getElementById('tempo-options').querySelectorAll('.tempo-card').forEach(card => {
-  card.addEventListener('click', () => {
-    document.querySelectorAll('.tempo-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    state.tempo = card.dataset.tempo;
-    checkEnableGenerate();
-  });
-});
-
-/* ── Enable / disable generate button ──────────────────────────────────── */
-function hasAnySelection() {
-  return state.geoTags.size > 0
-      || state.morphTags.size > 0
-      || state.phenTags.size > 0
-      || state.tempo !== null
-      || Object.values(state.binaries).some(Boolean);
-}
-
-function checkEnableGenerate() {
-  const btn  = document.getElementById('generate-btn');
-  const note = document.getElementById('generate-note');
-  if (hasAnySelection()) {
-    btn.disabled = false;
-    note.textContent = 'Ready — click to generate activation suggestions';
-  } else {
-    btn.disabled = true;
-    note.textContent = 'Select at least one option across dimensions to activate';
-  }
-}
-
-/* ── Morphology SVG Network ─────────────────────────────────────────────── */
-function updateMorphNetwork() {
-  const selected = [...state.morphTags];
-  const arrowsG  = document.getElementById('morph-arrows');
-  const nodesG   = document.getElementById('morph-nodes');
-  const emptyTxt = document.getElementById('morph-svg-empty');
-
-  arrowsG.innerHTML = '';
-  nodesG.innerHTML  = '';
-
-  if (selected.length < 2) {
-    emptyTxt.style.display = '';
-    emptyTxt.textContent = selected.length === 0
-      ? 'Select morphologies to see network'
-      : 'Select 2 or more morphologies to see network';
-    return;
-  }
-  emptyTxt.style.display = 'none';
-
-  const cx = 160, cy = 162, r = 118;
-  const n = selected.length;
-
-  // Compute positions
-  const positions = selected.map((_, i) => {
-    const angle = (2 * Math.PI * i / n) - Math.PI / 2;
-    return {
-      x: cx + r * Math.cos(angle),
-      y: cy + r * Math.sin(angle),
-    };
-  });
-
-  // Draw curved arrows between consecutive nodes (circular)
-  for (let i = 0; i < n; i++) {
-    const from = positions[i];
-    const to   = positions[(i + 1) % n];
-    const mx   = (from.x + to.x) / 2;
-    const my   = (from.y + to.y) / 2;
-    // Control point: curve toward center
-    const cpx  = mx + (cx - mx) * 0.35;
-    const cpy  = my + (cy - my) * 0.35;
-
-    // Shorten path so arrowhead doesn't overlap node
-    const nodeR = 18;
-    const dx    = to.x - cpx;
-    const dy    = to.y - cpy;
-    const dist  = Math.sqrt(dx * dx + dy * dy);
-    const tx    = to.x - (dx / dist) * nodeR;
-    const ty    = to.y - (dy / dist) * nodeR;
-
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', `M ${from.x} ${from.y} Q ${cpx} ${cpy} ${tx} ${ty}`);
-    path.setAttribute('fill', 'none');
-    path.setAttribute('stroke', 'rgba(140,69,24,0.4)');
-    path.setAttribute('stroke-width', '1.5');
-    path.setAttribute('marker-end', 'url(#arrowhead)');
-    arrowsG.appendChild(path);
-  }
-
-  // Draw nodes
-  selected.forEach((label, i) => {
-    const { x, y } = positions[i];
-    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('cx', x);
-    circle.setAttribute('cy', y);
-    circle.setAttribute('r', 18);
-    circle.setAttribute('fill', '#2c2c2c');
-    circle.setAttribute('stroke', 'rgba(140,69,24,0.5)');
-    circle.setAttribute('stroke-width', '1.5');
-    g.appendChild(circle);
-
-    // Wrap label text — short labels only
-    const words  = label.split(/\s+/);
-    const line1  = words[0];
-    const line2  = words.slice(1).join(' ');
-    const text1  = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    text1.setAttribute('x', x);
-    text1.setAttribute('y', line2 ? y - 3 : y + 3);
-    text1.setAttribute('text-anchor', 'middle');
-    text1.setAttribute('dominant-baseline', 'middle');
-    text1.setAttribute('font-family', 'Space Mono, monospace');
-    text1.setAttribute('font-size', '7');
-    text1.setAttribute('fill', '#ffffff');
-    text1.setAttribute('letter-spacing', '0.5');
-    text1.textContent = line1;
-    g.appendChild(text1);
-
-    if (line2) {
-      const text2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      text2.setAttribute('x', x);
-      text2.setAttribute('y', y + 9);
-      text2.setAttribute('text-anchor', 'middle');
-      text2.setAttribute('dominant-baseline', 'middle');
-      text2.setAttribute('font-family', 'Space Mono, monospace');
-      text2.setAttribute('font-size', '7');
-      text2.setAttribute('fill', '#ffffff');
-      text2.setAttribute('letter-spacing', '0.5');
-      text2.textContent = line2;
-      g.appendChild(text2);
+    // If switching back to analysis, demote 'proposed' items to 'existing'
+    if (currentMode === 'analysis') {
+      Object.values(ITEMS).flat().forEach(item => {
+        if (item.state === 'proposed') {
+          item.state = 'existing';
+          item.el.classList.remove('proposed');
+          item.el.classList.add('existing');
+        }
+      });
     }
 
-    nodesG.appendChild(g);
+    drawConnections();
+    checkGenerate();
   });
+});
+
+/* ────────────────────────────────────────────────────────────────────────────
+   SVG CONNECTIONS
+──────────────────────────────────────────────────────────────────────────── */
+const diagramEl = document.getElementById('diagram');
+const connG     = document.getElementById('conn-g');
+
+// Column color pairs for strokes [geo→morph, morph→phen, phen→tempo]
+const STROKE_COLORS = [
+  { existing: 'rgba(74,122,138,.35)',  proposed: 'rgba(74,122,138,.18)',  marker: 'arr-geo' },
+  { existing: 'rgba(140,69,24,.35)',   proposed: 'rgba(140,69,24,.18)',   marker: 'arr-morph' },
+  { existing: 'rgba(107,91,138,.35)',  proposed: 'rgba(107,91,138,.18)',  marker: 'arr-phen' },
+];
+
+function getItemMidRight(el) {
+  const dr = diagramEl.getBoundingClientRect();
+  const r  = el.getBoundingClientRect();
+  return { x: r.right - dr.left, y: r.top - dr.top + r.height / 2 };
+}
+function getItemMidLeft(el) {
+  const dr = diagramEl.getBoundingClientRect();
+  const r  = el.getBoundingClientRect();
+  return { x: r.left - dr.left, y: r.top - dr.top + r.height / 2 };
 }
 
-/* ── Generate logic ─────────────────────────────────────────────────────── */
-document.getElementById('generate-btn').addEventListener('click', generateActivation);
+function drawConnections() {
+  connG.innerHTML = '';
+  const diagRect = diagramEl.getBoundingClientRect();
+  if (diagRect.width === 0) return;
 
-function generateActivation() {
-  const reactivate = [];
-  const reawaken   = [];
-  const rebalance  = [];
-  let reactivateNote = '';
-  let reawakenNote   = '';
-  let rebalanceNote  = '';
+  const cols = [ITEMS.geo, ITEMS.morph, ITEMS.phen, ITEMS.tempo];
 
-  const morph = state.morphTags;
-  const geo   = state.geoTags;
-  const phen  = state.phenTags;
-  const t     = state.tensions;
-  const b     = state.binaries;
-  const tempo = state.tempo;
+  for (let ci = 0; ci < cols.length - 1; ci++) {
+    const fromActive = cols[ci].filter(i => i.state !== 'none');
+    const toActive   = cols[ci + 1].filter(i => i.state !== 'none');
+    const sc         = STROKE_COLORS[ci];
 
-  /* ── REACTIVATE ── */
-  if (morph.size < 3) {
-    reactivate.push('Increase morphological diversity — richer sensory layering creates more conditions for awe');
+    fromActive.forEach(fromItem => {
+      toActive.forEach(toItem => {
+        const p1 = getItemMidRight(fromItem.el);
+        const p2 = getItemMidLeft(toItem.el);
+        const dx = (p2.x - p1.x) * 0.42;
+
+        const isProposed = fromItem.state === 'proposed' || toItem.state === 'proposed';
+        const color  = isProposed ? sc.proposed : sc.existing;
+        const dashes = isProposed ? '5 4' : null;
+        const width  = isProposed ? '1.2' : '1.5';
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d',
+          `M ${p1.x} ${p1.y} C ${p1.x + dx} ${p1.y} ${p2.x - dx} ${p2.y} ${p2.x} ${p2.y}`
+        );
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke', color);
+        path.setAttribute('stroke-width', width);
+        if (dashes) path.setAttribute('stroke-dasharray', dashes);
+        // Only show arrowhead for non-proposed connections to keep clutter low
+        if (!isProposed) path.setAttribute('marker-end', 'url(#' + sc.marker + ')');
+
+        connG.appendChild(path);
+      });
+    });
   }
-  if (!morph.has('Plants') && !morph.has('Green Space')) {
-    reactivate.push('Introduce vegetation, seasonal plantings, or living walls to add ecological presence and alterity');
+}
+
+// Redraw on resize (debounced)
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(drawConnections, 80);
+});
+// Redraw on scroll (connections move with page)
+window.addEventListener('scroll', drawConnections, { passive: true });
+
+/* ────────────────────────────────────────────────────────────────────────────
+   GENERATE BUTTON ENABLE
+──────────────────────────────────────────────────────────────────────────── */
+function allItems() { return Object.values(ITEMS).flat(); }
+function activeItems(col) { return ITEMS[col].filter(i => i.state !== 'none'); }
+function existingItems(col) { return ITEMS[col].filter(i => i.state === 'existing'); }
+function proposedItems(col) { return ITEMS[col].filter(i => i.state === 'proposed'); }
+function hasId(col, id) { return ITEMS[col].some(i => i.id === id && i.state !== 'none'); }
+function isProposedId(col, id) { return ITEMS[col].some(i => i.id === id && i.state === 'proposed'); }
+
+function checkGenerate() {
+  const anySelected = allItems().some(i => i.state !== 'none');
+  const btn  = document.getElementById('generate-btn');
+  const note = document.getElementById('gen-note');
+  btn.disabled = !anySelected;
+  note.textContent = anySelected
+    ? (currentMode === 'activation'
+        ? 'Ready — generate a strategy for this place'
+        : 'Ready — or switch to Rhythmactivation to propose additions')
+    : 'Select conditions across dimensions to generate a strategy';
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   GENERATE OUTPUT
+──────────────────────────────────────────────────────────────────────────── */
+document.getElementById('generate-btn').addEventListener('click', generate);
+
+function generate() {
+  const isActivation = currentMode === 'activation';
+
+  // Collect labels
+  const geoLabels   = activeItems('geo').map(i => i.el.querySelector('.item-name').textContent.replace(/\n/g,' ').trim());
+  const morphLabels  = activeItems('morph').map(i => i.el.querySelector('.item-name').textContent.replace(/\n/g,' ').trim());
+  const phenLabels   = activeItems('phen').map(i => {
+    const t = i.el.querySelector('.tension-type');
+    return t ? t.textContent : i.el.querySelector('.item-name').textContent;
+  });
+  const tempoLabels  = activeItems('tempo').map(i => i.el.querySelector('.item-name').textContent);
+
+  const propGeo   = proposedItems('geo').map(i => i.el.querySelector('.item-name').textContent.replace(/\n/g,' ').trim());
+  const propMorph = proposedItems('morph').map(i => i.el.querySelector('.item-name').textContent.replace(/\n/g,' ').trim());
+  const propPhen  = proposedItems('phen').map(i => {
+    const t = i.el.querySelector('.tension-type');
+    return t ? t.textContent : i.el.querySelector('.item-name').textContent;
+  });
+  const propTempo = proposedItems('tempo').map(i => i.el.querySelector('.item-name').textContent);
+
+  // Active tensions with pole state
+  const activeTensions = Object.keys(TENSION_POLES).filter(id => {
+    const item = ITEMS.phen.find(i => i.id === id);
+    return item && item.state !== 'none';
+  });
+
+  /* ── Narrative ── */
+  let narrative = '';
+
+  if (geoLabels.length) {
+    const geoStr = listJoin(geoLabels);
+    narrative += `This rhythmanalysis considers ${geoStr} as the primary location type${geoLabels.length > 1 ? 's' : ''}. `;
   }
-  if (!morph.has('Water')) {
-    reactivate.push('Consider water features, reflecting pools, or canalized water to introduce a non-human rhythm');
+  if (morphLabels.length) {
+    const mStr = listJoin(morphLabels);
+    narrative += `The morphological profile includes ${mStr}, `;
+    if (morphLabels.length < 4) {
+      narrative += `a relatively contained set of forms that may limit the range of awe conditions present. `;
+    } else {
+      narrative += `a diverse array of forms offering multiple conditions for awe. `;
+    }
   }
-  if (!morph.has('Light')) {
-    reactivate.push('Introduce lighting interventions — seasonal, reactive, or kinetic light to extend temporal availability');
+  if (activeTensions.length) {
+    const tStr = listJoin(activeTensions.map(id => id.charAt(0).toUpperCase() + id.slice(1)));
+    narrative += `The phenomenological character is shaped by ${tStr} tension${activeTensions.length > 1 ? 's' : ''}`;
+    // Note which binaries are active
+    const binaries = ['alterity','surprise','threshold','sanctuary'].filter(b => hasId('phen', b));
+    if (binaries.length) {
+      narrative += ` alongside the presence of ${listJoin(binaries)}. `;
+    } else {
+      narrative += `. `;
+    }
   }
-  if (!morph.has('Art & Objects')) {
-    reactivate.push('Commission public art, murals, or site-specific installations to create focal points of visual awe');
+  if (tempoLabels.length) {
+    narrative += `Temporally, this place is animated by ${listJoin(tempoLabels.map(t => t.toLowerCase()))} frequencies.`;
   }
-  if (!morph.has('Events') && !morph.has('Communities')) {
-    reactivate.push('Program recurring events — markets, performances, or community gatherings — to activate social morphologies');
-  }
-  if (!morph.has('Vistas')) {
-    reactivate.push('Consider view corridors, elevated platforms, or cleared sightlines to introduce spatial vastness');
-  }
-  if (geo.has('Waterfront') && !morph.has('Water')) {
-    reactivate.push('The waterfront setting offers unrealized potential — foreground the water as a morphological feature');
-  }
-  if (state.morphStab > 60) {
-    reactivate.push('The high dynamism of this location calls for anchor elements — permanent installations or plantings to ground the space');
+  if (!narrative) {
+    narrative = 'Select items across the four dimensions to generate a rhythmic profile for this place.';
   }
 
-  if (state.morphStab > 60) {
-    reactivateNote = 'Stability note: High morphological dynamism detected. Consider establishing fixed, permanent elements before layering additional programming.';
-  } else if (state.morphStab < 40) {
-    reactivateNote = 'Stability note: The stable morphological state is a foundation — layer temporary and seasonal elements to introduce change.';
+  if (isActivation && (propMorph.length || propGeo.length || propPhen.length || propTempo.length)) {
+    narrative += ' The rhythmactivation proposes introducing ';
+    const proposals = [...propGeo, ...propMorph, ...propPhen, ...propTempo];
+    narrative += listJoin(proposals) + (proposals.length > 1 ? ' as new elements' : ' as a new element');
+    narrative += ' to amplify and rebalance the awe potential of this site.';
   }
 
-  /* ── REAWAKEN ── */
-  if (!phen.has('Wonder')) {
-    reawaken.push('Introduce elements of discovery — hidden features, sequential reveals, or sensory surprise');
+  /* ── Morphological card ── */
+  const morphSuggestions = [];
+  if (isActivation) {
+    if (!hasId('morph','water') && (hasId('geo','waterfronts') || hasId('geo','parks'))) {
+      morphSuggestions.push('Introduce a water feature — a reflecting pool, fountain, or naturalized channel — to foreground a non-human rhythm and invite alterity.');
+    }
+    if (!hasId('morph','light')) {
+      morphSuggestions.push('Layer lighting interventions — seasonal, reactive, or directional — to extend the temporal availability of awe into the evening.');
+    }
+    if (!hasId('morph','art') && !hasId('morph','visualdesign')) {
+      morphSuggestions.push('Commission site-specific art or visual design elements to create focal points of beauty and wonder.');
+    }
+    if (!hasId('morph','events') && !hasId('morph','communities')) {
+      morphSuggestions.push('Program recurring community events — weekly markets, monthly performances, or seasonal gatherings — to activate social morphologies and collective effervescence.');
+    }
+    if (!hasId('morph','plants') && !hasId('morph','greenspace') && !hasId('morph','nature')) {
+      morphSuggestions.push('Introduce vegetation, ecological plantings, or a Miyawaki-style forest to embed non-human rhythms and create conditions for alterity.');
+    }
+    if (propGeo.length) {
+      morphSuggestions.push('The addition of ' + listJoin(propGeo) + ' as a location type opens possibilities for new morphological programming — consider what forms this new geography makes available.');
+    }
+    if (propMorph.length) {
+      morphSuggestions.push('Proposed additions (' + listJoin(propMorph) + ') should be calibrated to the existing morphological palette to avoid dissonance — consider how each new form amplifies or contrasts existing ones.');
+    }
+  } else {
+    // Analysis mode observations
+    if (morphLabels.length === 0) {
+      morphSuggestions.push('No morphological forms identified yet. Observing the material conditions of this place — its textures, volumes, living presences, and sensory qualities — is the first step of rhythmanalysis.');
+    } else if (morphLabels.length < 3) {
+      morphSuggestions.push(`The morphological profile (${listJoin(morphLabels)}) is sparse. This place may underperform in its capacity to elicit awe, relying on a narrow set of forms.`);
+    } else {
+      morphSuggestions.push(`This place draws on ${morphLabels.length} morphological elements, suggesting a layered sensory environment. Consider which forms are dynamic (changing across time) versus stable (fixed and permanent).`);
+    }
+    if (hasId('morph','animals') || hasId('morph','weather') || hasId('morph','plants')) {
+      morphSuggestions.push('The presence of living or atmospheric forms (animals, weather, plants) introduces non-human rhythms — a key condition for experiences of alterity and awe.');
+    }
+    if (hasId('morph','events') || hasId('morph','communities') || hasId('morph','collective')) {
+      morphSuggestions.push('Social and communal morphologies are present. These forms carry the potential for collective effervescence — shared emotional states that can intensify and amplify awe.');
+    }
   }
-  if (!phen.has('Vastness')) {
-    reawaken.push('Open visual or spatial connections to larger systems — sky, water, or distant horizons');
-  }
-  if (!phen.has('Interconnection')) {
-    reawaken.push('Create legible connections between people and place — signage, programming, or community displays');
-  }
-  if (t.ornate < 30) {
-    reawaken.push('Introduce ornamental excess — decoration, craft, or aesthetic detail that exceeds functional necessity');
-  }
-  if (t.ornate > 70) {
-    reawaken.push('Balance ornate elements with functional clarity — ensure the space remains navigable and purposeful');
-  }
-  if (t.inclusive > 60) {
-    reawaken.push('Reduce perceived barriers — improve wayfinding, signage, and create explicit welcoming gestures');
-  }
-  if (t.wild < 30) {
-    reawaken.push('Introduce curated elements to create legibility and guide attention without taming the wildness');
-  }
-  if (t.wild > 70) {
-    reawaken.push('Allow some ecological autonomy — unmown patches, volunteer plants, or animal habitats');
-  }
-  if (!b.alterity) {
-    reawaken.push('Introduce living, non-human presences — plants, birds, water — to create encounters with irreducible otherness');
-  }
-  if (!b.surprise) {
-    reawaken.push('Design for the unexpected — seasonal changes, pop-up installations, or elements that shift with time of day');
-  }
-  if (!b.sanctuary && t.expansive > 60) {
-    reawaken.push('Create moments of enclosure — seating alcoves, planted edges, or overhead canopy — within the expansive setting');
-  }
-  if (state.phenStab > 60) {
-    reawaken.push('The dynamic phenomenological state suggests programming interventions rather than fixed physical changes');
-  }
+  if (!morphSuggestions.length) morphSuggestions.push('The morphological conditions of this place appear well-developed. Continue to observe how these forms shift across seasons and times of day.');
 
-  if (state.phenStab > 60) {
-    reawakenNote = 'Stability note: Dynamic phenomenological conditions present. Prioritize responsive, time-based programming over permanent physical change.';
-  } else if (state.phenStab < 40) {
-    reawakenNote = 'Stability note: The stable experiential character of this space is an asset — use it as a ground for introducing carefully calibrated moments of disruption.';
+  /* ── Phenomenological card ── */
+  const phenSuggestions = [];
+  if (isActivation) {
+    if (!TENSION_POLES.ecological.left && !hasId('morph','animals') && !hasId('morph','plants') && !hasId('morph','nature')) {
+      phenSuggestions.push('Accentuate the ecological tension toward wildness — unmown patches, volunteer vegetation, or wildlife habitats can introduce genuine otherness and unpredictability.');
+    }
+    if (!hasId('phen','alterity')) {
+      phenSuggestions.push('Introduce encounters with the radically non-human — living presences, uncontrolled systems, or weather-responsive elements — to create conditions for alterity.');
+    }
+    if (!hasId('phen','threshold')) {
+      phenSuggestions.push('Design a threshold — a marked entry, lighting change, or material shift — that signals a different experiential register and primes visitors for awe.');
+    }
+    if (!hasId('phen','sanctuary') && (TENSION_POLES.spatial.left || hasId('geo','parks'))) {
+      phenSuggestions.push('Introduce moments of enclosure — a planted alcove, overhead canopy, or sheltered seat — to create sanctuary within an expansive setting.');
+    }
+    if (!hasId('phen','surprise')) {
+      phenSuggestions.push('Design for surprise: seasonal installations, hidden features, or elements that change with the time of day to introduce arrhythmic moments of the unexpected.');
+    }
+    if (TENSION_POLES.social.right) {
+      phenSuggestions.push('Reduce perceived barriers to access — improve wayfinding, lower visual and social thresholds, and create explicit welcoming gestures to shift the social tension toward inclusion.');
+    }
+    if (propPhen.length) {
+      phenSuggestions.push('Proposed phenomenological additions (' + listJoin(propPhen) + ') signal a desire to deepen the experiential richness of this site — consider how these qualities might be legible to a first-time visitor.');
+    }
+  } else {
+    // Analysis mode
+    if (activeTensions.length === 0) {
+      phenSuggestions.push('No phenomenological tensions identified. Observing which qualities are in productive tension — wildness vs. curation, novelty vs. familiarity — is central to rhythmanalysis.');
+    } else {
+      const eurythmic = activeTensions.filter(id => {
+        const p = TENSION_POLES[id];
+        return p.right && !p.left; // right poles tend toward familiarity/harmony
+      });
+      const arrhythmic = activeTensions.filter(id => {
+        const p = TENSION_POLES[id];
+        return p.left && !p.right;
+      });
+      if (arrhythmic.length > eurythmic.length) {
+        phenSuggestions.push('The phenomenological profile skews arrhythmic — toward disruption, novelty, and transformation. This space is likely experienced as dynamic and stimulating.');
+      } else if (eurythmic.length > arrhythmic.length) {
+        phenSuggestions.push('The phenomenological profile skews eurythmic — toward familiarity, continuity, and alignment. This space may reward return visits and slow attunement.');
+      } else {
+        phenSuggestions.push('The phenomenological tensions are balanced between arrhythmic and eurythmic qualities — a productive tension that may offer different encounters at different times.');
+      }
+    }
+    const binariesPresent = ['alterity','surprise','threshold','sanctuary'].filter(b => hasId('phen', b));
+    if (binariesPresent.length > 0) {
+      phenSuggestions.push(`The presence of ${listJoin(binariesPresent)} indicates this place has conditions for heightened experiential encounter — qualities that push beyond the everyday.`);
+    } else {
+      phenSuggestions.push('None of the awe binaries (alterity, surprise, threshold, sanctuary) are currently present. These qualities are often what distinguish an ordinary place from an awe-generating one.');
+    }
   }
+  if (!phenSuggestions.length) phenSuggestions.push('The phenomenological conditions of this place are rich. Monitor how these experiential qualities shift with season, time of day, and changing programming.');
 
-  /* ── REBALANCE ── */
-  if (tempo === 'Ephemeral' || tempo === 'Periodic') {
-    rebalance.push('Anchor the space with always-available awe elements — permanent plantings, architecture, or water features — to provide reliable access to awe');
+  /* ── Temporal card ── */
+  const tempoSuggestions = [];
+  if (isActivation) {
+    if (!hasId('tempo','timeless') && !hasId('tempo','daily')) {
+      tempoSuggestions.push('Establish a reliably available anchor — a permanent planting, architectural element, or water feature — so that awe is accessible independently of events or seasons.');
+    }
+    if (!hasId('tempo','recurring')) {
+      tempoSuggestions.push('Introduce a recurring programming cycle — weekly, monthly, or seasonal events — to establish rhythmic expectations and the pleasure of anticipated return.');
+    }
+    if (!hasId('tempo','history') && !hasId('tempo','ephemeral')) {
+      tempoSuggestions.push('Engage the temporal extremes: ephemeral installations (one-time events) and historical interpretation (honoring the past) together expand the temporal range of the place.');
+    }
+    if (hasId('tempo','seasonal') && !hasId('morph','plants') && !hasId('morph','weather')) {
+      tempoSuggestions.push('The seasonal frequency calls for morphological reinforcement — plantings, water, or weather-sensitive materials that make the change of seasons perceptible and celebrated.');
+    }
+    if (!hasId('tempo','history') && (hasId('geo','civic') || hasId('geo','educational'))) {
+      tempoSuggestions.push('This location type has temporal depth — consider introducing historical interpretation through signage, public art, or naming to activate the frequency of history.');
+    }
+    if (propTempo.length) {
+      tempoSuggestions.push('Adding ' + listJoin(propTempo) + ' as proposed frequencies would expand the rhythmic profile of this place, creating new windows of availability for awe.');
+    }
+  } else {
+    // Analysis mode
+    if (tempoLabels.length === 0) {
+      tempoSuggestions.push('No temporal frequencies identified. Consider how often awe is reliably available at this site — is it always there, or only under specific conditions?');
+    } else if (tempoLabels.length === 1) {
+      tempoSuggestions.push(`This place operates primarily at a single temporal frequency (${tempoLabels[0].toLowerCase()}). A richer rhythmic profile would offer awe across multiple timescales.`);
+    } else {
+      tempoSuggestions.push(`This place operates across ${tempoLabels.length} temporal frequencies (${listJoin(tempoLabels.map(t=>t.toLowerCase()))}), suggesting a polyrhythmic environment. Each frequency addresses a different relationship with time.`);
+    }
+    if (hasId('tempo','timeless') || hasId('tempo','daily')) {
+      tempoSuggestions.push('The presence of timeless or daily frequencies means awe is reliably available at this site — a significant asset for everyday urban life.');
+    }
+    if (hasId('tempo','ephemeral') || hasId('tempo','periodic')) {
+      tempoSuggestions.push('Ephemeral or periodic frequencies introduce arrhythmic potential — the possibility of unexpected, unrepeatable encounter that disrupts the routine of daily life.');
+    }
   }
-  if (tempo === 'Always') {
-    rebalance.push('Introduce ephemeral or periodic events to layer temporal excitement onto the stable base — festivals, seasonal installations, performances');
-  }
-  if (tempo === 'Seasonal') {
-    rebalance.push('Maximize seasonal legibility — ensure the transitions between seasons are perceptible and celebrated in the space');
-  }
-  if (tempo === 'Recurring') {
-    rebalance.push('Align recurring programming with natural rhythms — weekly markets at peak light, monthly events at seasonal transitions');
-  }
-  if (state.tempoStab < 40) {
-    rebalance.push('The temporal stability of this space is an asset — use it as a foundation for layering more dynamic programming');
-  }
-  if (state.tempoStab > 60) {
-    rebalance.push('The high temporal dynamism suggests adding permanently available awe — something that is always there regardless of programming');
-  }
-  if (!tempo) {
-    rebalance.push('Define the temporal identity of this space — is it a place of always-available awe, or a stage for periodic gatherings?');
-  }
-  if (geo.has('Cultural Venue') && tempo !== 'Recurring' && tempo !== 'Daily' && tempo !== 'Always') {
-    rebalance.push('Cultural venues benefit from reliable rhythms — consider establishing recurring programming cycles');
-  }
+  if (!tempoSuggestions.length) tempoSuggestions.push('The temporal profile of this place is well-rounded. Continue to observe how different frequencies feel across the year and across different user groups.');
 
-  if (state.tempoStab > 60) {
-    rebalanceNote = 'Stability note: High temporal dynamism. Establish stable anchors before introducing further programmable layers.';
-  } else if (state.tempoStab < 40) {
-    rebalanceNote = 'Stability note: Stable temporal character. Leverage this consistency while introducing carefully timed moments of change.';
-  }
-
-  /* ── CROSS-DIMENSIONAL ── */
+  /* ── Cross-dimensional note ── */
   let crossNote = '';
-  if (geo.size < 2 && morph.size < 3 && phen.size < 2) {
-    crossNote = 'This location has significant untapped potential across all dimensions. Consider a comprehensive activation strategy.';
-  }
-  const avgStab = (state.geoStab + state.morphStab + state.phenStab + state.tempoStab) / 4;
-  if (avgStab > 60) {
-    const dynamicNote = 'This highly dynamic location may benefit from a period of stability — establish anchor points before layering additional programming.';
-    crossNote = crossNote ? crossNote + ' ' + dynamicNote : dynamicNote;
-  }
-
-  /* ── Fallbacks ── */
-  if (reactivate.length === 0) {
-    reactivate.push('Strong morphological foundation — consider fine-tuning existing elements rather than introducing new ones');
-  }
-  if (reawaken.length === 0) {
-    reawaken.push('Strong phenomenological profile — maintain existing conditions and monitor for shifts over time');
-  }
-  if (rebalance.length === 0) {
-    rebalance.push('Temporal profile is well-balanced — consider documentation and interpretation to make temporal richness legible');
+  const totalActive = allItems().filter(i => i.state !== 'none').length;
+  const totalProposed = allItems().filter(i => i.state === 'proposed').length;
+  if (isActivation && totalProposed > 0) {
+    const eurythmicGoal = activeTensions.some(id => TENSION_POLES[id].right);
+    const arrhythmicGoal = activeTensions.some(id => TENSION_POLES[id].left);
+    if (arrhythmicGoal && !eurythmicGoal) {
+      crossNote = 'The proposed activation leans arrhythmic — toward disruption, novelty, and renewal. This is effective for stimulating awe, but consider whether the stable, familiar qualities of this place are being honored alongside the new.';
+    } else if (eurythmicGoal && !arrhythmicGoal) {
+      crossNote = 'The proposed activation leans eurythmic — toward harmony, continuity, and alignment. This can deepen the subtle dimensions of awe, but consider whether there are opportunities to introduce productive disruption or surprise.';
+    } else if (totalProposed > 5) {
+      crossNote = 'A substantial rhythmactivation is proposed. Consider sequencing these interventions — beginning with anchoring, stable elements before layering dynamic and ephemeral ones.';
+    }
+  } else if (!isActivation && totalActive < 4) {
+    crossNote = 'This rhythmanalysis is preliminary. Continue observing this place across different times of day and seasons to build a more complete rhythmic portrait.';
   }
 
   /* ── Render ── */
-  renderList('reactivate-list', reactivate);
-  renderList('reawaken-list',   reawaken);
-  renderList('rebalance-list',  rebalance);
+  document.getElementById('out-eyebrow').textContent = isActivation ? 'Rhythmactivation' : 'Rhythmanalysis';
+  document.getElementById('out-title').textContent   = isActivation ? 'Activation Strategy' : 'Rhythmic Profile';
 
-  document.getElementById('reactivate-note').textContent = reactivateNote;
-  document.getElementById('reawaken-note').textContent   = reawakenNote;
-  document.getElementById('rebalance-note').textContent  = rebalanceNote;
-
-  const crossEl = document.getElementById('cross-note');
-  if (crossNote) {
-    crossEl.textContent = crossNote;
-    crossEl.style.display = '';
-  } else {
-    crossEl.style.display = 'none';
-  }
-
-  // Output meta
-  const locName = document.getElementById('location-name').value.trim();
-  const date    = document.getElementById('analysis-date').value;
+  const locName = document.getElementById('loc-name').value.trim();
+  const locDate = document.getElementById('loc-date').value;
   let meta = '';
   if (locName) meta += locName;
-  if (date) meta += (meta ? ' · ' : '') + formatDate(date);
-  meta += (meta ? ' · ' : '') + 'Generated ' + formatDate(new Date().toISOString().slice(0,10));
-  document.getElementById('output-meta').textContent = meta;
+  if (locDate) meta += (meta ? ' · ' : '') + fmtDate(locDate);
+  meta += (meta ? ' · ' : '') + 'Generated ' + fmtDate(new Date().toISOString().slice(0,10));
+  document.getElementById('out-meta').textContent = meta;
 
-  // Show output + animate
+  document.getElementById('out-narrative').textContent = narrative;
+
+  // Card titles / frames
+  if (isActivation) {
+    document.getElementById('morph-title').textContent = 'New Forms';
+    document.getElementById('morph-frame').textContent = 'Material and sensory interventions to enrich the conditions for awe';
+    document.getElementById('phen-title').textContent  = 'Deepen Experience';
+    document.getElementById('phen-frame').textContent  = 'Phenomenological interventions to cultivate richer encounters and heightened awareness';
+    document.getElementById('tempo-title').textContent = 'Expand Rhythms';
+    document.getElementById('tempo-frame').textContent = 'Temporal interventions to broaden when and how awe is accessible';
+  } else {
+    document.getElementById('morph-title').textContent = 'What Is Here';
+    document.getElementById('morph-frame').textContent = 'The material and sensory conditions currently present in this place';
+    document.getElementById('phen-title').textContent  = 'How It Feels';
+    document.getElementById('phen-frame').textContent  = 'The phenomenological qualities and tensions shaping the experience of this place';
+    document.getElementById('tempo-title').textContent = 'When It Happens';
+    document.getElementById('tempo-frame').textContent = 'The temporal rhythms through which awe manifests at this site';
+  }
+
+  renderList('morph-list', morphSuggestions);
+  renderList('phen-list',  phenSuggestions);
+  renderList('tempo-list', tempoSuggestions);
+
+  const crossEl = document.getElementById('cross-note');
+  crossEl.style.display = crossNote ? '' : 'none';
+  crossEl.textContent = crossNote;
+
   const section = document.getElementById('output-section');
   section.classList.add('visible');
   section.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // Stagger cards
-  const cards = document.querySelectorAll('.output-card');
-  cards.forEach(c => c.classList.remove('anim'));
-  cards.forEach((c, i) => {
-    setTimeout(() => c.classList.add('anim'), 150 + i * 120);
+  document.querySelectorAll('.strategy-card').forEach(c => c.classList.remove('anim'));
+  document.querySelectorAll('.strategy-card').forEach((c, i) => {
+    setTimeout(() => c.classList.add('anim'), 120 + i * 110);
   });
 }
 
+/* ────────────────────────────────────────────────────────────────────────────
+   HELPERS
+──────────────────────────────────────────────────────────────────────────── */
 function renderList(id, items) {
   const ul = document.getElementById(id);
   ul.innerHTML = '';
@@ -1544,10 +1367,17 @@ function renderList(id, items) {
   });
 }
 
-function formatDate(str) {
+function listJoin(arr) {
+  if (!arr.length) return '';
+  if (arr.length === 1) return arr[0];
+  if (arr.length === 2) return arr[0] + ' and ' + arr[1];
+  return arr.slice(0, -1).join(', ') + ', and ' + arr[arr.length - 1];
+}
+
+function fmtDate(str) {
   if (!str) return '';
   const d = new Date(str + 'T12:00:00');
-  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  return d.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
 }
 </script>
 </body>
