@@ -68,12 +68,110 @@ body::before {
 .mode-btn + .mode-btn { border-left: 1px solid rgba(26,26,26,.15); }
 .mode-btn.active { background: var(--ink); color: #fff; }
 
+/* ── Focus View button ── */
+.focus-view-btn {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .12em;
+  text-transform: uppercase; padding: 7px 12px; border-radius: 3px;
+  border: 1px solid rgba(26,26,26,.2); background: transparent;
+  cursor: pointer; color: var(--muted); transition: all .15s; white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+}
+.focus-view-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+body.focus-mode .focus-view-btn {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+}
+.focus-badge {
+  background: rgba(255,255,255,.25); border-radius: 8px; padding: 1px 5px;
+  font-size: 7px; display: none;
+}
+body.focus-mode .focus-badge { display: inline; }
+
 .header-hint {
   font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: .88rem;
   color: var(--stone); line-height: 1.4; transition: color .2s; max-width: 340px;
 }
 .header-hint.has-source {
   color: var(--accent); font-style: normal; font-weight: 600;
+}
+
+/* ── Instruction Banner ── */
+#instruction-banner {
+  flex-shrink: 0;
+  background: var(--parchment);
+  border-bottom: 1px solid rgba(140,69,24,.12);
+  border-left: 3px solid var(--accent);
+  overflow: hidden;
+  transition: max-height .2s ease, opacity .2s;
+  max-height: 200px;
+  opacity: 1;
+  position: relative; z-index: 90;
+}
+#instruction-banner.dismissed {
+  max-height: 0; opacity: 0; border-bottom-width: 0;
+}
+.banner-inner {
+  display: flex; align-items: flex-start; gap: 20px;
+  padding: 8px 20px 8px 16px; flex-wrap: wrap;
+}
+.banner-steps {
+  display: flex; gap: 14px; flex-wrap: wrap; flex: 1; align-items: center;
+}
+.banner-step {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .05em;
+  color: var(--muted); white-space: nowrap;
+}
+.banner-step strong { color: var(--ink); }
+.banner-divider {
+  width: 1px; height: 14px; background: rgba(26,26,26,.12); flex-shrink: 0; align-self: center;
+}
+.banner-desc {
+  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .05em;
+  color: var(--stone); font-style: italic; align-self: center;
+}
+.banner-close {
+  font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1;
+  border: none; background: none; cursor: pointer; color: var(--stone);
+  padding: 2px 4px; flex-shrink: 0; margin-top: 1px;
+  transition: color .15s;
+}
+.banner-close:hover { color: var(--ink); }
+
+/* ── Mode Description Bar ── */
+#mode-desc-bar {
+  flex-shrink: 0;
+  background: rgba(255,255,255,.6);
+  border-bottom: 1px solid rgba(26,26,26,.06);
+  overflow: hidden;
+  transition: max-height .2s ease, opacity .2s;
+  max-height: 80px; opacity: 1;
+  position: relative; z-index: 89;
+}
+#mode-desc-bar.dismissed {
+  max-height: 0; opacity: 0; border-bottom-width: 0;
+}
+.mdb-inner {
+  display: flex; align-items: center; gap: 12px;
+  padding: 6px 20px 6px 16px;
+}
+.mdb-mode-label {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .2em;
+  text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
+}
+body:not(.mode-activation) .mdb-mode-label { color: var(--geo); }
+body.mode-activation .mdb-mode-label { color: var(--accent); }
+.mdb-text {
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: .82rem;
+  color: var(--stone); flex: 1; line-height: 1.4;
+}
+/* show/hide per mode */
+#mdb-analysis { display: flex; align-items: center; gap: 12px; flex: 1; }
+#mdb-activation { display: none; align-items: center; gap: 12px; flex: 1; }
+body.mode-activation #mdb-analysis { display: none; }
+body.mode-activation #mdb-activation { display: flex; }
+/* activation canvas tint */
+body.mode-activation .canvas-wrap::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: rgba(192,112,48,.03); z-index: 1;
 }
 
 /* ── App body ── */
@@ -123,7 +221,7 @@ body::before {
 }
 .flow-col:last-child { border-right: none; }
 
-/* Stable→Dynamic subtle background gradient on morph + tempo */
+/* Stable→Dynamic background gradient on morph + tempo */
 .flow-col[data-col="morph"] {
   background: linear-gradient(
     to bottom,
@@ -143,6 +241,19 @@ body::before {
   );
 }
 
+/* Vertical gradient strip on absolute left edge of morph + tempo columns */
+.flow-col[data-col="morph"]::after,
+.flow-col[data-col="tempo"]::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--stable) 0%, var(--dynamic) 100%);
+  opacity: .45;
+  pointer-events: none;
+  z-index: 2;
+}
+
 .col-header {
   padding: 20px 16px 14px;
   border-bottom: 1px solid rgba(26,26,26,.08);
@@ -159,20 +270,21 @@ body::before {
 }
 .col-title { font-weight: 300; font-size: 1.25rem; line-height: 1.1; }
 
-/* Stable→Dynamic axis in column header */
+/* Stable→Dynamic axis — vertical orientation */
 .col-axis {
-  display: flex; align-items: center; gap: 5px; margin-top: 9px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 3px; margin-top: 9px;
 }
 .axis-label {
   font-family: 'Space Mono', monospace; font-size: 6.5px; letter-spacing: .12em;
-  text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
+  text-transform: uppercase; white-space: nowrap;
+  display: flex; align-items: center; gap: 3px;
 }
 .axis-label.stable { color: var(--stable); }
 .axis-label.dynamic { color: var(--dynamic); }
 .axis-bar {
-  flex: 1; height: 3px; border-radius: 2px;
-  background: linear-gradient(to right, var(--stable), var(--dynamic));
-  opacity: .7;
+  width: 28px; height: 18px; border-radius: 3px;
+  background: linear-gradient(to bottom, var(--stable), var(--dynamic));
+  opacity: .65; margin-left: 2px;
 }
 
 .flow-col[data-col="geo"]   { --col-color: var(--geo); }
@@ -202,7 +314,7 @@ body::before {
   cursor: crosshair;
   user-select: none;
   position: relative;
-  transition: border-color .15s, background .15s, transform .1s, box-shadow .15s;
+  transition: border-color .15s, background .15s, transform .1s, box-shadow .15s, opacity .2s;
   display: flex; align-items: flex-start; gap: 8px;
   border-left: 3px solid var(--spectrum-color, rgba(26,26,26,.12));
 }
@@ -236,6 +348,19 @@ body::before {
   box-shadow: inset 0 0 0 2px var(--r-color, transparent);
   border-color: var(--r-color, var(--col-color));
 }
+
+/* Focus mode */
+body.focus-mode .flow-node:not(.in-rhythm) {
+  opacity: 0.07;
+  pointer-events: none;
+}
+body.focus-mode .flow-node.in-rhythm.r-active {
+  box-shadow: inset 0 0 0 2px var(--r-color, transparent), 0 0 12px rgba(0,0,0,.14);
+}
+body.focus-mode .col-section {
+  opacity: .3;
+}
+
 .node-dots {
   display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; padding-top: 3px;
 }
@@ -325,6 +450,28 @@ body::before {
   text-transform: uppercase; color: var(--muted); white-space: nowrap; flex-shrink: 0;
 }
 .rp-divider { width: 1px; height: 24px; background: rgba(26,26,26,.1); flex-shrink: 0; }
+
+/* Session metadata inputs */
+.rp-meta {
+  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
+.rp-meta-item {
+  display: flex; align-items: center; gap: 4px;
+}
+.rp-meta-item label {
+  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--stone); white-space: nowrap;
+}
+.rp-meta-input {
+  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .04em;
+  color: var(--ink); border: none; border-bottom: 1px solid rgba(26,26,26,.12);
+  background: transparent; outline: none; padding: 2px 0;
+  transition: border-color .15s;
+}
+.rp-meta-input[type="text"] { width: 90px; }
+.rp-meta-input[type="date"] { width: 100px; }
+.rp-meta-input:focus { border-bottom-color: var(--accent); }
+
 .rp-chips {
   display: flex; gap: 6px; align-items: center; flex: 1;
   overflow-x: auto; overflow-y: visible;
@@ -379,7 +526,18 @@ body::before {
   border-style: dashed; color: var(--accent); display: none;
 }
 .rp-add-btn.propose:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
-body.mode-activation .rp-add-btn.propose { display: block; }
+body.mode-activation .rp-add-btn.propose {
+  display: block;
+  border-color: var(--accent); color: var(--accent); font-weight: bold;
+}
+/* In activation mode, propose is the primary action */
+body.mode-activation .rp-add-btn.propose {
+  background: rgba(140,69,24,.07);
+  border-style: solid;
+}
+body.mode-activation .rp-add-btn:not(.propose) {
+  opacity: .6;
+}
 
 .rp-empty {
   font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: .88rem;
@@ -399,7 +557,7 @@ body.mode-activation .rp-add-btn.propose { display: block; }
   width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
 }
 .rd-name-input {
-  font-family: 'Space Mono', monospace; font-size: 8.5px; letter-spacing: .08em;
+  font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .08em;
   text-transform: uppercase; color: var(--ink);
   border: none; border-bottom: 1px solid rgba(26,26,26,.15);
   background: transparent; outline: none; width: 140px; padding: 2px 0;
@@ -410,16 +568,20 @@ body.mode-activation .rp-add-btn.propose { display: block; }
   text-transform: uppercase; color: var(--stone);
 }
 .rd-section {
-  font-family: 'Space Mono', monospace; font-size: 7px; letter-spacing: .15em;
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .15em;
   text-transform: uppercase; color: var(--stone); margin-bottom: 5px;
 }
 .rd-connections { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; align-content: flex-start; }
 .rd-conn-tag {
   display: inline-flex; align-items: center; gap: 5px;
-  font-family: 'Space Mono', monospace; font-size: 7px; letter-spacing: .05em;
-  padding: 3px 7px; border-radius: 2px;
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .05em;
+  padding: 4px 8px; border-radius: 2px;
   background: rgba(26,26,26,.04); color: var(--muted);
-  text-transform: uppercase; border-left: 3px solid var(--tag-color, rgba(26,26,26,.15));
+  border-left: 3px solid var(--tag-color, rgba(26,26,26,.15));
+}
+.rd-conn-tag .conn-node-name {
+  font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: normal;
+  text-transform: none; letter-spacing: .01em; color: var(--ink);
 }
 .rd-conn-tag button {
   cursor: pointer; color: var(--stone); font-size: 11px; line-height: 1;
@@ -428,7 +590,7 @@ body.mode-activation .rp-add-btn.propose { display: block; }
 }
 .rd-conn-tag button:hover { opacity: 1; color: #c04040; }
 .rd-no-conns {
-  font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: .85rem;
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px;
   color: var(--stone);
 }
 </style>
@@ -446,13 +608,49 @@ body.mode-activation .rp-add-btn.propose { display: block; }
   </div>
   <div class="header-right">
     <span class="header-hint" id="header-hint">Click a node to select source, then click another to connect — or drag between nodes</span>
+    <button class="focus-view-btn" id="focus-view-btn" onclick="toggleFocusMode()">
+      Rhythm View
+      <span class="focus-badge" id="focus-badge">0</span>
+    </button>
     <div class="mode-toggle">
-      <button class="mode-btn active" data-mode="analysis" onclick="setMode('analysis')">Rhythm<em style="font-family:inherit;font-style:italic">analysis</em></button>
-      <button class="mode-btn" data-mode="activation" onclick="setMode('activation')">Rhythm<em style="font-family:inherit;font-style:italic">activation</em></button>
+      <button class="mode-btn active" data-mode="analysis" onclick="setMode('analysis')">Rhythmanalysis</button>
+      <button class="mode-btn" data-mode="activation" onclick="setMode('activation')">Rhythmactivation</button>
     </div>
     <a href="rhythm.html" style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--stone);text-decoration:none;padding:7px 10px;border:1px solid rgba(26,26,26,.15);border-radius:3px;transition:color .2s" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--stone)'">Diagram View →</a>
   </div>
 </header>
+
+<!-- ── Instruction Banner ── -->
+<div id="instruction-banner">
+  <div class="banner-inner">
+    <div class="banner-steps">
+      <span class="banner-step"><strong>①</strong> Click any node to select it as a source (it will pulse with an outline)</span>
+      <div class="banner-divider"></div>
+      <span class="banner-step"><strong>②</strong> Click a second node to draw a connection — across any column</span>
+      <div class="banner-divider"></div>
+      <span class="banner-step"><strong>③</strong> Or drag directly from node to node</span>
+      <div class="banner-divider"></div>
+      <span class="banner-step"><strong>④</strong> Click any connection line to delete it · Press Esc to cancel a selection</span>
+      <div class="banner-divider"></div>
+      <span class="banner-desc">Rhythmanalysis: map existing rhythms · Rhythmactivation: design proposed interventions</span>
+    </div>
+    <button class="banner-close" id="banner-close" title="Dismiss instructions">×</button>
+  </div>
+</div>
+
+<!-- ── Mode Description Bar ── -->
+<div id="mode-desc-bar">
+  <div class="mdb-inner">
+    <div id="mdb-analysis">
+      <span class="mdb-mode-label">Rhythmanalysis</span>
+      <span class="mdb-text">Observe &amp; document the existing rhythms of this place. Trace how geography, morphology, qualities, and time connect in what you perceive right now. Add rhythms you identify, then draw connections across the four columns.</span>
+    </div>
+    <div id="mdb-activation">
+      <span class="mdb-mode-label">Rhythmactivation</span>
+      <span class="mdb-text">Design proposed interventions to shift or strengthen rhythms. Your analysis rhythms remain as a baseline. Add proposed rhythms (shown as dashed lines) to explore what could be different. What new connections would change the character of this place?</span>
+    </div>
+  </div>
+</div>
 
 <!-- ── App body ── -->
 <div class="app-body">
@@ -502,9 +700,9 @@ body.mode-activation .rp-add-btn.propose { display: block; }
           <div class="col-cat">Morphology</div>
           <div class="col-title">Forms</div>
           <div class="col-axis">
-            <span class="axis-label stable">Stable</span>
+            <span class="axis-label stable">↑ STABLE</span>
             <div class="axis-bar"></div>
-            <span class="axis-label dynamic">Dynamic</span>
+            <span class="axis-label dynamic">DYNAMIC ↓</span>
           </div>
         </div>
         <div class="col-section">Physical Forms</div>
@@ -580,9 +778,9 @@ body.mode-activation .rp-add-btn.propose { display: block; }
           <div class="col-cat">Temporality</div>
           <div class="col-title">Frequencies</div>
           <div class="col-axis">
-            <span class="axis-label stable">Stable</span>
+            <span class="axis-label stable">↑ STABLE</span>
             <div class="axis-bar"></div>
-            <span class="axis-label dynamic">Dynamic</span>
+            <span class="axis-label dynamic">DYNAMIC ↓</span>
           </div>
         </div>
         <div class="col-section">Rhythms of Time</div>
@@ -601,7 +799,19 @@ body.mode-activation .rp-add-btn.propose { display: block; }
   <!-- ── Bottom Rhythm Panel ── -->
   <div class="rhythm-panel" id="rhythm-panel">
     <div class="rhythm-panel-bar">
-      <span class="rp-label">Rhythms</span>
+      <span class="rp-label" id="rp-label">Identified Rhythms</span>
+      <div class="rp-divider"></div>
+      <!-- Session metadata -->
+      <div class="rp-meta">
+        <div class="rp-meta-item">
+          <label for="rp-place">Place:</label>
+          <input class="rp-meta-input" id="rp-place" type="text" placeholder="Location…" />
+        </div>
+        <div class="rp-meta-item">
+          <label for="rp-date">Date:</label>
+          <input class="rp-meta-input" id="rp-date" type="date" />
+        </div>
+      </div>
       <div class="rp-divider"></div>
       <div class="rp-chips" id="rp-chips"></div>
       <div class="rp-add-wrap">
@@ -643,6 +853,7 @@ let rhythms    = [];
 let nextId     = 1;
 let activeId   = null;
 let mode       = 'analysis';
+let focusMode  = false;
 
 let dragSrc           = null;
 let dragActive        = false;
@@ -675,7 +886,6 @@ const nodeLabel = (col, id) => NODE_LABELS[id] || id;
    SPECTRUM COLORS (stable→dynamic interpolation)
 ═══════════════════════════════════════════════════════════════ */
 function spectrumColor(t) {
-  // stable: #3a6080  dynamic: #c07030
   const r = Math.round(0x3a + t * (0xc0 - 0x3a));
   const g = Math.round(0x60 + t * (0x70 - 0x60));
   const b = Math.round(0x80 + t * (0x30 - 0x80));
@@ -685,9 +895,34 @@ function spectrumColor(t) {
 function initNodeSpectrum() {
   document.querySelectorAll('.flow-node[data-spectrum]').forEach(el => {
     const t = parseFloat(el.dataset.spectrum);
-    const color = spectrumColor(t);
-    el.style.setProperty('--spectrum-color', color);
+    el.style.setProperty('--spectrum-color', spectrumColor(t));
   });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INSTRUCTION BANNER
+═══════════════════════════════════════════════════════════════ */
+function initBanner() {
+  const banner = document.getElementById('instruction-banner');
+  const modeBar = document.getElementById('mode-desc-bar');
+  if (sessionStorage.getItem('rhythm-banner-dismissed') === '1') {
+    banner.classList.add('dismissed');
+    modeBar.classList.add('dismissed');
+  }
+  document.getElementById('banner-close').addEventListener('click', () => {
+    banner.classList.add('dismissed');
+    modeBar.classList.add('dismissed');
+    sessionStorage.setItem('rhythm-banner-dismissed', '1');
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SESSION DATE DEFAULT
+═══════════════════════════════════════════════════════════════ */
+function initSessionDate() {
+  const d = document.getElementById('rp-date');
+  const today = new Date().toISOString().slice(0, 10);
+  d.value = today;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -697,7 +932,45 @@ function setMode(m) {
   mode = m;
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === m));
   document.body.classList.toggle('mode-activation', m === 'activation');
+  // Update panel label
+  document.getElementById('rp-label').textContent =
+    m === 'activation' ? 'Proposed Interventions' : 'Identified Rhythms';
   renderConnections();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOCUS MODE
+═══════════════════════════════════════════════════════════════ */
+function updateFocusClasses() {
+  // Collect all node keys that appear in any rhythm's connections
+  const inRhythm = new Set();
+  rhythms.forEach(r => {
+    r.connections.forEach(c => {
+      inRhythm.add(c.fromCol + ':' + c.fromId);
+      inRhythm.add(c.toCol   + ':' + c.toId);
+    });
+  });
+
+  document.querySelectorAll('.flow-node').forEach(el => {
+    const key = el.dataset.col + ':' + el.dataset.id;
+    el.classList.toggle('in-rhythm', inRhythm.has(key));
+  });
+
+  // Update badge count
+  const badge = document.getElementById('focus-badge');
+  badge.textContent = inRhythm.size;
+}
+
+function toggleFocusMode() {
+  focusMode = !focusMode;
+  document.body.classList.toggle('focus-mode', focusMode);
+  const btn = document.getElementById('focus-view-btn');
+  if (focusMode) {
+    updateFocusClasses();
+    btn.childNodes[0].textContent = '← Full View ';
+  } else {
+    btn.childNodes[0].textContent = 'Rhythm View ';
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -713,6 +986,7 @@ function addRhythm(status = 'existing') {
   renderPanel();
   renderConnections();
   renderNodeDots();
+  if (focusMode) updateFocusClasses();
   return id;
 }
 
@@ -722,6 +996,7 @@ function deleteRhythm(id) {
   renderPanel();
   renderConnections();
   renderNodeDots();
+  if (focusMode) updateFocusClasses();
 }
 
 function setActive(id) {
@@ -753,6 +1028,7 @@ function addConnection(fromCol, fromId, toCol, toId) {
     renderConnections();
     renderPanel();
     renderNodeDots();
+    if (focusMode) updateFocusClasses();
   }
 }
 
@@ -763,6 +1039,7 @@ function deleteConnection(rhythmId, connIdx) {
   renderConnections();
   renderPanel();
   renderNodeDots();
+  if (focusMode) updateFocusClasses();
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -903,9 +1180,9 @@ function renderNodeDots() {
    RENDER BOTTOM PANEL
 ═══════════════════════════════════════════════════════════════ */
 function renderPanel() {
-  const chipsEl  = document.getElementById('rp-chips');
-  const detailEl = document.getElementById('rhythm-detail');
-  const connsEl  = document.getElementById('rd-connections');
+  const chipsEl   = document.getElementById('rp-chips');
+  const detailEl  = document.getElementById('rhythm-detail');
+  const connsEl   = document.getElementById('rd-connections');
   const nameInput = document.getElementById('rd-name-input');
   const swatchEl  = document.getElementById('rd-swatch');
   const statusEl  = document.getElementById('rd-status');
@@ -967,9 +1244,9 @@ function renderPanel() {
         tag.className = 'rd-conn-tag';
         tag.style.setProperty('--tag-color', r.color);
         tag.innerHTML =
-          `<span>${nodeLabel(conn.fromCol, conn.fromId)}</span>` +
+          `<span class="conn-node-name">${nodeLabel(conn.fromCol, conn.fromId)}</span>` +
           `<span style="color:var(--stone)">→</span>` +
-          `<span>${nodeLabel(conn.toCol, conn.toId)}</span>` +
+          `<span class="conn-node-name">${nodeLabel(conn.toCol, conn.toId)}</span>` +
           `<button title="Remove">×</button>`;
         tag.querySelector('button').addEventListener('click', () => deleteConnection(r.id, ci));
         connsEl.appendChild(tag);
@@ -981,16 +1258,16 @@ function renderPanel() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CLICK-TO-CONNECT
+   CLICK-TO-CONNECT (event delegation from #flow-columns)
 ═══════════════════════════════════════════════════════════════ */
 const hintEl = document.getElementById('header-hint');
 
-function setClickSrc(el) {
+function setClickSrc(node) {
   if (clickSrc) clickSrc.el.classList.remove('click-source');
-  if (el) {
-    clickSrc = { col: el.dataset.col, id: el.dataset.id, el };
-    el.classList.add('click-source');
-    hintEl.textContent = `"${nodeLabel(el.dataset.col, el.dataset.id)}" selected — click another node to connect, or press Esc`;
+  if (node) {
+    clickSrc = { col: node.dataset.col, id: node.dataset.id, el: node };
+    node.classList.add('click-source');
+    hintEl.textContent = `"${nodeLabel(node.dataset.col, node.dataset.id)}" selected — click another node to connect, or press Esc`;
     hintEl.classList.add('has-source');
   } else {
     clickSrc = null;
@@ -999,21 +1276,20 @@ function setClickSrc(el) {
   }
 }
 
-document.querySelectorAll('.flow-node').forEach(el => {
-  el.addEventListener('click', e => {
-    if (dragJustCompleted) { dragJustCompleted = false; return; }
-    if (dragActive) return;
-    e.stopPropagation();
-
-    if (!clickSrc) {
-      setClickSrc(el);
-    } else if (clickSrc.el === el) {
-      setClickSrc(null);
-    } else {
-      addConnection(clickSrc.col, clickSrc.id, el.dataset.col, el.dataset.id);
-      setClickSrc(null);
-    }
-  });
+document.getElementById('flow-columns').addEventListener('click', e => {
+  if (dragJustCompleted) { dragJustCompleted = false; return; }
+  if (dragActive) return;
+  const node = e.target.closest('.flow-node');
+  if (!node) return;
+  e.stopPropagation();
+  if (!clickSrc) {
+    setClickSrc(node);
+  } else if (clickSrc.el === node) {
+    setClickSrc(null);
+  } else {
+    addConnection(clickSrc.col, clickSrc.id, node.dataset.col, node.dataset.id);
+    setClickSrc(null);
+  }
 });
 
 document.getElementById('canvas').addEventListener('click', e => {
@@ -1027,32 +1303,32 @@ document.getElementById('canvas').addEventListener('click', e => {
 });
 
 /* ═══════════════════════════════════════════════════════════════
-   DRAG TO CONNECT
+   DRAG TO CONNECT (event delegation from #flow-columns)
 ═══════════════════════════════════════════════════════════════ */
 const canvas  = document.getElementById('canvas');
 const dragSvg  = document.getElementById('drag-svg');
 const dragLine = document.getElementById('drag-line');
 const dropTip  = document.getElementById('drop-tip');
 
-document.querySelectorAll('.flow-node').forEach(el => {
-  el.addEventListener('mousedown', e => {
-    e.preventDefault();
-    let r = getActive();
-    if (!r) {
-      addRhythm('existing');
-      r = getActive();
-    }
-    if (!r) return;
+document.getElementById('flow-columns').addEventListener('mousedown', e => {
+  const node = e.target.closest('.flow-node');
+  if (!node) return;
+  e.preventDefault();
+  let r = getActive();
+  if (!r) {
+    addRhythm('existing');
+    r = getActive();
+  }
+  if (!r) return;
 
-    const cr = canvas.getBoundingClientRect();
-    const fr = el.getBoundingClientRect();
-    const x1 = fr.right  - cr.left + canvas.scrollLeft;
-    const y1 = fr.top + fr.height / 2 - cr.top + canvas.scrollTop;
+  const cr = canvas.getBoundingClientRect();
+  const fr = node.getBoundingClientRect();
+  const x1 = fr.right  - cr.left + canvas.scrollLeft;
+  const y1 = fr.top + fr.height / 2 - cr.top + canvas.scrollTop;
 
-    dragSrc = { col: el.dataset.col, id: el.dataset.id, el };
-    dragActive = false;
-    el._dragOrigin = { mx: e.clientX, my: e.clientY, x1, y1 };
-  });
+  dragSrc = { col: node.dataset.col, id: node.dataset.id, el: node };
+  dragActive = false;
+  node._dragOrigin = { mx: e.clientX, my: e.clientY, x1, y1 };
 });
 
 document.addEventListener('mousemove', e => {
@@ -1108,11 +1384,17 @@ document.addEventListener('mouseup', e => {
   dragSrc    = null;
 });
 
-document.querySelectorAll('.flow-node').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    if (dragActive && dragSrc && el !== dragSrc.el) el.classList.add('drop-target');
-  });
-  el.addEventListener('mouseleave', () => el.classList.remove('drop-target'));
+/* Drop target hover — event delegation */
+document.getElementById('flow-columns').addEventListener('mouseover', e => {
+  if (!dragActive || !dragSrc) return;
+  const node = e.target.closest('.flow-node');
+  if (!node || node === dragSrc.el) return;
+  node.classList.add('drop-target');
+});
+
+document.getElementById('flow-columns').addEventListener('mouseout', e => {
+  const node = e.target.closest('.flow-node');
+  if (node) node.classList.remove('drop-target');
 });
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1122,26 +1404,36 @@ canvas.addEventListener('scroll', renderConnections);
 window.addEventListener('resize', renderConnections);
 
 /* ═══════════════════════════════════════════════════════════════
-   ESCAPE
+   KEYBOARD SHORTCUTS
 ═══════════════════════════════════════════════════════════════ */
 document.addEventListener('keydown', e => {
-  if (e.key !== 'Escape') return;
-  if (dragActive && dragSrc) {
-    dragSrc.el.classList.remove('dragging-source');
-    dragSrc.el._dragOrigin = null;
-    dragSvg.style.display = 'none';
-    dragLine.setAttribute('d', '');
-    dropTip.style.display = 'none';
-    dragActive = false;
-    dragSrc    = null;
+  if (e.target.tagName === 'INPUT') return; // don't fire in inputs
+
+  if (e.key === 'Escape') {
+    if (dragActive && dragSrc) {
+      dragSrc.el.classList.remove('dragging-source');
+      dragSrc.el._dragOrigin = null;
+      dragSvg.style.display = 'none';
+      dragLine.setAttribute('d', '');
+      dropTip.style.display = 'none';
+      dragActive = false;
+      dragSrc    = null;
+    }
+    setClickSrc(null);
+    return;
   }
-  setClickSrc(null);
+
+  if (e.key === 'f' || e.key === 'F') {
+    toggleFocusMode();
+  }
 });
 
 /* ═══════════════════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════════════════ */
 initNodeSpectrum();
+initBanner();
+initSessionDate();
 renderPanel();
 </script>
 </body>
