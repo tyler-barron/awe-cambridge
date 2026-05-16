@@ -325,23 +325,38 @@ body.mode-activation .canvas-wrap::after {
   transform: translateX(2px);
   box-shadow: 0 2px 10px rgba(0,0,0,.07);
 }
-.flow-node.dragging-source,
-.flow-node.click-source {
+.flow-node.dragging-source {
   border-color: var(--col-color);
   border-left-color: var(--spectrum-color, var(--col-color));
   background: rgba(255,255,255,.98);
-  animation: pulse-source .9s ease-in-out infinite alternate;
+  box-shadow: 0 0 0 3px rgba(140,69,24,.2), 0 4px 16px rgba(0,0,0,.1);
   z-index: 50;
 }
-@keyframes pulse-source {
-  from { box-shadow: 0 0 0 2px rgba(140,69,24,.2), 0 2px 10px rgba(0,0,0,.08); }
-  to   { box-shadow: 0 0 0 6px rgba(140,69,24,.1), 0 2px 16px rgba(0,0,0,.12); }
+/* Click-source: solid filled state — unmissable */
+.flow-node.click-source {
+  background: var(--src-bg, rgba(140,69,24,.09)) !important;
+  border: 2px solid var(--src-color, #8c4518) !important;
+  border-left: 3px solid var(--src-color, #8c4518) !important;
+  box-shadow: 0 0 0 4px var(--src-ring, rgba(140,69,24,.18)), 0 4px 20px rgba(0,0,0,.1);
+  transform: translateX(3px) scale(1.01);
+  z-index: 50;
+}
+/* Dim all other nodes when a source is selected — focus attention */
+body.has-click-src .flow-node:not(.click-source):not(.drop-target) {
+  opacity: 0.38;
+}
+body.has-click-src .flow-node:not(.click-source):hover {
+  opacity: 1 !important;
+  border-color: var(--col-color);
+  box-shadow: 0 0 0 3px rgba(140,69,24,.15), 0 2px 10px rgba(0,0,0,.06);
+  transform: translateX(2px);
 }
 .flow-node.drop-target {
+  opacity: 1 !important;
   border-color: var(--col-color);
   background: rgba(255,255,255,.98);
-  transform: scale(1.02);
-  box-shadow: 0 0 0 3px rgba(26,26,26,.06);
+  transform: scale(1.03);
+  box-shadow: 0 0 0 4px rgba(140,69,24,.2), 0 4px 16px rgba(0,0,0,.08);
 }
 .flow-node.r-active {
   background: rgba(255,255,255,.98);
@@ -571,24 +586,38 @@ body.mode-activation .rp-add-btn:not(.propose) {
   font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .15em;
   text-transform: uppercase; color: var(--stone); margin-bottom: 5px;
 }
-.rd-connections { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; align-content: flex-start; }
+.rd-connections { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; align-content: flex-start; }
 .rd-conn-tag {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .05em;
-  padding: 4px 8px; border-radius: 2px;
-  background: rgba(26,26,26,.04); color: var(--muted);
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 6px 10px 6px 8px; border-radius: 3px;
+  background: rgba(26,26,26,.04);
   border-left: 3px solid var(--tag-color, rgba(26,26,26,.15));
+  min-width: 200px; max-width: 300px;
 }
-.rd-conn-tag .conn-node-name {
-  font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: normal;
-  text-transform: none; letter-spacing: .01em; color: var(--ink);
+.conn-tag-row {
+  display: flex; align-items: center; gap: 6px;
 }
-.rd-conn-tag button {
-  cursor: pointer; color: var(--stone); font-size: 11px; line-height: 1;
-  border: none; background: none; padding: 0; margin-left: 1px; opacity: .6;
-  transition: opacity .15s, color .15s;
+.conn-node-name {
+  font-family: 'Cormorant Garamond', serif; font-size: 13px; font-style: normal;
+  letter-spacing: .01em; color: var(--ink);
 }
-.rd-conn-tag button:hover { opacity: 1; color: #c04040; }
+.conn-arrow { color: var(--stone); font-size: 11px; flex-shrink: 0; }
+.conn-tag-del {
+  cursor: pointer; color: var(--stone); font-size: 12px; line-height: 1;
+  border: none; background: none; padding: 0; margin-left: auto; opacity: .5;
+  transition: opacity .15s, color .15s; flex-shrink: 0;
+}
+.conn-tag-del:hover { opacity: 1; color: #c04040; }
+.conn-note-input {
+  width: 100%;
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 11px;
+  color: var(--muted); border: none; border-bottom: 1px solid rgba(26,26,26,.08);
+  background: transparent; outline: none; resize: none;
+  padding: 2px 0; line-height: 1.5; min-height: 18px; overflow: hidden;
+  transition: border-color .15s, color .15s;
+}
+.conn-note-input:focus { border-bottom-color: var(--accent); color: var(--ink); font-style: normal; }
+.conn-note-input::placeholder { color: rgba(122,120,120,.5); font-style: italic; }
 .rd-no-conns {
   font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px;
   color: var(--stone);
@@ -1024,7 +1053,7 @@ function addConnection(fromCol, fromId, toCol, toId) {
     c.toCol   === toCol   && c.toId   === toId
   );
   if (!dup) {
-    r.connections.push({ fromCol, fromId, toCol, toId });
+    r.connections.push({ fromCol, fromId, toCol, toId, note: '' });
     renderConnections();
     renderPanel();
     renderNodeDots();
@@ -1244,11 +1273,19 @@ function renderPanel() {
         tag.className = 'rd-conn-tag';
         tag.style.setProperty('--tag-color', r.color);
         tag.innerHTML =
-          `<span class="conn-node-name">${nodeLabel(conn.fromCol, conn.fromId)}</span>` +
-          `<span style="color:var(--stone)">→</span>` +
-          `<span class="conn-node-name">${nodeLabel(conn.toCol, conn.toId)}</span>` +
-          `<button title="Remove">×</button>`;
-        tag.querySelector('button').addEventListener('click', () => deleteConnection(r.id, ci));
+          `<div class="conn-tag-row">` +
+            `<span class="conn-node-name">${nodeLabel(conn.fromCol, conn.fromId)}</span>` +
+            `<span class="conn-arrow">→</span>` +
+            `<span class="conn-node-name">${nodeLabel(conn.toCol, conn.toId)}</span>` +
+            `<button class="conn-tag-del" title="Remove">×</button>` +
+          `</div>` +
+          `<textarea class="conn-note-input" placeholder="Add observation…" rows="1">${conn.note || ''}</textarea>`;
+        tag.querySelector('.conn-tag-del').addEventListener('click', () => deleteConnection(r.id, ci));
+        tag.querySelector('.conn-note-input').addEventListener('input', function() {
+          conn.note = this.value;
+          this.style.height = 'auto';
+          this.style.height = this.scrollHeight + 'px';
+        });
         connsEl.appendChild(tag);
       });
     }
@@ -1262,15 +1299,33 @@ function renderPanel() {
 ═══════════════════════════════════════════════════════════════ */
 const hintEl = document.getElementById('header-hint');
 
+function hexToRgba(hex, alpha) {
+  const h = hex.replace('#','');
+  const r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 function setClickSrc(node) {
-  if (clickSrc) clickSrc.el.classList.remove('click-source');
+  if (clickSrc) {
+    clickSrc.el.classList.remove('click-source');
+    clickSrc.el.style.removeProperty('--src-color');
+    clickSrc.el.style.removeProperty('--src-bg');
+    clickSrc.el.style.removeProperty('--src-ring');
+  }
   if (node) {
+    const r = getActive();
+    const color = r ? r.color : '#8c4518';
     clickSrc = { col: node.dataset.col, id: node.dataset.id, el: node };
     node.classList.add('click-source');
+    node.style.setProperty('--src-color', color);
+    node.style.setProperty('--src-bg', hexToRgba(color, 0.10));
+    node.style.setProperty('--src-ring', hexToRgba(color, 0.20));
+    document.body.classList.add('has-click-src');
     hintEl.textContent = `"${nodeLabel(node.dataset.col, node.dataset.id)}" selected — click another node to connect, or press Esc`;
     hintEl.classList.add('has-source');
   } else {
     clickSrc = null;
+    document.body.classList.remove('has-click-src');
     hintEl.textContent = 'Click a node to select source, then click another to connect — or drag between nodes';
     hintEl.classList.remove('has-source');
   }
