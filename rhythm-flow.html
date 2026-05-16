@@ -17,6 +17,8 @@
   --morph:     #8c4518;
   --phen:      #6b5b8a;
   --tempo:     #a07c2a;
+  --stable:    #3a6080;
+  --dynamic:   #c07030;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; overflow: hidden; }
@@ -32,10 +34,10 @@ body::before {
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
 }
 
-/* ── Header ────────────────────────────────────────────────────────────────── */
+/* ── Header ── */
 .site-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 28px;
+  padding: 12px 24px;
   border-bottom: 1px solid rgba(140,69,24,.15);
   background: rgba(246,246,246,.96); backdrop-filter: blur(8px);
   flex-shrink: 0; gap: 16px; flex-wrap: wrap;
@@ -50,129 +52,44 @@ body::before {
 .back-link:hover { color: var(--accent); }
 .header-title { display: flex; flex-direction: column; gap: 2px; }
 .eyebrow { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .3em; text-transform: uppercase; color: var(--tempo); }
-.page-title { font-weight: 300; font-size: 1.5rem; line-height: 1.1; }
+.page-title { font-weight: 300; font-size: 1.4rem; line-height: 1.1; }
 .page-title em { font-style: italic; color: var(--tempo); }
 .header-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
-/* ── Mode toggle ─────────────────────────────────────────────────────────── */
+/* ── Mode toggle ── */
 .mode-toggle {
   display: flex; border: 1px solid rgba(26,26,26,.15); border-radius: 3px; overflow: hidden;
 }
 .mode-btn {
   font-family: 'Space Mono', monospace; font-size: 8.5px; letter-spacing: .15em;
-  text-transform: uppercase; padding: 8px 16px; border: none; background: transparent;
+  text-transform: uppercase; padding: 7px 14px; border: none; background: transparent;
   cursor: pointer; color: var(--muted); transition: background .15s, color .15s; white-space: nowrap;
 }
 .mode-btn + .mode-btn { border-left: 1px solid rgba(26,26,26,.15); }
 .mode-btn.active { background: var(--ink); color: #fff; }
 
 .header-hint {
-  font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: .9rem;
-  color: var(--stone); max-width: 320px; line-height: 1.4;
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: .88rem;
+  color: var(--stone); line-height: 1.4; transition: color .2s; max-width: 340px;
+}
+.header-hint.has-source {
+  color: var(--accent); font-style: normal; font-weight: 600;
 }
 
-/* ── App body ──────────────────────────────────────────────────────────────── */
+/* ── App body ── */
 .app-body {
-  display: flex; flex: 1; overflow: hidden;
-}
-
-/* ── Sidebar ───────────────────────────────────────────────────────────────── */
-.sidebar {
-  width: 240px; flex-shrink: 0;
-  border-right: 1px solid rgba(26,26,26,.1);
-  background: rgba(255,255,255,.55);
-  display: flex; flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   overflow: hidden;
 }
-.sidebar-head {
-  padding: 14px 16px 10px;
-  border-bottom: 1px solid rgba(26,26,26,.08);
-  background: rgba(26,26,26,.02);
-}
-.sidebar-label {
-  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .22em;
-  text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 10px;
-}
-.sidebar-add-wrap { display: flex; gap: 6px; }
-.add-btn {
-  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .1em;
-  padding: 6px 10px; border-radius: 3px; border: 1px solid rgba(26,26,26,.2);
-  background: transparent; cursor: pointer; color: var(--muted);
-  transition: all .15s; flex: 1; text-align: center;
-}
-.add-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
-.add-btn.propose {
-  border-style: dashed; color: var(--accent);
-  display: none;
-}
-.add-btn.propose:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
-body.mode-activation .add-btn.propose { display: block; }
 
-.rhythm-list { flex: 1; overflow-y: auto; padding: 8px 0; }
-.rhythm-empty {
-  padding: 24px 16px; text-align: center;
-  font-style: italic; color: var(--stone); font-size: .88rem; line-height: 1.55;
-}
-
-/* ── Rhythm row ─────────────────────────────────────────────────────────── */
-.r-row {
-  display: flex; align-items: center; gap: 8px;
-  padding: 9px 14px; cursor: pointer; transition: background .12s;
-  border-left: 3px solid transparent; position: relative;
-}
-.r-row:hover { background: rgba(26,26,26,.04); }
-.r-row.active {
-  background: rgba(255,255,255,.7);
-  border-left-color: var(--r-color);
-}
-.r-swatch {
-  width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0;
-  background: var(--r-color);
-}
-.r-row.proposed .r-swatch {
-  background: transparent; border: 2px dashed var(--r-color);
-}
-.r-name {
-  font-family: 'Space Mono', monospace; font-size: 8.5px; letter-spacing: .08em;
-  text-transform: uppercase; color: var(--ink); flex: 1;
-}
-.r-badge {
-  font-family: 'Space Mono', monospace; font-size: 7px; letter-spacing: .05em;
-  padding: 2px 5px; border-radius: 2px; text-transform: uppercase;
-}
-.r-badge-existing { background: rgba(26,26,26,.07); color: var(--stone); }
-.r-badge-proposed { background: rgba(140,69,24,.08); color: var(--accent); border: 1px dashed rgba(140,69,24,.3); }
-.r-del {
-  opacity: 0; font-size: 14px; color: var(--stone); cursor: pointer; line-height: 1;
-  padding: 2px 4px; border-radius: 2px; transition: opacity .15s, color .15s;
-  background: none; border: none;
-}
-.r-row:hover .r-del { opacity: 1; }
-.r-del:hover { color: #c04040; }
-
-.r-conn-count {
-  font-family: 'Space Mono', monospace; font-size: 7px; color: var(--stone);
-  letter-spacing: .05em;
-}
-
-/* ── Sidebar footer ─────────────────────────────────────────────────────── */
-.sidebar-footer {
-  padding: 12px 14px;
-  border-top: 1px solid rgba(26,26,26,.08);
-  background: rgba(26,26,26,.02);
-}
-.sidebar-hint {
-  font-family: 'Space Mono', monospace; font-size: 7px; letter-spacing: .08em;
-  color: var(--stone); line-height: 1.7; text-transform: uppercase;
-}
-
-/* ── Canvas area ────────────────────────────────────────────────────────── */
+/* ── Canvas area ── */
 .canvas-wrap {
   flex: 1; overflow: auto; position: relative;
   background: var(--parchment);
   cursor: default;
 }
-/* subtle grid lines */
 .canvas-wrap::before {
   content: ''; position: absolute; inset: 0; pointer-events: none;
   background-image:
@@ -181,7 +98,7 @@ body.mode-activation .add-btn.propose { display: block; }
   background-size: 32px 32px;
 }
 
-/* ── SVG overlay ─────────────────────────────────────────────────────────── */
+/* ── SVG overlays ── */
 #conn-svg {
   position: absolute; inset: 0; width: 100%; height: 100%;
   pointer-events: none; overflow: visible;
@@ -191,9 +108,9 @@ body.mode-activation .add-btn.propose { display: block; }
   pointer-events: stroke; cursor: pointer;
   transition: stroke-width .15s, opacity .15s;
 }
-#conn-svg .conn-path:hover { stroke-width: 4 !important; opacity: 1 !important; }
+#conn-svg .conn-path:hover { stroke-width: 5 !important; opacity: 1 !important; }
 
-/* ── Columns layout ─────────────────────────────────────────────────────── */
+/* ── Columns layout ── */
 .flow-columns {
   display: grid; grid-template-columns: repeat(4, 1fr);
   gap: 0; min-height: 100%; position: relative;
@@ -206,43 +123,79 @@ body.mode-activation .add-btn.propose { display: block; }
 }
 .flow-col:last-child { border-right: none; }
 
+/* Stable→Dynamic subtle background gradient on morph + tempo */
+.flow-col[data-col="morph"] {
+  background: linear-gradient(
+    to bottom,
+    rgba(58,96,128,.05) 0%,
+    rgba(58,96,128,.02) 35%,
+    rgba(192,112,48,.02) 65%,
+    rgba(192,112,48,.07) 100%
+  );
+}
+.flow-col[data-col="tempo"] {
+  background: linear-gradient(
+    to bottom,
+    rgba(58,96,128,.05) 0%,
+    rgba(58,96,128,.02) 35%,
+    rgba(192,112,48,.02) 65%,
+    rgba(192,112,48,.07) 100%
+  );
+}
+
 .col-header {
-  padding: 24px 20px 16px;
+  padding: 20px 16px 14px;
   border-bottom: 1px solid rgba(26,26,26,.08);
   background: rgba(255,255,255,.4);
   position: sticky; top: 0; z-index: 5;
 }
 .col-num {
   font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .3em;
-  text-transform: uppercase; color: var(--col-color); margin-bottom: 4px;
+  text-transform: uppercase; color: var(--col-color); margin-bottom: 3px;
 }
 .col-cat {
   font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .2em;
-  text-transform: uppercase; color: var(--stone); margin-bottom: 6px;
+  text-transform: uppercase; color: var(--stone); margin-bottom: 5px;
 }
-.col-title { font-weight: 300; font-size: 1.3rem; line-height: 1.1; }
+.col-title { font-weight: 300; font-size: 1.25rem; line-height: 1.1; }
+
+/* Stable→Dynamic axis in column header */
+.col-axis {
+  display: flex; align-items: center; gap: 5px; margin-top: 9px;
+}
+.axis-label {
+  font-family: 'Space Mono', monospace; font-size: 6.5px; letter-spacing: .12em;
+  text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
+}
+.axis-label.stable { color: var(--stable); }
+.axis-label.dynamic { color: var(--dynamic); }
+.axis-bar {
+  flex: 1; height: 3px; border-radius: 2px;
+  background: linear-gradient(to right, var(--stable), var(--dynamic));
+  opacity: .7;
+}
 
 .flow-col[data-col="geo"]   { --col-color: var(--geo); }
 .flow-col[data-col="morph"] { --col-color: var(--morph); }
 .flow-col[data-col="phen"]  { --col-color: var(--phen); }
 .flow-col[data-col="tempo"] { --col-color: var(--tempo); }
 
-/* ── Section label ─────────────────────────────────────────────────────── */
+/* ── Section label ── */
 .col-section {
   font-family: 'Space Mono', monospace; font-size: 7px; letter-spacing: .2em;
   text-transform: uppercase; color: var(--stone);
-  padding: 14px 20px 6px;
+  padding: 12px 16px 5px;
 }
 
-/* ── Flow nodes ─────────────────────────────────────────────────────────── */
+/* ── Flow nodes ── */
 .flow-node {
-  margin: 5px 14px;
-  padding: 9px 14px;
+  margin: 4px 12px;
+  padding: 8px 12px;
   background: rgba(255,255,255,.7);
   border: 1.5px solid rgba(26,26,26,.12);
   border-radius: 4px;
   font-family: 'Cormorant Garamond', serif;
-  font-size: .97rem;
+  font-size: .95rem;
   font-weight: 300;
   line-height: 1.3;
   color: var(--ink);
@@ -251,27 +204,40 @@ body.mode-activation .add-btn.propose { display: block; }
   position: relative;
   transition: border-color .15s, background .15s, transform .1s, box-shadow .15s;
   display: flex; align-items: flex-start; gap: 8px;
+  border-left: 3px solid var(--spectrum-color, rgba(26,26,26,.12));
 }
 .flow-node:hover {
   border-color: var(--col-color);
+  border-left-color: var(--spectrum-color, var(--col-color));
   background: rgba(255,255,255,.95);
   transform: translateX(2px);
-  box-shadow: 0 2px 12px rgba(0,0,0,.07);
+  box-shadow: 0 2px 10px rgba(0,0,0,.07);
 }
-.flow-node.dragging-source {
+.flow-node.dragging-source,
+.flow-node.click-source {
   border-color: var(--col-color);
+  border-left-color: var(--spectrum-color, var(--col-color));
   background: rgba(255,255,255,.98);
-  box-shadow: 0 2px 16px rgba(0,0,0,.12);
+  animation: pulse-source .9s ease-in-out infinite alternate;
   z-index: 50;
+}
+@keyframes pulse-source {
+  from { box-shadow: 0 0 0 2px rgba(140,69,24,.2), 0 2px 10px rgba(0,0,0,.08); }
+  to   { box-shadow: 0 0 0 6px rgba(140,69,24,.1), 0 2px 16px rgba(0,0,0,.12); }
 }
 .flow-node.drop-target {
   border-color: var(--col-color);
   background: rgba(255,255,255,.98);
-  box-shadow: 0 0 0 3px rgba(var(--col-color-rgb),.18);
   transform: scale(1.02);
+  box-shadow: 0 0 0 3px rgba(26,26,26,.06);
+}
+.flow-node.r-active {
+  background: rgba(255,255,255,.98);
+  box-shadow: inset 0 0 0 2px var(--r-color, transparent);
+  border-color: var(--r-color, var(--col-color));
 }
 .node-dots {
-  display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; padding-top: 2px;
+  display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; padding-top: 3px;
 }
 .n-dot {
   width: 7px; height: 7px; border-radius: 50%;
@@ -282,38 +248,38 @@ body.mode-activation .add-btn.propose { display: block; }
 
 /* tension nodes */
 .flow-node.tension-node {
-  flex-direction: column; gap: 6px; cursor: crosshair;
+  flex-direction: column; gap: 5px; cursor: crosshair;
+  border-left: 3px solid rgba(107,91,138,.3);
 }
+.tension-inner { display: flex; align-items: center; gap: 8px; }
 .tension-name {
-  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .15em; text-transform: uppercase; color: var(--phen);
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--phen);
 }
 .tension-poles {
-  display: flex; gap: 6px; flex-wrap: wrap;
+  display: flex; gap: 5px; flex-wrap: wrap; align-items: center;
 }
 .tension-pole {
-  font-family: 'Cormorant Garamond', serif; font-size: .82rem; font-style: italic;
+  font-family: 'Cormorant Garamond', serif; font-size: .8rem; font-style: italic;
   color: var(--muted); background: rgba(107,91,138,.06); border: 1px solid rgba(107,91,138,.15);
-  border-radius: 2px; padding: 2px 7px;
+  border-radius: 2px; padding: 2px 6px;
 }
+.tension-arrow { color: var(--stone); font-size: .8rem; align-self: center; }
 
-/* ── Drag preview line ─────────────────────────────────────────────────── */
+/* ── Drag preview line ── */
 #drag-svg {
   position: absolute; inset: 0; width: 100%; height: 100%;
   pointer-events: none; z-index: 30; display: none;
 }
-#drag-line {
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
+#drag-line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
-/* ── Flowing animations ─────────────────────────────────────────────────── */
+/* ── Flowing animations ── */
 @keyframes flow-anim {
   from { stroke-dashoffset: 24; }
   to   { stroke-dashoffset: 0; }
 }
 
-/* ── Drop tooltip ────────────────────────────────────────────────────────── */
+/* ── Drop tooltip ── */
 #drop-tip {
   position: fixed; background: var(--ink); color: #fff;
   font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .1em;
@@ -322,21 +288,7 @@ body.mode-activation .add-btn.propose { display: block; }
   white-space: nowrap;
 }
 
-/* ── Active rhythm highlight on nodes ──────────────────────────────────── */
-.flow-node.r-active {
-  background: rgba(255,255,255,.98);
-  box-shadow: inset 0 0 0 2px var(--r-color, transparent);
-  border-color: var(--r-color, var(--col-color));
-}
-
-/* ── Scrollbar styling ──────────────────────────────────────────────────── */
-.canvas-wrap::-webkit-scrollbar { width: 6px; height: 6px; }
-.canvas-wrap::-webkit-scrollbar-track { background: transparent; }
-.canvas-wrap::-webkit-scrollbar-thumb { background: rgba(26,26,26,.15); border-radius: 3px; }
-.rhythm-list::-webkit-scrollbar { width: 4px; }
-.rhythm-list::-webkit-scrollbar-thumb { background: rgba(26,26,26,.12); border-radius: 2px; }
-
-/* ── Connection delete tooltip ─────────────────────────────────────────── */
+/* ── Connection delete tooltip ── */
 .conn-delete-tip {
   position: fixed; background: #c04040; color: #fff;
   font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .1em;
@@ -344,11 +296,146 @@ body.mode-activation .add-btn.propose { display: block; }
   z-index: 9997; display: none; white-space: nowrap;
   transform: translate(-50%, -130%);
 }
+
+/* ── Scrollbar ── */
+.canvas-wrap::-webkit-scrollbar { width: 6px; height: 6px; }
+.canvas-wrap::-webkit-scrollbar-track { background: transparent; }
+.canvas-wrap::-webkit-scrollbar-thumb { background: rgba(26,26,26,.15); border-radius: 3px; }
+
+/* ══════════════════════════════════════════════════
+   BOTTOM RHYTHM PANEL
+══════════════════════════════════════════════════ */
+.rhythm-panel {
+  flex-shrink: 0;
+  background: rgba(255,255,255,.94);
+  border-top: 1px solid rgba(26,26,26,.1);
+  backdrop-filter: blur(8px);
+  z-index: 50;
+  overflow: hidden;
+}
+.rhythm-panel-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 20px;
+  min-height: 52px;
+}
+.rp-label {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .22em;
+  text-transform: uppercase; color: var(--muted); white-space: nowrap; flex-shrink: 0;
+}
+.rp-divider { width: 1px; height: 24px; background: rgba(26,26,26,.1); flex-shrink: 0; }
+.rp-chips {
+  display: flex; gap: 6px; align-items: center; flex: 1;
+  overflow-x: auto; overflow-y: visible;
+}
+.rp-chips::-webkit-scrollbar { display: none; }
+
+/* rhythm chip */
+.r-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 9px 5px 7px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(26,26,26,.14);
+  cursor: pointer;
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--muted);
+  transition: all .15s; white-space: nowrap; flex-shrink: 0;
+  background: rgba(255,255,255,.8);
+}
+.r-chip:hover { border-color: var(--r-color); color: var(--ink); background: rgba(255,255,255,1); }
+.r-chip.active {
+  background: var(--r-color);
+  border-color: var(--r-color);
+  color: #fff;
+}
+.r-chip.proposed-chip { border-style: dashed; }
+.chip-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  background: var(--r-color);
+}
+.r-chip.active .chip-dot { background: rgba(255,255,255,.55); }
+.chip-count {
+  font-size: 7px; opacity: .75; background: rgba(0,0,0,.1);
+  border-radius: 8px; padding: 1px 4px; margin-left: 1px;
+}
+.r-chip.active .chip-count { background: rgba(255,255,255,.2); }
+.chip-del {
+  margin-left: 1px; cursor: pointer; font-size: 13px; line-height: 1;
+  border: none; background: none; color: inherit; opacity: .55; padding: 0;
+  transition: opacity .15s;
+}
+.chip-del:hover { opacity: 1; }
+
+.rp-add-wrap { display: flex; gap: 6px; flex-shrink: 0; }
+.rp-add-btn {
+  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .1em;
+  padding: 5px 10px; border-radius: 3px; border: 1px solid rgba(26,26,26,.2);
+  background: transparent; cursor: pointer; color: var(--muted);
+  transition: all .15s; white-space: nowrap;
+}
+.rp-add-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+.rp-add-btn.propose {
+  border-style: dashed; color: var(--accent); display: none;
+}
+.rp-add-btn.propose:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+body.mode-activation .rp-add-btn.propose { display: block; }
+
+.rp-empty {
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: .88rem;
+  color: var(--stone); flex: 1;
+}
+
+/* Rhythm detail row (expands below chip bar) */
+.rhythm-detail {
+  border-top: 1px solid rgba(26,26,26,.06);
+  padding: 8px 20px 10px;
+  display: none; align-items: flex-start; gap: 20px; flex-wrap: wrap;
+}
+.rhythm-detail.open { display: flex; }
+.rd-left { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+.rd-name-wrap { display: flex; align-items: center; gap: 6px; }
+.rd-color-swatch {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.rd-name-input {
+  font-family: 'Space Mono', monospace; font-size: 8.5px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink);
+  border: none; border-bottom: 1px solid rgba(26,26,26,.15);
+  background: transparent; outline: none; width: 140px; padding: 2px 0;
+}
+.rd-name-input:focus { border-bottom-color: var(--accent); }
+.rd-status {
+  font-family: 'Space Mono', monospace; font-size: 7px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--stone);
+}
+.rd-section {
+  font-family: 'Space Mono', monospace; font-size: 7px; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--stone); margin-bottom: 5px;
+}
+.rd-connections { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; align-content: flex-start; }
+.rd-conn-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'Space Mono', monospace; font-size: 7px; letter-spacing: .05em;
+  padding: 3px 7px; border-radius: 2px;
+  background: rgba(26,26,26,.04); color: var(--muted);
+  text-transform: uppercase; border-left: 3px solid var(--tag-color, rgba(26,26,26,.15));
+}
+.rd-conn-tag button {
+  cursor: pointer; color: var(--stone); font-size: 11px; line-height: 1;
+  border: none; background: none; padding: 0; margin-left: 1px; opacity: .6;
+  transition: opacity .15s, color .15s;
+}
+.rd-conn-tag button:hover { opacity: 1; color: #c04040; }
+.rd-no-conns {
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: .85rem;
+  color: var(--stone);
+}
 </style>
 </head>
 <body>
 
-<!-- ── Header ──────────────────────────────────────────────────────────────── -->
+<!-- ── Header ── -->
 <header class="site-header">
   <div class="header-left">
     <a href="index.html" class="back-link">← Awe Atlas</a>
@@ -358,58 +445,35 @@ body.mode-activation .add-btn.propose { display: block; }
     </div>
   </div>
   <div class="header-right">
-    <span class="header-hint">Drag from any node to another to trace a rhythm's flow</span>
+    <span class="header-hint" id="header-hint">Click a node to select source, then click another to connect — or drag between nodes</span>
     <div class="mode-toggle">
       <button class="mode-btn active" data-mode="analysis" onclick="setMode('analysis')">Rhythm<em style="font-family:inherit;font-style:italic">analysis</em></button>
       <button class="mode-btn" data-mode="activation" onclick="setMode('activation')">Rhythm<em style="font-family:inherit;font-style:italic">activation</em></button>
     </div>
-    <a href="rhythm.html" style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--stone);text-decoration:none;padding:8px 10px;border:1px solid rgba(26,26,26,.15);border-radius:3px;transition:color .2s" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--stone)'">Diagram View →</a>
+    <a href="rhythm.html" style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--stone);text-decoration:none;padding:7px 10px;border:1px solid rgba(26,26,26,.15);border-radius:3px;transition:color .2s" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--stone)'">Diagram View →</a>
   </div>
 </header>
 
-<!-- ── App body ─────────────────────────────────────────────────────────────── -->
+<!-- ── App body ── -->
 <div class="app-body">
 
-  <!-- ── Sidebar ─────────────────────────────────────────────────────────── -->
-  <aside class="sidebar">
-    <div class="sidebar-head">
-      <span class="sidebar-label">Rhythms</span>
-      <div class="sidebar-add-wrap">
-        <button class="add-btn" onclick="addRhythm('existing')">+ Existing</button>
-        <button class="add-btn propose" onclick="addRhythm('proposed')">+ Proposed</button>
-      </div>
-    </div>
-    <div class="rhythm-list" id="rhythm-list">
-      <div class="rhythm-empty" id="empty-msg">Add a rhythm to begin tracing connections across the diagram.</div>
-    </div>
-    <div class="sidebar-footer">
-      <div class="sidebar-hint">
-        Click a rhythm to select it.<br>
-        Drag between nodes to connect.<br>
-        Click a connection to remove it.
-      </div>
-    </div>
-  </aside>
-
-  <!-- ── Canvas ──────────────────────────────────────────────────────────── -->
+  <!-- ── Canvas ── -->
   <div class="canvas-wrap" id="canvas">
 
-    <!-- SVG: persistent connections -->
     <svg id="conn-svg" xmlns="http://www.w3.org/2000/svg">
       <defs id="svg-defs"></defs>
     </svg>
 
-    <!-- SVG: drag preview -->
     <svg id="drag-svg" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <marker id="drag-arrow" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto">
-          <path d="M 0 1 L 8 4 L 0 7 Z" fill="#aaa"/>
+          <path d="M 0 1 L 8 4 L 0 7 Z" fill="#999"/>
         </marker>
       </defs>
-      <path id="drag-line" stroke="#aaa" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#drag-arrow)"/>
+      <path id="drag-line" stroke="#999" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#drag-arrow)"/>
     </svg>
 
-    <!-- ── 4 columns ──────────────────────────────────────────────────── -->
+    <!-- ── 4 columns ── -->
     <div class="flow-columns" id="flow-columns">
 
       <!-- 01 Geography -->
@@ -431,29 +495,34 @@ body.mode-activation .add-btn.propose { display: block; }
         <div class="flow-node" data-col="geo" data-id="waterfronts"><div class="node-dots"></div><span class="node-label">Waterfronts</span></div>
       </div>
 
-      <!-- 02 Morphology -->
+      <!-- 02 Morphology — ordered Stable → Dynamic -->
       <div class="flow-col" data-col="morph">
         <div class="col-header">
           <div class="col-num">02</div>
           <div class="col-cat">Morphology</div>
           <div class="col-title">Forms</div>
+          <div class="col-axis">
+            <span class="axis-label stable">Stable</span>
+            <div class="axis-bar"></div>
+            <span class="axis-label dynamic">Dynamic</span>
+          </div>
         </div>
         <div class="col-section">Physical Forms</div>
-        <div class="flow-node" data-col="morph" data-id="animals"><div class="node-dots"></div><span class="node-label">Animals</span></div>
-        <div class="flow-node" data-col="morph" data-id="architecture"><div class="node-dots"></div><span class="node-label">Architecture</span></div>
-        <div class="flow-node" data-col="morph" data-id="art"><div class="node-dots"></div><span class="node-label">Art &amp; Objects</span></div>
-        <div class="flow-node" data-col="morph" data-id="communities"><div class="node-dots"></div><span class="node-label">Communities</span></div>
-        <div class="flow-node" data-col="morph" data-id="events"><div class="node-dots"></div><span class="node-label">Events</span></div>
-        <div class="flow-node" data-col="morph" data-id="greenspace"><div class="node-dots"></div><span class="node-label">Green Space</span></div>
-        <div class="flow-node" data-col="morph" data-id="infrastructure"><div class="node-dots"></div><span class="node-label">Infrastructure</span></div>
-        <div class="flow-node" data-col="morph" data-id="light"><div class="node-dots"></div><span class="node-label">Light</span></div>
-        <div class="flow-node" data-col="morph" data-id="people"><div class="node-dots"></div><span class="node-label">People</span></div>
-        <div class="flow-node" data-col="morph" data-id="plants"><div class="node-dots"></div><span class="node-label">Plants</span></div>
-        <div class="flow-node" data-col="morph" data-id="smells"><div class="node-dots"></div><span class="node-label">Smells</span></div>
-        <div class="flow-node" data-col="morph" data-id="sounds"><div class="node-dots"></div><span class="node-label">Sounds</span></div>
-        <div class="flow-node" data-col="morph" data-id="vistas"><div class="node-dots"></div><span class="node-label">Vistas</span></div>
-        <div class="flow-node" data-col="morph" data-id="water"><div class="node-dots"></div><span class="node-label">Water</span></div>
-        <div class="flow-node" data-col="morph" data-id="weather"><div class="node-dots"></div><span class="node-label">Weather</span></div>
+        <div class="flow-node" data-col="morph" data-id="architecture" data-spectrum="0.05"><div class="node-dots"></div><span class="node-label">Architecture</span></div>
+        <div class="flow-node" data-col="morph" data-id="infrastructure" data-spectrum="0.1"><div class="node-dots"></div><span class="node-label">Infrastructure</span></div>
+        <div class="flow-node" data-col="morph" data-id="art" data-spectrum="0.18"><div class="node-dots"></div><span class="node-label">Art &amp; Objects</span></div>
+        <div class="flow-node" data-col="morph" data-id="vistas" data-spectrum="0.25"><div class="node-dots"></div><span class="node-label">Vistas</span></div>
+        <div class="flow-node" data-col="morph" data-id="greenspace" data-spectrum="0.32"><div class="node-dots"></div><span class="node-label">Green Space</span></div>
+        <div class="flow-node" data-col="morph" data-id="water" data-spectrum="0.38"><div class="node-dots"></div><span class="node-label">Water</span></div>
+        <div class="flow-node" data-col="morph" data-id="plants" data-spectrum="0.44"><div class="node-dots"></div><span class="node-label">Plants</span></div>
+        <div class="flow-node" data-col="morph" data-id="communities" data-spectrum="0.5"><div class="node-dots"></div><span class="node-label">Communities</span></div>
+        <div class="flow-node" data-col="morph" data-id="animals" data-spectrum="0.56"><div class="node-dots"></div><span class="node-label">Animals</span></div>
+        <div class="flow-node" data-col="morph" data-id="people" data-spectrum="0.62"><div class="node-dots"></div><span class="node-label">People</span></div>
+        <div class="flow-node" data-col="morph" data-id="events" data-spectrum="0.68"><div class="node-dots"></div><span class="node-label">Events</span></div>
+        <div class="flow-node" data-col="morph" data-id="light" data-spectrum="0.76"><div class="node-dots"></div><span class="node-label">Light</span></div>
+        <div class="flow-node" data-col="morph" data-id="sounds" data-spectrum="0.82"><div class="node-dots"></div><span class="node-label">Sounds</span></div>
+        <div class="flow-node" data-col="morph" data-id="smells" data-spectrum="0.88"><div class="node-dots"></div><span class="node-label">Smells</span></div>
+        <div class="flow-node" data-col="morph" data-id="weather" data-spectrum="0.95"><div class="node-dots"></div><span class="node-label">Weather</span></div>
         <div class="col-section">Wonders of Life</div>
         <div class="flow-node" data-col="morph" data-id="moralbeauty"><div class="node-dots"></div><span class="node-label">Moral Beauty</span></div>
         <div class="flow-node" data-col="morph" data-id="nature"><div class="node-dots"></div><span class="node-label">Nature</span></div>
@@ -474,28 +543,28 @@ body.mode-activation .add-btn.propose { display: block; }
         </div>
         <div class="col-section">Tensions</div>
         <div class="flow-node tension-node" data-col="phen" data-id="formal">
-          <div style="display:flex;align-items:center;gap:8px"><div class="node-dots"></div><span class="tension-name">Formal</span></div>
-          <div class="tension-poles"><span class="tension-pole">Ornate</span><span style="color:var(--stone);font-size:.8rem;align-self:center">↔</span><span class="tension-pole">Functional</span></div>
+          <div class="tension-inner"><div class="node-dots"></div><span class="tension-name">Formal</span></div>
+          <div class="tension-poles"><span class="tension-pole">Ornate</span><span class="tension-arrow">↔</span><span class="tension-pole">Functional</span></div>
         </div>
         <div class="flow-node tension-node" data-col="phen" data-id="social">
-          <div style="display:flex;align-items:center;gap:8px"><div class="node-dots"></div><span class="tension-name">Social</span></div>
-          <div class="tension-poles"><span class="tension-pole">Collective</span><span style="color:var(--stone);font-size:.8rem;align-self:center">↔</span><span class="tension-pole">Individual</span></div>
+          <div class="tension-inner"><div class="node-dots"></div><span class="tension-name">Social</span></div>
+          <div class="tension-poles"><span class="tension-pole">Collective</span><span class="tension-arrow">↔</span><span class="tension-pole">Individual</span></div>
         </div>
         <div class="flow-node tension-node" data-col="phen" data-id="ecological">
-          <div style="display:flex;align-items:center;gap:8px"><div class="node-dots"></div><span class="tension-name">Ecological</span></div>
-          <div class="tension-poles"><span class="tension-pole">Wild</span><span style="color:var(--stone);font-size:.8rem;align-self:center">↔</span><span class="tension-pole">Curated</span></div>
+          <div class="tension-inner"><div class="node-dots"></div><span class="tension-name">Ecological</span></div>
+          <div class="tension-poles"><span class="tension-pole">Wild</span><span class="tension-arrow">↔</span><span class="tension-pole">Curated</span></div>
         </div>
         <div class="flow-node tension-node" data-col="phen" data-id="evaluative">
-          <div style="display:flex;align-items:center;gap:8px"><div class="node-dots"></div><span class="tension-name">Evaluative</span></div>
-          <div class="tension-poles"><span class="tension-pole">Familiar</span><span style="color:var(--stone);font-size:.8rem;align-self:center">↔</span><span class="tension-pole">Novel</span></div>
+          <div class="tension-inner"><div class="node-dots"></div><span class="tension-name">Evaluative</span></div>
+          <div class="tension-poles"><span class="tension-pole">Familiar</span><span class="tension-arrow">↔</span><span class="tension-pole">Novel</span></div>
         </div>
         <div class="flow-node tension-node" data-col="phen" data-id="temporal-t">
-          <div style="display:flex;align-items:center;gap:8px"><div class="node-dots"></div><span class="tension-name">Temporal</span></div>
-          <div class="tension-poles"><span class="tension-pole">Stable</span><span style="color:var(--stone);font-size:.8rem;align-self:center">↔</span><span class="tension-pole">Dynamic</span></div>
+          <div class="tension-inner"><div class="node-dots"></div><span class="tension-name">Temporal</span></div>
+          <div class="tension-poles"><span class="tension-pole">Stable</span><span class="tension-arrow">↔</span><span class="tension-pole">Dynamic</span></div>
         </div>
         <div class="flow-node tension-node" data-col="phen" data-id="spatial">
-          <div style="display:flex;align-items:center;gap:8px"><div class="node-dots"></div><span class="tension-name">Spatial</span></div>
-          <div class="tension-poles"><span class="tension-pole">Enclosed</span><span style="color:var(--stone);font-size:.8rem;align-self:center">↔</span><span class="tension-pole">Expansive</span></div>
+          <div class="tension-inner"><div class="node-dots"></div><span class="tension-name">Spatial</span></div>
+          <div class="tension-poles"><span class="tension-pole">Enclosed</span><span class="tension-arrow">↔</span><span class="tension-pole">Expansive</span></div>
         </div>
         <div class="col-section">Binaries</div>
         <div class="flow-node" data-col="phen" data-id="alterity"><div class="node-dots"></div><span class="node-label">Alterity</span></div>
@@ -504,52 +573,126 @@ body.mode-activation .add-btn.propose { display: block; }
         <div class="flow-node" data-col="phen" data-id="sanctuary"><div class="node-dots"></div><span class="node-label">Sanctuary</span></div>
       </div>
 
-      <!-- 04 Temporality -->
+      <!-- 04 Temporality — ordered Stable → Dynamic -->
       <div class="flow-col" data-col="tempo">
         <div class="col-header">
           <div class="col-num">04</div>
           <div class="col-cat">Temporality</div>
           <div class="col-title">Frequencies</div>
+          <div class="col-axis">
+            <span class="axis-label stable">Stable</span>
+            <div class="axis-bar"></div>
+            <span class="axis-label dynamic">Dynamic</span>
+          </div>
         </div>
         <div class="col-section">Rhythms of Time</div>
-        <div class="flow-node" data-col="tempo" data-id="history"><div class="node-dots"></div><span class="node-label">History</span></div>
-        <div class="flow-node" data-col="tempo" data-id="ephemeral"><div class="node-dots"></div><span class="node-label">Ephemeral</span></div>
-        <div class="flow-node" data-col="tempo" data-id="periodic"><div class="node-dots"></div><span class="node-label">Periodic</span></div>
-        <div class="flow-node" data-col="tempo" data-id="recurring"><div class="node-dots"></div><span class="node-label">Recurring</span></div>
-        <div class="flow-node" data-col="tempo" data-id="seasonal"><div class="node-dots"></div><span class="node-label">Seasonal</span></div>
-        <div class="flow-node" data-col="tempo" data-id="daily"><div class="node-dots"></div><span class="node-label">Daily</span></div>
-        <div class="flow-node" data-col="tempo" data-id="timeless"><div class="node-dots"></div><span class="node-label">Timeless</span></div>
+        <div class="flow-node" data-col="tempo" data-id="history" data-spectrum="0.05"><div class="node-dots"></div><span class="node-label">History</span></div>
+        <div class="flow-node" data-col="tempo" data-id="timeless" data-spectrum="0.15"><div class="node-dots"></div><span class="node-label">Timeless</span></div>
+        <div class="flow-node" data-col="tempo" data-id="seasonal" data-spectrum="0.35"><div class="node-dots"></div><span class="node-label">Seasonal</span></div>
+        <div class="flow-node" data-col="tempo" data-id="recurring" data-spectrum="0.52"><div class="node-dots"></div><span class="node-label">Recurring</span></div>
+        <div class="flow-node" data-col="tempo" data-id="daily" data-spectrum="0.65"><div class="node-dots"></div><span class="node-label">Daily</span></div>
+        <div class="flow-node" data-col="tempo" data-id="periodic" data-spectrum="0.78"><div class="node-dots"></div><span class="node-label">Periodic</span></div>
+        <div class="flow-node" data-col="tempo" data-id="ephemeral" data-spectrum="0.95"><div class="node-dots"></div><span class="node-label">Ephemeral</span></div>
       </div>
 
     </div><!-- /flow-columns -->
   </div><!-- /canvas-wrap -->
 
+  <!-- ── Bottom Rhythm Panel ── -->
+  <div class="rhythm-panel" id="rhythm-panel">
+    <div class="rhythm-panel-bar">
+      <span class="rp-label">Rhythms</span>
+      <div class="rp-divider"></div>
+      <div class="rp-chips" id="rp-chips"></div>
+      <div class="rp-add-wrap">
+        <button class="rp-add-btn" onclick="addRhythm('existing')">+ Existing</button>
+        <button class="rp-add-btn propose" onclick="addRhythm('proposed')">+ Proposed</button>
+      </div>
+    </div>
+    <div class="rhythm-detail" id="rhythm-detail">
+      <div class="rd-left">
+        <div class="rd-name-wrap">
+          <div class="rd-color-swatch" id="rd-swatch"></div>
+          <input class="rd-name-input" id="rd-name-input" type="text" placeholder="Rhythm name…" />
+        </div>
+        <div class="rd-status" id="rd-status"></div>
+      </div>
+      <div style="flex:1">
+        <div class="rd-section">Connections</div>
+        <div class="rd-connections" id="rd-connections"></div>
+      </div>
+    </div>
+  </div>
+
 </div><!-- /app-body -->
 
-<!-- Drop tip -->
 <div id="drop-tip">Release to connect</div>
-<div class="conn-delete-tip" id="conn-delete-tip">Click to remove</div>
+<div class="conn-delete-tip" id="conn-delete-tip">Click to remove connection</div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════
    STATE
-═══════════════════════════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════════════════ */
 const RHYTHM_COLORS = [
   '#2e6da4','#c0572a','#2e8a56','#8a4a7a',
   '#a07c1a','#5a4a9a','#a04040','#3a7a72',
+  '#4a8a60','#8a6a2a','#6a3a9a','#c06040',
 ];
+
 let rhythms    = [];
 let nextId     = 1;
-let activeId   = null; // currently selected rhythm id
+let activeId   = null;
 let mode       = 'analysis';
 
-// Drag state
-let dragSrc    = null; // { col, id, el }
-let dragActive = false;
+let dragSrc           = null;
+let dragActive        = false;
+let dragJustCompleted = false;
+let clickSrc          = null; // { col, id, el }
 
-/* ═══════════════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════
+   NODE LABELS
+═══════════════════════════════════════════════════════════════ */
+const NODE_LABELS = {
+  civic:'Civic, Community & Cultural', corridors:'Corridors', educational:'Educational',
+  industry:'Industry & Office', parks:'Parks', plazas:'Plazas',
+  residences:'Residences', streets:'Streets', waterfronts:'Waterfronts',
+  architecture:'Architecture', infrastructure:'Infrastructure', art:'Art & Objects',
+  vistas:'Vistas', greenspace:'Green Space', water:'Water', plants:'Plants',
+  communities:'Communities', animals:'Animals', people:'People', events:'Events',
+  light:'Light', sounds:'Sounds', smells:'Smells', weather:'Weather',
+  moralbeauty:'Moral Beauty', nature:'Nature', visualdesign:'Visual Design',
+  lifedeath:'Life & Death', collective:'Collective Effervescence', music:'Music',
+  spiritual:'Spirituality / Religion', epiphany:'Epiphany',
+  formal:'Formal', social:'Social', ecological:'Ecological', evaluative:'Evaluative',
+  'temporal-t':'Temporal', spatial:'Spatial', alterity:'Alterity',
+  surprise:'Surprise', threshold:'Threshold', sanctuary:'Sanctuary',
+  history:'History', timeless:'Timeless', seasonal:'Seasonal',
+  recurring:'Recurring', daily:'Daily', periodic:'Periodic', ephemeral:'Ephemeral',
+};
+const nodeLabel = (col, id) => NODE_LABELS[id] || id;
+
+/* ═══════════════════════════════════════════════════════════════
+   SPECTRUM COLORS (stable→dynamic interpolation)
+═══════════════════════════════════════════════════════════════ */
+function spectrumColor(t) {
+  // stable: #3a6080  dynamic: #c07030
+  const r = Math.round(0x3a + t * (0xc0 - 0x3a));
+  const g = Math.round(0x60 + t * (0x70 - 0x60));
+  const b = Math.round(0x80 + t * (0x30 - 0x80));
+  return `rgb(${r},${g},${b})`;
+}
+
+function initNodeSpectrum() {
+  document.querySelectorAll('.flow-node[data-spectrum]').forEach(el => {
+    const t = parseFloat(el.dataset.spectrum);
+    const color = spectrumColor(t);
+    el.style.setProperty('--spectrum-color', color);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
    MODE
-═══════════════════════════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════════════════ */
 function setMode(m) {
   mode = m;
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === m));
@@ -557,45 +700,50 @@ function setMode(m) {
   renderConnections();
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════
    RHYTHM MANAGEMENT
-═══════════════════════════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════════════════ */
 function addRhythm(status = 'existing') {
   const id    = nextId++;
   const color = RHYTHM_COLORS[(id - 1) % RHYTHM_COLORS.length];
   rhythms.push({ id, color, status, connections: [],
-    name: 'Rhythm ' + String(id).padStart(2,'0') });
+    name: 'Rhythm ' + String(id).padStart(2, '0') });
   activeId = id;
   ensureMarker(id, color);
-  renderSidebar();
+  renderPanel();
   renderConnections();
   renderNodeDots();
+  return id;
 }
 
 function deleteRhythm(id) {
   rhythms = rhythms.filter(r => r.id !== id);
   if (activeId === id) activeId = rhythms.length ? rhythms[rhythms.length - 1].id : null;
-  renderSidebar();
+  renderPanel();
   renderConnections();
   renderNodeDots();
 }
 
 function setActive(id) {
   activeId = id;
-  renderSidebar();
+  renderPanel();
   renderConnections();
   renderNodeDots();
 }
 
-function getActive() { return rhythms.find(r => r.id === activeId); }
+function getActive() { return rhythms.find(r => r.id === activeId) || null; }
 
-/* ═══════════════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════
    CONNECTIONS
-═══════════════════════════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════════════════ */
 function addConnection(fromCol, fromId, toCol, toId) {
-  const r = getActive();
+  let r = getActive();
+  if (!r) {
+    addRhythm('existing');
+    r = getActive();
+  }
   if (!r) return;
-  if (fromCol === toCol && fromId === toId) return; // same node
+  if (fromCol === toCol && fromId === toId) return;
   const dup = r.connections.find(c =>
     c.fromCol === fromCol && c.fromId === fromId &&
     c.toCol   === toCol   && c.toId   === toId
@@ -603,7 +751,7 @@ function addConnection(fromCol, fromId, toCol, toId) {
   if (!dup) {
     r.connections.push({ fromCol, fromId, toCol, toId });
     renderConnections();
-    renderSidebar();
+    renderPanel();
     renderNodeDots();
   }
 }
@@ -613,46 +761,44 @@ function deleteConnection(rhythmId, connIdx) {
   if (!r) return;
   r.connections.splice(connIdx, 1);
   renderConnections();
-  renderSidebar();
+  renderPanel();
   renderNodeDots();
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════
    SVG MARKERS
-═══════════════════════════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════════════════ */
 function ensureMarker(id, color) {
   const defs = document.getElementById('svg-defs');
   if (defs.querySelector('#arrow-' + id)) return;
-  const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
-  marker.setAttribute('id', 'arrow-' + id);
-  marker.setAttribute('markerWidth', '9');
-  marker.setAttribute('markerHeight', '9');
-  marker.setAttribute('refX', '9');
-  marker.setAttribute('refY', '4.5');
-  marker.setAttribute('orient', 'auto');
-  marker.setAttribute('markerUnits', 'userSpaceOnUse');
-  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('d', 'M 0 1 L 9 4.5 L 0 8 Z');
-  path.setAttribute('fill', color);
-  marker.appendChild(path);
-  defs.appendChild(marker);
 
-  // Also add a dimmed version
-  const markerDim = marker.cloneNode(true);
-  markerDim.setAttribute('id', 'arrow-dim-' + id);
-  markerDim.querySelector('path').setAttribute('opacity', '0.4');
-  defs.appendChild(markerDim);
+  function makeMarker(mid, opacity) {
+    const m = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+    m.setAttribute('id', mid);
+    m.setAttribute('markerWidth', '9');
+    m.setAttribute('markerHeight', '9');
+    m.setAttribute('refX', '9');
+    m.setAttribute('refY', '4.5');
+    m.setAttribute('orient', 'auto');
+    m.setAttribute('markerUnits', 'userSpaceOnUse');
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', 'M 0 1 L 9 4.5 L 0 8 Z');
+    p.setAttribute('fill', color);
+    p.setAttribute('opacity', opacity);
+    m.appendChild(p);
+    defs.appendChild(m);
+  }
+  makeMarker('arrow-' + id, '1');
+  makeMarker('arrow-dim-' + id, '0.4');
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════
    RENDER CONNECTIONS
-═══════════════════════════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════════════════ */
 function renderConnections() {
   const svg    = document.getElementById('conn-svg');
   const canvas = document.getElementById('canvas');
-  // Remove old paths (keep defs)
   svg.querySelectorAll('.conn-path').forEach(el => el.remove());
-
   const cr = canvas.getBoundingClientRect();
 
   rhythms.forEach(r => {
@@ -666,13 +812,10 @@ function renderConnections() {
 
       const fr = fromEl.getBoundingClientRect();
       const tr = toEl.getBoundingClientRect();
-
       const x1 = fr.right  - cr.left + canvas.scrollLeft;
       const y1 = fr.top    + fr.height / 2 - cr.top + canvas.scrollTop;
       const x2 = tr.left   - cr.left + canvas.scrollLeft;
       const y2 = tr.top    + tr.height / 2 - cr.top + canvas.scrollTop;
-
-      // Horizontal bezier
       const dx = Math.max(Math.abs(x2 - x1) * 0.5, 60);
       const d  = `M ${x1} ${y1} C ${x1+dx} ${y1} ${x2-dx} ${y2} ${x2} ${y2}`;
 
@@ -681,32 +824,25 @@ function renderConnections() {
       path.setAttribute('fill', 'none');
       path.setAttribute('stroke', r.color);
       path.classList.add('conn-path');
-
-      const opacity     = isActive ? 0.85 : 0.32;
-      const strokeWidth = isActive ? 2.8 : 1.6;
-      path.setAttribute('stroke-width', strokeWidth);
-      path.setAttribute('opacity', opacity);
+      path.setAttribute('stroke-width', isActive ? 3 : 1.5);
+      path.setAttribute('opacity', isActive ? 0.9 : 0.28);
       path.setAttribute('marker-end', `url(#${isActive ? 'arrow' : 'arrow-dim'}-${r.id})`);
 
       if (isProposed) {
         path.setAttribute('stroke-dasharray', '10 6');
         path.style.animation = 'flow-anim 1.8s linear infinite';
-      } else {
-        path.setAttribute('stroke-dasharray', '10 0');
       }
 
-      // Click to delete
       path.dataset.rhythmId = r.id;
       path.dataset.connIdx  = ci;
       path.style.pointerEvents = 'stroke';
       path.style.cursor = 'pointer';
-      path.addEventListener('click', (e) => {
+
+      path.addEventListener('click', e => {
         e.stopPropagation();
         deleteConnection(r.id, ci);
       });
-
-      // Hover tooltip
-      path.addEventListener('mouseenter', (e) => {
+      path.addEventListener('mouseenter', e => {
         const tip = document.getElementById('conn-delete-tip');
         tip.style.display = 'block';
         tip.style.left = e.clientX + 'px';
@@ -721,37 +857,31 @@ function renderConnections() {
   });
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════
    RENDER NODE DOTS
-═══════════════════════════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════════════════ */
 function renderNodeDots() {
-  // Clear all dots and state classes
   document.querySelectorAll('.flow-node').forEach(el => {
     el.querySelector('.node-dots').innerHTML = '';
     el.classList.remove('r-active');
     el.style.removeProperty('--r-color');
   });
 
-  // Per-node: collect which rhythms include it
-  const nodeRhythms = {}; // key → [{color, proposed}]
+  const nodeRhythms = {};
   rhythms.forEach(r => {
     r.connections.forEach(c => {
-      const k1 = c.fromCol + ':' + c.fromId;
-      const k2 = c.toCol   + ':' + c.toId;
-      if (!nodeRhythms[k1]) nodeRhythms[k1] = [];
-      if (!nodeRhythms[k2]) nodeRhythms[k2] = [];
-      nodeRhythms[k1].push({ color: r.color, proposed: r.status === 'proposed', id: r.id });
-      nodeRhythms[k2].push({ color: r.color, proposed: r.status === 'proposed', id: r.id });
+      [c.fromCol + ':' + c.fromId, c.toCol + ':' + c.toId].forEach(k => {
+        if (!nodeRhythms[k]) nodeRhythms[k] = [];
+        nodeRhythms[k].push({ color: r.color, proposed: r.status === 'proposed', id: r.id });
+      });
     });
   });
 
-  // Apply dots and highlight active rhythm's nodes
   Object.entries(nodeRhythms).forEach(([key, rList]) => {
     const [col, id] = key.split(':');
     const el = document.querySelector(`[data-col="${col}"][data-id="${id}"]`);
     if (!el) return;
     const dotsEl = el.querySelector('.node-dots');
-    // Deduplicate
     const seen = new Set();
     rList.forEach(({ color, proposed, id: rid }) => {
       if (seen.has(rid)) return;
@@ -761,7 +891,6 @@ function renderNodeDots() {
       dot.style.background = proposed ? 'transparent' : color;
       if (proposed) dot.style.borderColor = color;
       dotsEl.appendChild(dot);
-
       if (rid === activeId) {
         el.classList.add('r-active');
         el.style.setProperty('--r-color', color);
@@ -770,104 +899,208 @@ function renderNodeDots() {
   });
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   RENDER SIDEBAR
-═══════════════════════════════════════════════════════════════════════════ */
-function renderSidebar() {
-  const list   = document.getElementById('rhythm-list');
-  const empty  = document.getElementById('empty-msg');
+/* ═══════════════════════════════════════════════════════════════
+   RENDER BOTTOM PANEL
+═══════════════════════════════════════════════════════════════ */
+function renderPanel() {
+  const chipsEl  = document.getElementById('rp-chips');
+  const detailEl = document.getElementById('rhythm-detail');
+  const connsEl  = document.getElementById('rd-connections');
+  const nameInput = document.getElementById('rd-name-input');
+  const swatchEl  = document.getElementById('rd-swatch');
+  const statusEl  = document.getElementById('rd-status');
 
+  // Chips
+  chipsEl.innerHTML = '';
   if (!rhythms.length) {
-    list.innerHTML = '';
-    list.appendChild(empty);
-    return;
+    const ph = document.createElement('span');
+    ph.className = 'rp-empty';
+    ph.textContent = 'No rhythms yet — click + Existing to begin tracing connections';
+    chipsEl.appendChild(ph);
   }
-  if (empty.parentNode) empty.parentNode.removeChild(empty);
-
-  list.innerHTML = '';
   rhythms.forEach(r => {
-    const row = document.createElement('div');
-    row.className = 'r-row' + (r.status === 'proposed' ? ' proposed' : '') + (r.id === activeId ? ' active' : '');
-    row.style.setProperty('--r-color', r.color);
+    const chip = document.createElement('div');
+    chip.className = 'r-chip' +
+      (r.id === activeId ? ' active' : '') +
+      (r.status === 'proposed' ? ' proposed-chip' : '');
+    chip.style.setProperty('--r-color', r.color);
 
-    const connCount = r.connections.length;
+    const dotStyle = r.status === 'proposed'
+      ? `background:transparent;border:1.5px dashed ${r.color}`
+      : `background:${r.color}`;
 
-    row.innerHTML = `
-      <div class="r-swatch" style="background:${r.status==='proposed'?'transparent':r.color};${r.status==='proposed'?'border:2px dashed '+r.color:''}"></div>
-      <span class="r-name">${r.name}</span>
-      <span class="r-conn-count">${connCount > 0 ? connCount + ' conn' : ''}</span>
-      <span class="r-badge r-badge-${r.status}">${r.status}</span>
-      <button class="r-del" title="Delete rhythm" onclick="event.stopPropagation();deleteRhythm(${r.id})">×</button>
-    `;
-    row.addEventListener('click', () => setActive(r.id));
-    list.appendChild(row);
+    chip.innerHTML =
+      `<span class="chip-dot" style="${dotStyle}"></span>` +
+      `<span>${r.name}</span>` +
+      (r.connections.length ? `<span class="chip-count">${r.connections.length}</span>` : '') +
+      `<button class="chip-del" title="Remove rhythm">×</button>`;
+
+    chip.querySelector('.chip-del').addEventListener('click', e => {
+      e.stopPropagation();
+      deleteRhythm(r.id);
+    });
+    chip.addEventListener('click', () => setActive(r.id));
+    chipsEl.appendChild(chip);
   });
+
+  // Detail
+  const r = getActive();
+  if (r) {
+    detailEl.classList.add('open');
+    swatchEl.style.background = r.color;
+    nameInput.value = r.name;
+    nameInput.oninput = () => {
+      r.name = nameInput.value || r.name;
+      renderPanel();
+    };
+    statusEl.textContent = r.status === 'proposed' ? '— proposed rhythm' : '— existing rhythm';
+
+    connsEl.innerHTML = '';
+    if (!r.connections.length) {
+      const msg = document.createElement('span');
+      msg.className = 'rd-no-conns';
+      msg.textContent = 'No connections yet — click or drag between nodes to trace this rhythm\'s path';
+      connsEl.appendChild(msg);
+    } else {
+      r.connections.forEach((conn, ci) => {
+        const tag = document.createElement('div');
+        tag.className = 'rd-conn-tag';
+        tag.style.setProperty('--tag-color', r.color);
+        tag.innerHTML =
+          `<span>${nodeLabel(conn.fromCol, conn.fromId)}</span>` +
+          `<span style="color:var(--stone)">→</span>` +
+          `<span>${nodeLabel(conn.toCol, conn.toId)}</span>` +
+          `<button title="Remove">×</button>`;
+        tag.querySelector('button').addEventListener('click', () => deleteConnection(r.id, ci));
+        connsEl.appendChild(tag);
+      });
+    }
+  } else {
+    detailEl.classList.remove('open');
+  }
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════
+   CLICK-TO-CONNECT
+═══════════════════════════════════════════════════════════════ */
+const hintEl = document.getElementById('header-hint');
+
+function setClickSrc(el) {
+  if (clickSrc) clickSrc.el.classList.remove('click-source');
+  if (el) {
+    clickSrc = { col: el.dataset.col, id: el.dataset.id, el };
+    el.classList.add('click-source');
+    hintEl.textContent = `"${nodeLabel(el.dataset.col, el.dataset.id)}" selected — click another node to connect, or press Esc`;
+    hintEl.classList.add('has-source');
+  } else {
+    clickSrc = null;
+    hintEl.textContent = 'Click a node to select source, then click another to connect — or drag between nodes';
+    hintEl.classList.remove('has-source');
+  }
+}
+
+document.querySelectorAll('.flow-node').forEach(el => {
+  el.addEventListener('click', e => {
+    if (dragJustCompleted) { dragJustCompleted = false; return; }
+    if (dragActive) return;
+    e.stopPropagation();
+
+    if (!clickSrc) {
+      setClickSrc(el);
+    } else if (clickSrc.el === el) {
+      setClickSrc(null);
+    } else {
+      addConnection(clickSrc.col, clickSrc.id, el.dataset.col, el.dataset.id);
+      setClickSrc(null);
+    }
+  });
+});
+
+document.getElementById('canvas').addEventListener('click', e => {
+  if (e.target === e.currentTarget ||
+      e.target.classList.contains('flow-columns') ||
+      e.target.classList.contains('flow-col') ||
+      e.target.classList.contains('col-section') ||
+      e.target.classList.contains('col-header')) {
+    setClickSrc(null);
+  }
+});
+
+/* ═══════════════════════════════════════════════════════════════
    DRAG TO CONNECT
-═══════════════════════════════════════════════════════════════════════════ */
-const canvas   = document.getElementById('canvas');
+═══════════════════════════════════════════════════════════════ */
+const canvas  = document.getElementById('canvas');
 const dragSvg  = document.getElementById('drag-svg');
 const dragLine = document.getElementById('drag-line');
 const dropTip  = document.getElementById('drop-tip');
 
 document.querySelectorAll('.flow-node').forEach(el => {
-  el.addEventListener('mousedown', (e) => {
-    const r = getActive();
-    if (!r) return;
+  el.addEventListener('mousedown', e => {
     e.preventDefault();
-    dragSrc    = { col: el.dataset.col, id: el.dataset.id, el };
-    dragActive = true;
+    let r = getActive();
+    if (!r) {
+      addRhythm('existing');
+      r = getActive();
+    }
+    if (!r) return;
 
-    // Style source
-    el.classList.add('dragging-source');
-
-    // Show drag svg
-    dragSvg.style.display = 'block';
-    dragLine.setAttribute('stroke', r.color);
-
-    // Position initial line
     const cr = canvas.getBoundingClientRect();
     const fr = el.getBoundingClientRect();
     const x1 = fr.right  - cr.left + canvas.scrollLeft;
     const y1 = fr.top + fr.height / 2 - cr.top + canvas.scrollTop;
-    dragLine.setAttribute('d', `M ${x1} ${y1} L ${x1} ${y1}`);
+
+    dragSrc = { col: el.dataset.col, id: el.dataset.id, el };
+    dragActive = false;
+    el._dragOrigin = { mx: e.clientX, my: e.clientY, x1, y1 };
   });
 });
 
-document.addEventListener('mousemove', (e) => {
-  if (!dragActive || !dragSrc) return;
+document.addEventListener('mousemove', e => {
+  if (!dragSrc) return;
+  const origin = dragSrc.el._dragOrigin;
+  if (!origin) return;
+
+  const dist = Math.hypot(e.clientX - origin.mx, e.clientY - origin.my);
+  if (!dragActive && dist < 5) return;
+
+  if (!dragActive) {
+    dragActive = true;
+    dragSrc.el.classList.add('dragging-source');
+    dragSvg.style.display = 'block';
+    const r = getActive();
+    dragLine.setAttribute('stroke', r ? r.color : '#999');
+  }
 
   const cr = canvas.getBoundingClientRect();
-  const fr = dragSrc.el.getBoundingClientRect();
-  const x1 = fr.right  - cr.left + canvas.scrollLeft;
-  const y1 = fr.top + fr.height / 2 - cr.top + canvas.scrollTop;
+  const x1 = origin.x1;
+  const y1 = origin.y1;
   const x2 = e.clientX - cr.left + canvas.scrollLeft;
   const y2 = e.clientY - cr.top  + canvas.scrollTop;
   const dx = Math.max(Math.abs(x2 - x1) * 0.5, 50);
   dragLine.setAttribute('d', `M ${x1} ${y1} C ${x1+dx} ${y1} ${x2-dx} ${y2} ${x2} ${y2}`);
 
-  // Move drop tip
   dropTip.style.display = 'block';
   dropTip.style.left = e.clientX + 'px';
   dropTip.style.top  = e.clientY + 'px';
 });
 
-document.addEventListener('mouseup', (e) => {
-  if (!dragActive || !dragSrc) return;
+document.addEventListener('mouseup', e => {
+  if (!dragSrc) return;
 
-  // Find target node under cursor
-  const els = document.elementsFromPoint(e.clientX, e.clientY);
-  const target = els.find(el => el.classList.contains('flow-node') && el !== dragSrc.el);
+  if (dragActive) {
+    dragJustCompleted = true;
+    setClickSrc(null);
 
-  if (target) {
-    addConnection(dragSrc.col, dragSrc.id, target.dataset.col, target.dataset.id);
-    target.classList.remove('drop-target');
+    const els = document.elementsFromPoint(e.clientX, e.clientY);
+    const target = els.find(el => el.classList.contains('flow-node') && el !== dragSrc.el);
+    if (target) {
+      addConnection(dragSrc.col, dragSrc.id, target.dataset.col, target.dataset.id);
+      target.classList.remove('drop-target');
+    }
   }
 
-  // Cleanup
   dragSrc.el.classList.remove('dragging-source');
+  dragSrc.el._dragOrigin = null;
   dragSvg.style.display  = 'none';
   dragLine.setAttribute('d', '');
   dropTip.style.display  = 'none';
@@ -875,42 +1108,41 @@ document.addEventListener('mouseup', (e) => {
   dragSrc    = null;
 });
 
-// Highlight potential drop targets on hover
 document.querySelectorAll('.flow-node').forEach(el => {
   el.addEventListener('mouseenter', () => {
-    if (dragActive && dragSrc && el !== dragSrc.el) {
-      el.classList.add('drop-target');
-    }
+    if (dragActive && dragSrc && el !== dragSrc.el) el.classList.add('drop-target');
   });
-  el.addEventListener('mouseleave', () => {
-    el.classList.remove('drop-target');
-  });
+  el.addEventListener('mouseleave', () => el.classList.remove('drop-target'));
 });
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   RERENDER ON SCROLL / RESIZE
-═══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL / RESIZE
+═══════════════════════════════════════════════════════════════ */
 canvas.addEventListener('scroll', renderConnections);
 window.addEventListener('resize', renderConnections);
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   ESCAPE TO CANCEL DRAG
-═══════════════════════════════════════════════════════════════════════════ */
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && dragActive) {
-    if (dragSrc) dragSrc.el.classList.remove('dragging-source');
+/* ═══════════════════════════════════════════════════════════════
+   ESCAPE
+═══════════════════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (dragActive && dragSrc) {
+    dragSrc.el.classList.remove('dragging-source');
+    dragSrc.el._dragOrigin = null;
     dragSvg.style.display = 'none';
     dragLine.setAttribute('d', '');
     dropTip.style.display = 'none';
     dragActive = false;
     dragSrc    = null;
   }
+  setClickSrc(null);
 });
 
-/* ═══════════════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════
    INIT
-═══════════════════════════════════════════════════════════════════════════ */
-renderSidebar();
+═══════════════════════════════════════════════════════════════ */
+initNodeSpectrum();
+renderPanel();
 </script>
 </body>
 </html>
