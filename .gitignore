@@ -13,3 +13,6 @@ awe-map-prototype.html
 # OS
 .DS_Store
 Thumbs.db
+
+# Claude Code internals
+.claude/
