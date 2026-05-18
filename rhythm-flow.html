@@ -94,48 +94,6 @@ body.focus-mode .focus-badge { display: inline; }
   color: var(--accent); font-style: normal; font-weight: 600;
 }
 
-/* ── Instruction Banner ── */
-#instruction-banner {
-  flex-shrink: 0;
-  background: var(--parchment);
-  border-bottom: 1px solid rgba(140,69,24,.12);
-  border-left: 3px solid var(--accent);
-  overflow: hidden;
-  transition: max-height .2s ease, opacity .2s;
-  max-height: 200px;
-  opacity: 1;
-  position: relative; z-index: 90;
-}
-#instruction-banner.dismissed {
-  max-height: 0; opacity: 0; border-bottom-width: 0;
-}
-.banner-inner {
-  display: flex; align-items: flex-start; gap: 20px;
-  padding: 8px 20px 8px 16px; flex-wrap: wrap;
-}
-.banner-steps {
-  display: flex; gap: 14px; flex-wrap: wrap; flex: 1; align-items: center;
-}
-.banner-step {
-  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .05em;
-  color: var(--muted); white-space: nowrap;
-}
-.banner-step strong { color: var(--ink); }
-.banner-divider {
-  width: 1px; height: 14px; background: rgba(26,26,26,.12); flex-shrink: 0; align-self: center;
-}
-.banner-desc {
-  font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: .05em;
-  color: var(--stone); font-style: italic; align-self: center;
-}
-.banner-close {
-  font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1;
-  border: none; background: none; cursor: pointer; color: var(--stone);
-  padding: 2px 4px; flex-shrink: 0; margin-top: 1px;
-  transition: color .15s;
-}
-.banner-close:hover { color: var(--ink); }
-
 /* ── Mode Description Bar ── */
 #mode-desc-bar {
   flex-shrink: 0;
@@ -257,7 +215,7 @@ body.mode-activation .canvas-wrap::after {
 .col-header {
   padding: 20px 16px 14px;
   border-bottom: 1px solid rgba(26,26,26,.08);
-  background: rgba(255,255,255,.4);
+  background: rgba(246,246,246,.98);
   position: sticky; top: 0; z-index: 5;
 }
 .col-num {
@@ -270,21 +228,26 @@ body.mode-activation .canvas-wrap::after {
 }
 .col-title { font-weight: 300; font-size: 1.25rem; line-height: 1.1; }
 
-/* Stable→Dynamic axis — vertical orientation */
-.col-axis {
-  display: flex; flex-direction: column; align-items: flex-start; gap: 3px; margin-top: 9px;
+/* Stable→Dynamic axis — right-edge strip on morph + tempo columns */
+.col-axis-right {
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 20px;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 50px 0 20px;
+  pointer-events: none; z-index: 4;
 }
-.axis-label {
-  font-family: 'Space Mono', monospace; font-size: 6.5px; letter-spacing: .12em;
-  text-transform: uppercase; white-space: nowrap;
-  display: flex; align-items: center; gap: 3px;
+.axis-right-label {
+  font-family: 'Space Mono', monospace; font-size: 6px; letter-spacing: .1em;
+  text-transform: uppercase; writing-mode: vertical-rl;
+  white-space: nowrap; line-height: 1;
 }
-.axis-label.stable { color: var(--stable); }
-.axis-label.dynamic { color: var(--dynamic); }
-.axis-bar {
-  width: 28px; height: 18px; border-radius: 3px;
+.axis-right-label.stable { color: var(--stable); transform: rotate(180deg); }
+.axis-right-label.dynamic { color: var(--dynamic); }
+.axis-right-track {
+  flex: 1; width: 3px; border-radius: 2px; margin: 6px 0;
   background: linear-gradient(to bottom, var(--stable), var(--dynamic));
-  opacity: .65; margin-left: 2px;
+  opacity: .5;
 }
 
 .flow-col[data-col="geo"]   { --col-color: var(--geo); }
@@ -636,7 +599,7 @@ body.mode-activation .rp-add-btn:not(.propose) {
     </div>
   </div>
   <div class="header-right">
-    <span class="header-hint" id="header-hint">Click a node to select source, then click another to connect — or drag between nodes</span>
+    <span class="header-hint" id="header-hint">Click a node to select it, then click another to connect — or drag node to node</span>
     <button class="focus-view-btn" id="focus-view-btn" onclick="toggleFocusMode()">
       Rhythm View
       <span class="focus-badge" id="focus-badge">0</span>
@@ -648,24 +611,6 @@ body.mode-activation .rp-add-btn:not(.propose) {
     <a href="rhythm.html" style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--stone);text-decoration:none;padding:7px 10px;border:1px solid rgba(26,26,26,.15);border-radius:3px;transition:color .2s" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--stone)'">Diagram View →</a>
   </div>
 </header>
-
-<!-- ── Instruction Banner ── -->
-<div id="instruction-banner">
-  <div class="banner-inner">
-    <div class="banner-steps">
-      <span class="banner-step"><strong>①</strong> Click any node to select it as a source (it will pulse with an outline)</span>
-      <div class="banner-divider"></div>
-      <span class="banner-step"><strong>②</strong> Click a second node to draw a connection — across any column</span>
-      <div class="banner-divider"></div>
-      <span class="banner-step"><strong>③</strong> Or drag directly from node to node</span>
-      <div class="banner-divider"></div>
-      <span class="banner-step"><strong>④</strong> Click any connection line to delete it · Press Esc to cancel a selection</span>
-      <div class="banner-divider"></div>
-      <span class="banner-desc">Rhythmanalysis: map existing rhythms · Rhythmactivation: design proposed interventions</span>
-    </div>
-    <button class="banner-close" id="banner-close" title="Dismiss instructions">×</button>
-  </div>
-</div>
 
 <!-- ── Mode Description Bar ── -->
 <div id="mode-desc-bar">
@@ -728,11 +673,11 @@ body.mode-activation .rp-add-btn:not(.propose) {
           <div class="col-num">02</div>
           <div class="col-cat">Morphology</div>
           <div class="col-title">Forms</div>
-          <div class="col-axis">
-            <span class="axis-label stable">↑ STABLE</span>
-            <div class="axis-bar"></div>
-            <span class="axis-label dynamic">DYNAMIC ↓</span>
-          </div>
+        </div>
+        <div class="col-axis-right">
+          <span class="axis-right-label stable">Stable</span>
+          <div class="axis-right-track"></div>
+          <span class="axis-right-label dynamic">Dynamic</span>
         </div>
         <div class="col-section">Physical Forms</div>
         <div class="flow-node" data-col="morph" data-id="architecture" data-spectrum="0.05"><div class="node-dots"></div><span class="node-label">Architecture</span></div>
@@ -806,11 +751,11 @@ body.mode-activation .rp-add-btn:not(.propose) {
           <div class="col-num">04</div>
           <div class="col-cat">Temporality</div>
           <div class="col-title">Frequencies</div>
-          <div class="col-axis">
-            <span class="axis-label stable">↑ STABLE</span>
-            <div class="axis-bar"></div>
-            <span class="axis-label dynamic">DYNAMIC ↓</span>
-          </div>
+        </div>
+        <div class="col-axis-right">
+          <span class="axis-right-label stable">Stable</span>
+          <div class="axis-right-track"></div>
+          <span class="axis-right-label dynamic">Dynamic</span>
         </div>
         <div class="col-section">Rhythms of Time</div>
         <div class="flow-node" data-col="tempo" data-id="history" data-spectrum="0.05"><div class="node-dots"></div><span class="node-label">History</span></div>
@@ -872,11 +817,15 @@ body.mode-activation .rp-add-btn:not(.propose) {
 /* ═══════════════════════════════════════════════════════════════
    STATE
 ═══════════════════════════════════════════════════════════════ */
-const RHYTHM_COLORS = [
-  '#2e6da4','#c0572a','#2e8a56','#8a4a7a',
+// Existing rhythms always get this single muted color (analytical, documentary)
+const EXISTING_COLOR = '#4a6a7a';
+// Proposed rhythms get distinct vibrant colors (interventions, design)
+const PROPOSED_COLORS = [
+  '#c0572a','#2e8a56','#8a4a7a',
   '#a07c1a','#5a4a9a','#a04040','#3a7a72',
   '#4a8a60','#8a6a2a','#6a3a9a','#c06040',
 ];
+let nextProposedIdx = 0;
 
 let rhythms    = [];
 let nextId     = 1;
@@ -928,22 +877,6 @@ function initNodeSpectrum() {
   });
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   INSTRUCTION BANNER
-═══════════════════════════════════════════════════════════════ */
-function initBanner() {
-  const banner = document.getElementById('instruction-banner');
-  const modeBar = document.getElementById('mode-desc-bar');
-  if (sessionStorage.getItem('rhythm-banner-dismissed') === '1') {
-    banner.classList.add('dismissed');
-    modeBar.classList.add('dismissed');
-  }
-  document.getElementById('banner-close').addEventListener('click', () => {
-    banner.classList.add('dismissed');
-    modeBar.classList.add('dismissed');
-    sessionStorage.setItem('rhythm-banner-dismissed', '1');
-  });
-}
 
 /* ═══════════════════════════════════════════════════════════════
    SESSION DATE DEFAULT
@@ -1007,7 +940,9 @@ function toggleFocusMode() {
 ═══════════════════════════════════════════════════════════════ */
 function addRhythm(status = 'existing') {
   const id    = nextId++;
-  const color = RHYTHM_COLORS[(id - 1) % RHYTHM_COLORS.length];
+  const color = status === 'proposed'
+    ? PROPOSED_COLORS[nextProposedIdx++ % PROPOSED_COLORS.length]
+    : EXISTING_COLOR;
   rhythms.push({ id, color, status, connections: [],
     name: 'Rhythm ' + String(id).padStart(2, '0') });
   activeId = id;
@@ -1487,7 +1422,6 @@ document.addEventListener('keydown', e => {
    INIT
 ═══════════════════════════════════════════════════════════════ */
 initNodeSpectrum();
-initBanner();
 initSessionDate();
 renderPanel();
 </script>
